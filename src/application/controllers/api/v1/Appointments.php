@@ -5,6 +5,7 @@
  *
  * @package     EasyAppointments
  * @author      A.Tselegidis <alextselegidis@gmail.com>
+ * @updater     Davido Team
  * @copyright   Copyright (c) 2013 - 2018, Alex Tselegidis
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
@@ -30,6 +31,7 @@ class Appointments extends API_V1_Controller {
      * @var \EA\Engine\Api\V1\Parsers\Appointments
      */
     protected $parser;
+    protected $parserAttachment;
 
     /**
      * Class Constructor
@@ -39,6 +41,7 @@ class Appointments extends API_V1_Controller {
         parent::__construct();
         $this->load->model('appointments_model');
         $this->parser = new \EA\Engine\Api\V1\Parsers\Appointments;
+        $this->load->model('attachments_model');
     }
 
     /**
@@ -102,6 +105,11 @@ class Appointments extends API_V1_Controller {
 
             $id = $this->appointments_model->add($appointment);
 
+            // add attachment
+            if ( ! empty($appointment['attachment'])) {
+                $this->attachments_model->save_attachments($id, $appointment['attachment']);
+            }
+
             // Fetch the new object from the database and return it to the client.
             $batch = $this->appointments_model->get_batch('id = ' . $id);
             $response = new Response($batch);
@@ -138,6 +146,12 @@ class Appointments extends API_V1_Controller {
             $updatedAppointment['id'] = $id;
             $id = $this->appointments_model->add($updatedAppointment);
 
+            // Update the appointment attachments
+            if ( ! empty($updatedAppointment['attachment'])) {
+                $this->parser->decode($updatedAppointment['attachment']);
+                $this->attachments_model->set_attachment($id, $updatedAppointment['attachment']);
+            }
+
             // Fetch the updated object from the database and return it to the client.
             $batch = $this->appointments_model->get_batch('id = ' . $id);
             $response = new Response($batch);
@@ -159,6 +173,7 @@ class Appointments extends API_V1_Controller {
         try
         {
             $this->appointments_model->delete($id);
+            $this->attachments_model->remove_attachment($id);
 
             $response = new Response([
                 'code' => 200,

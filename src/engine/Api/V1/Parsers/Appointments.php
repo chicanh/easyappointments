@@ -36,7 +36,10 @@ class Appointments implements ParsersInterface {
             'customerId' => $response['id_users_customer'] !== NULL ? (int)$response['id_users_customer'] : NULL,
             'providerId' => $response['id_users_provider'] !== NULL ? (int)$response['id_users_provider'] : NULL,
             'serviceId' => $response['id_services'] !== NULL ? (int)$response['id_services'] : NULL,
-            'googleCalendarId' => $response['id_google_calendar'] !== NULL ? (int)$response['id_google_calendar'] : NULL
+            'googleCalendarId' => $response['id_google_calendar'] !== NULL ? (int)$response['id_google_calendar'] : NULL,
+            'status' => $response['status'],
+            'integratedId' => $response['id_integrated'] !== NULL ? (int)$response['id_integrated'] : NULL,
+            'cancelReason' => $response['cancel_reason']
         ];
 
         if (isset($response['provider']))
@@ -121,6 +124,26 @@ class Appointments implements ParsersInterface {
         if ( ! empty($request['googleCalendarId']))
         {
             $decodedRequest['id_google_calendar'] = $request['googleCalendarId'];
+        }
+
+        if ( ! empty($request['status']))
+        {
+            $decodedRequest['status'] = $request['status'];
+        }
+
+        if ( ! empty($request['integratedId']))
+        {
+            $decodedRequest['id_integrated'] = $request['integratedId'];
+        }
+
+        if ( ! empty($request['cancelReason']))
+        {
+            $decodedRequest['cancel_reason'] = $request['cancelReason'];
+        }
+
+        if ( ! empty($request['attachment']))
+        {
+            $decodedRequest['attachment'] = $request['attachment'];
         }
 
         $decodedRequest['is_unavailable'] = FALSE;

@@ -4,8 +4,7 @@
  * Easy!Appointments - Open Source Web Scheduler
  *
  * @package     EasyAppointments
- * @author      A.Tselegidis <alextselegidis@gmail.com>
- * @copyright   Copyright (c) 2013 - 2018, Alex Tselegidis
+ * @author      Davido Team
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
  * @since       v1.2.0
@@ -38,6 +37,7 @@ class Admins implements ParsersInterface {
             'state' => $response['state'],
             'zip' => $response['zip_code'],
             'notes' => $response['notes'],
+            'integratedId' => $response['id_integrated'],
             'settings' => [
                 'username' => $response['settings']['username'],
                 'notifications' => filter_var($response['settings']['notifications'], FILTER_VALIDATE_BOOLEAN),
@@ -111,6 +111,11 @@ class Admins implements ParsersInterface {
         if ( ! empty($request['notes']))
         {
             $decodedRequest['notes'] = $request['notes'];
+        }
+
+        if ( ! empty($request['integratedId']))
+        {
+            $decodedRequest['id_integrated'] = $request['integratedId'];
         }
 
         if ( ! empty($request['settings']))
