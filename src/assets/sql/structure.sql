@@ -13,6 +13,9 @@ CREATE TABLE IF NOT EXISTS `ea_appointments` (
     `id_users_customer` INT(11),
     `id_services` INT(11),
     `id_google_calendar` TEXT,
+    `status` CHAR(15),
+    `id_integrated` CHAR(36),
+    `cancel_reason` TEXT,
     PRIMARY KEY (`id`),
     KEY `id_users_customer` (`id_users_customer`),
     KEY `id_services` (`id_services`),
@@ -130,6 +133,7 @@ CREATE TABLE IF NOT EXISTS `ea_users` (
     `zip_code` VARCHAR(64),
     `notes` TEXT,
     `id_roles` INT(11) NOT NULL,
+    `id_integrated` CHAR(36),
     PRIMARY KEY (`id`),
     KEY `id_roles` (`id_roles`)
 )
@@ -155,6 +159,15 @@ CREATE TABLE IF NOT EXISTS `ea_user_settings` (
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8;
 
+CREATE TABLE IF NOT EXISTS `ea_appointments_attachments` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `id_appointment` INT(11) NOT NULL,
+    `name` CHAR(36),
+    `value` TEXT,
+    PRIMARY KEY (`id`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8;
 
 ALTER TABLE `ea_appointments`
     ADD CONSTRAINT `appointments_users_customer` FOREIGN KEY (`id_users_customer`) REFERENCES `ea_users` (`id`)
@@ -195,5 +208,10 @@ ALTER TABLE `ea_users`
 
 ALTER TABLE `ea_user_settings`
     ADD CONSTRAINT `user_settings_users` FOREIGN KEY (`id_users`) REFERENCES `ea_users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+ALTER TABLE `ea_appointments_attachments`
+    ADD CONSTRAINT `attachments_appointments` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;

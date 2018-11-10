@@ -25,6 +25,7 @@ class Migration_Remove_prefix_from_fkey_constraints extends CI_Migration {
         $this->db->query('ALTER TABLE ea_services DROP FOREIGN KEY ea_services_ibfk_1');
         $this->db->query('ALTER TABLE ea_users DROP FOREIGN KEY ea_users_ibfk_1');
         $this->db->query('ALTER TABLE ea_user_settings DROP FOREIGN KEY ea_user_settings_ibfk_1');
+        $this->db->query('ALTER TABLE ea_appointments_attachments DROP FOREIGN KEY ea_attachments_appointments_ibfk_1');
 
         // Add table constraints again without the "ea" prefix.
         $this->db->query('ALTER TABLE `ea_appointments`
@@ -68,6 +69,9 @@ class Migration_Remove_prefix_from_fkey_constraints extends CI_Migration {
             ADD CONSTRAINT `user_settings_users` FOREIGN KEY (`id_users`) REFERENCES `ea_users` (`id`)
             ON DELETE CASCADE
             ON UPDATE CASCADE');
+
+        $this->db->query('ALTER TABLE `ea_appointments_attachments`
+            ADD CONSTRAINT `attachments_appointments` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE');
     }
 
     public function down()
@@ -83,6 +87,7 @@ class Migration_Remove_prefix_from_fkey_constraints extends CI_Migration {
         $this->db->query('ALTER TABLE ea_services DROP FOREIGN KEY services_service_categories');
         $this->db->query('ALTER TABLE ea_users DROP FOREIGN KEY users_roles');
         $this->db->query('ALTER TABLE ea_user_settings DROP FOREIGN KEY user_settings_users');
+        $this->db->query('ALTER TABLE ea_appointments_attachments DROP FOREIGN KEY attachments_appointments');
 
         // Add table constraints again.
         $this->db->query('ALTER TABLE `ea_appointments`
@@ -106,5 +111,8 @@ class Migration_Remove_prefix_from_fkey_constraints extends CI_Migration {
 
         $this->db->query('ALTER TABLE `ea_user_settings`
             ADD CONSTRAINT `ea_user_settings_ibfk_1` FOREIGN KEY (`id_users`) REFERENCES `ea_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE');
+
+        $this->db->query('ALTER TABLE `ea_appointments_attachments`
+            ADD CONSTRAINT `ea_attachments_appointments_ibfk_1` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE');
     }
 }

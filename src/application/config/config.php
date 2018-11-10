@@ -356,6 +356,7 @@ $config['csrf_token_name'] = 'csrfToken';
 $config['csrf_cookie_name'] = 'csrfCookie';
 $config['csrf_expire'] = 7200;
 $config['csrf_exclude_uris'] = ['api/v1/.*'];
+$config['csrf_exclude_uris'] = ['api/v2/.*'];
 
 /*
 |--------------------------------------------------------------------------
