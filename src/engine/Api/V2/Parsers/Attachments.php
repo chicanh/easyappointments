@@ -10,7 +10,8 @@
  * @since       v1.2.0
  * ---------------------------------------------------------------------------- */
 
-namespace EA\Engine\Api\V1\Parsers;
+namespace EA\Engine\Api\V2\Parsers;
+use \EA\Engine\Api\V1\Parsers\ParsersInterface;
 
 /**
  * Attachments Parser

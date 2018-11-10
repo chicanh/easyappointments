@@ -4,7 +4,7 @@
  * Easy!Appointments - Open Source Web Scheduler
  *
  * @package     EasyAppointments
- * @author      A.Tselegidis <alextselegidis@gmail.com>
+ * @author      Davido Team
  * @copyright   Copyright (c) 2013 - 2018, Alex Tselegidis
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
@@ -98,6 +98,10 @@ class Appointments_Model extends CI_Model {
     {
         $appointment['book_datetime'] = date('Y-m-d H:i:s');
         $appointment['hash'] = $this->generate_hash();
+        if (isset($appointment['attachment']))
+        {
+            unset($appointment['attachment']);
+        }
 
         if ( ! $this->db->insert('ea_appointments', $appointment))
         {

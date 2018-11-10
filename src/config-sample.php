@@ -3,7 +3,8 @@
  * Easy!Appointments - Open Source Web Scheduler
  *
  * @package     EasyAppointments
- * @author      Davido Team
+ * @author      A.Tselegidis <alextselegidis@gmail.com>
+ * @copyright   Copyright (c) 2013 - 2018, Alex Tselegidis
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
  * @since       v1.0.0
@@ -29,7 +30,7 @@ class Config {
     // GENERAL SETTINGS
     // ------------------------------------------------------------------------
 
-    const BASE_URL      = 'http://localhost:8080/easyappointments';
+    const BASE_URL      = 'http://url-to-easyappointments-directory';
     const LANGUAGE      = 'english';
     const DEBUG_MODE    = FALSE;
 
@@ -37,10 +38,10 @@ class Config {
     // DATABASE SETTINGS
     // ------------------------------------------------------------------------
 
-    const DB_HOST       = '127.0.0.1';
-    const DB_NAME       = 'easyappointments';
-    const DB_USERNAME   = 'admin';
-    const DB_PASSWORD   = '123456';
+    const DB_HOST       = '';
+    const DB_NAME       = '';
+    const DB_USERNAME   = '';
+    const DB_PASSWORD   = '';
 
     // ------------------------------------------------------------------------
     // GOOGLE CALENDAR SYNC
@@ -51,12 +52,6 @@ class Config {
     const GOOGLE_CLIENT_ID      = '';
     const GOOGLE_CLIENT_SECRET  = '';
     const GOOGLE_API_KEY        = '';
-
-    // const GOOGLE_SYNC_FEATURE   = TRUE; // Enter TRUE or FALSE
-    // const GOOGLE_PRODUCT_NAME   = 'easyappointments';
-    // const GOOGLE_CLIENT_ID      = '216644187622-ba4aopg6ulke61m5lr48gr91tisvo3cl.apps.googleusercontent.com';
-    // const GOOGLE_CLIENT_SECRET  = 'VnqKNsmuk0UqnoXrncNNbVIz';
-    // const GOOGLE_API_KEY        = 'AIzaSyABQxNXwLpu166ygpA5dbrnwsWirqyYxAw';
 }
 
 /* End of file config.php */
