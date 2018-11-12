@@ -38,7 +38,7 @@ class Providers extends API_V1_Controller {
     {
         parent::__construct();
         $this->load->model('/v2/providers_model');
-        $this->parser = new \EA\Engine\Api\V2\Parsers\Providers;
+        $this->parser = new \EA\Engine\Api\V2\Parsers\ProvidersV2;
     }
 
     /**

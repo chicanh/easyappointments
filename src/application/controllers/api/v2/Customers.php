@@ -38,7 +38,7 @@ class Customers extends API_V1_Controller {
     {
         parent::__construct();
         $this->load->model('/v2/customers_model');
-        $this->parser = new \EA\Engine\Api\V2\Parsers\Customers;
+        $this->parser = new \EA\Engine\Api\V2\Parsers\CustomersV2;
     }
 
     /**
