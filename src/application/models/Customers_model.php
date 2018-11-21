@@ -70,6 +70,7 @@ class Customers_Model extends CI_Model {
     {
         if ( ! isset($customer['email']))
         {
+            $this->response(['status' => FALSE, 'error' => 'Customer\'s email is not provided.']);
             throw new Exception('Customer\'s email is not provided.');
         }
 

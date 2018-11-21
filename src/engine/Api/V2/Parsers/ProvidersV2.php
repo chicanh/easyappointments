@@ -10,7 +10,7 @@ class ProvidersV2 extends Providers {
         
         $response['id_integrated'] = $id_integrated;
 	}
-	public function decode($request, array $base = NULL)
+	public function decode(array &$request, array $base = NULL)
     {
         if ( ! empty($request['id_integrated']))
         {

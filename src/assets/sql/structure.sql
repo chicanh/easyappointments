@@ -83,6 +83,7 @@ CREATE TABLE IF NOT EXISTS `ea_services` (
     `availabilities_type` VARCHAR(32) DEFAULT 'flexible',
     `attendants_number` INT(11) DEFAULT '1',
     `id_service_categories` INT(11),
+    `id_integrated` CHAR(36),
     PRIMARY KEY (`id`),
     KEY `id_service_categories` (`id_service_categories`)
 )
