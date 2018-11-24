@@ -71,12 +71,11 @@ foreach ($resources as $resource)
     $route['api/v1/' . $resource . '/(:num)']['delete'] = 'api/v1/' . $resource . '/delete/$1';
     $route['api/v1/' . $resource]['get'] = 'api/v1/' . $resource . '/get';
     $route['api/v1/' . $resource . '/(:num)']['get'] = 'api/v1/' . $resource . '/get/$1';
-
-    $route['api/v2/' . $resource]['post'] = 'api/v2/' . $resource . '/post';
-    $route['api/v2/' . $resource . '/(:num)']['put'] = 'api/v2/' . $resource . '/put/$1';
-    $route['api/v2/' . $resource . '/(:num)']['delete'] = 'api/v2/' . $resource . '/delete/$1';
-    $route['api/v2/' . $resource]['get'] = 'api/v2/' . $resource . '/get';
-    $route['api/v2/' . $resource . '/(:num)']['get'] = 'api/v2/' . $resource . '/get/$1';
+    $route['api/v2/' . $resource]['post'] = 'api/v2/' . $resource.'v2' . '/post';
+    $route['api/v2/' . $resource . '/(:num)']['put'] = 'api/v2/' . $resource.'v2' . '/put/$1';
+    $route['api/v2/' . $resource . '/(:num)']['delete'] = 'api/v2/' . $resource.'v2' . '/delete/$1';
+    $route['api/v2/' . $resource]['get'] = 'api/v2/' . $resource.'v2' . '/get';
+    $route['api/v2/' . $resource . '/(:num)']['get'] = 'api/v2/' . $resource.'v2' . '/get/$1';
 }
 
 $route['api/v1/settings']['get'] = 'api/v1/settings/get';
