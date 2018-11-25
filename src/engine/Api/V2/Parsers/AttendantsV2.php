@@ -14,11 +14,11 @@ namespace EA\Engine\Api\V2\Parsers;
 use \EA\Engine\Api\V1\Parsers\ParsersInterface;
 
 /**
- * Attachments Parser
+ * Attendants Parser
  *
  * This class will handle the encoding and decoding from the API requests.
  */
-class Attachments implements ParsersInterface {
+class AttendantsV2 implements ParsersInterface {
     /**
      * Encode Response Array
      *
@@ -28,10 +28,13 @@ class Attachments implements ParsersInterface {
     {
         $encodedResponse = [
             'id' => $response['id'] !== NULL ? (int)$response['id'] : NULL,
-            'appointmentId' => $response['id_appointment'] !== NULL ? (int)$response['id_appointment'] : NULL,
-            'name' => $response['name'],
-            'value' => $response['value']
+            'appointmentId' => $response['id_appointment'] !== NULL ? (int)$response['id_appointment'] : NULL
         ];
+
+        if (array_key_exists('id_users', $response))
+        {
+            $encodedResponse['idUsers'] = $response['id_users'];
+        }
 
         $response = $encodedResponse;
     }
@@ -46,9 +49,19 @@ class Attachments implements ParsersInterface {
     {
         $decodedRequest = $base ?: [];
 
-        if ( ! empty($request['attachment']))
+        if ( ! empty($request['id']))
         {
-            $decodedRequest['attachment'] = $request['attachment'];
+            $decodedRequest['id'] = $request['id'];
+        }
+
+        if ( ! empty($request['appointmentId']))
+        {
+            $decodedRequest['id_appointment'] = $request['appointmentId'];
+        }
+
+        if ( ! empty($request['idUsers']))
+        {
+            $decodedRequest['id_users'] = $request['idUsers'];
         }
 
         $request = $decodedRequest;

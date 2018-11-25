@@ -24,7 +24,7 @@ use \EA\Engine\Types\NonEmptyText;
  * @subpackage API
  */
 
-class Customersv2 extends Customers {
+class CustomersV2 extends Customers {
     /**
      * Customers Resource Parser
      *

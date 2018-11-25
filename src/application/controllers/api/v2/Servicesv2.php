@@ -23,7 +23,7 @@ use \EA\Engine\Types\NonEmptyText;
  * @package Controllers
  * @subpackage API
  */
-class Servicesv2 extends Services {
+class ServicesV2 extends Services {
     /**
      * Services Resource Parser
      *
@@ -38,6 +38,7 @@ class Servicesv2 extends Services {
     {
         parent::__construct();
         $this->load->model('services_model');
+        $this->load->model('/v2/services_model_v2');
         $this->parser = new \EA\Engine\Api\V2\Parsers\ServicesV2;
     }
 
