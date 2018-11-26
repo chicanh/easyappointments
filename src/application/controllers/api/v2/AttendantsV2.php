@@ -75,9 +75,9 @@ class AttendantsV2 extends API_V1_Controller {
                 $user = $user_model->find_by_id_integrated($_GET['id_user_integrated']);
                 if (isset($user)) {
                     if ($user->id_roles == self::CUSTOMER) {
-                        $appointments = $appointments_model->get_by_user($conditions, array_key_exists('aggregates', $_GET), $user->id, $appointments_model::CUSTOMER);
+                        $appointments = $appointments_model->get_by_user($conditions, array_key_exists('aggregates', $_GET), $user[0]->id, $appointments_model::CUSTOMER);
                     } else if ($user->id_roles == self::PROVIDER) {
-                        $appointments = $appointments_model->get_by_user($conditions, array_key_exists('aggregates', $_GET), $user->id, $appointments_model::PROVIDER);
+                        $appointments = $appointments_model->get_by_user($conditions, array_key_exists('aggregates', $_GET), $user[0]->id, $appointments_model::PROVIDER);
                     }
                 }
             }
