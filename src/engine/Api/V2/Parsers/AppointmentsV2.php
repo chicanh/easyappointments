@@ -42,7 +42,7 @@ class AppointmentsV2 extends Appointments {
             'serviceId' => $response['id_services'] !== NULL ? (int)$response['id_services'] : NULL,
             'googleCalendarId' => $response['id_google_calendar'] !== NULL ? (int)$response['id_google_calendar'] : NULL,
             'status' => $response['status'],
-            'integratedId' => $response['id_integrated'],
+            'id_integrated' => $response['id_integrated'],
             'cancelReason' => $response['cancel_reason']
         ];
 
@@ -135,9 +135,9 @@ class AppointmentsV2 extends Appointments {
             $decodedRequest['status'] = $request['status'];
         }
 
-        if ( ! empty($request['integratedId']))
+        if ( ! empty($request['id_integrated']))
         {
-            $decodedRequest['id_integrated'] = $request['integratedId'];
+            $decodedRequest['id_integrated'] = $request['id_integrated'];
         }
 
         if ( ! empty($request['cancelReason']))
