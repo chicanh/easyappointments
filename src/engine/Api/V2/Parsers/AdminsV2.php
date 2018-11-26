@@ -4,21 +4,21 @@
  * Easy!Appointments - Open Source Web Scheduler
  *
  * @package     EasyAppointments
- * @author      A.Tselegidis <alextselegidis@gmail.com>
- * @copyright   Copyright (c) 2013 - 2018, Alex Tselegidis
+ * @author      Davido Team
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
  * @since       v1.2.0
  * ---------------------------------------------------------------------------- */
 
 namespace EA\Engine\Api\V2\Parsers;
-use \EA\Engine\Api\V1\Parsers\ParsersInterface;
+use \EA\Engine\Api\V1\Parsers\Admins;
+
 /**
- * Providers Parser
+ * Admins Parser
  *
  * This class will handle the encoding and decoding from the API requests.
  */
-class Providers implements ParsersInterface {
+class AdminsV2 extends Admins {
     /**
      * Encode Response Array
      *
@@ -38,28 +38,13 @@ class Providers implements ParsersInterface {
             'state' => $response['state'],
             'zip' => $response['zip_code'],
             'notes' => $response['notes'],
-            'id_integrated' => $response['id_integrated']
-        ];
-
-        if (array_key_exists('services', $response))
-        {
-            $encodedResponse['services'] = $response['services'];
-        }
-
-        if (array_key_exists('settings', $response))
-        {
-            $encodedResponse['settings'] = [
+            'integratedId' => $response['id_integrated'],
+            'settings' => [
                 'username' => $response['settings']['username'],
                 'notifications' => filter_var($response['settings']['notifications'], FILTER_VALIDATE_BOOLEAN),
-                'calendarView' => $response['settings']['calendar_view'],
-                'googleSync' => filter_var($response['settings']['google_sync'], FILTER_VALIDATE_BOOLEAN),
-                'googleCalendar' => $response['settings']['google_calendar'],
-                'googleToken' => $response['settings']['google_token'],
-                'syncFutureDays' => $response['settings']['sync_future_days'] !== NULL ? (int)$response['settings']['sync_future_days'] : NULL,
-                'syncPastDays' => $response['settings']['sync_past_days'] !== NULL ? (int)$response['settings']['sync_past_days'] : NULL,
-                'workingPlan' => json_decode($response['settings']['working_plan'], TRUE),
-            ];
-        }
+                'calendarView' => $response['settings']['calendar_view']
+            ]
+        ];
 
         $response = $encodedResponse;
     }
@@ -129,14 +114,11 @@ class Providers implements ParsersInterface {
             $decodedRequest['notes'] = $request['notes'];
         }
 
-        if ( ! empty($request['services']))
+        if ( ! empty($request['integratedId']))
         {
-            $decodedRequest['services'] = $request['services'];
+            $decodedRequest['id_integrated'] = $request['integratedId'];
         }
-        if ( ! empty($request['id_integrated']))
-        {
-            $decodedRequest['id_integrated'] = $request['id_integrated'];
-        }
+
         if ( ! empty($request['settings']))
         {
             if (empty($decodedRequest['settings']))
@@ -154,46 +136,15 @@ class Providers implements ParsersInterface {
                 $decodedRequest['settings']['password'] = $request['settings']['password'];
             }
 
-            if ( ! empty($request['settings']['calendarView']))
-            {
-                $decodedRequest['settings']['calendar_view'] = $request['settings']['calendarView'];
-            }
-
             if ($request['settings']['notifications'] !== NULL)
             {
                 $decodedRequest['settings']['notifications'] = filter_var($request['settings']['notifications'],
                     FILTER_VALIDATE_BOOLEAN);
             }
 
-            if ($request['settings']['googleSync'] !== NULL)
+            if ( ! empty($request['settings']['calendarView']))
             {
-                $decodedRequest['settings']['google_sync'] = filter_var($request['settings']['googleSync'],
-                    FILTER_VALIDATE_BOOLEAN);
-            }
-
-            if ( ! empty($request['settings']['googleCalendar']))
-            {
-                $decodedRequest['settings']['google_calendar'] = $request['settings']['googleCalendar'];
-            }
-
-            if ( ! empty($request['settings']['googleToken']))
-            {
-                $decodedRequest['settings']['google_token'] = $request['settings']['googleToken'];
-            }
-
-            if ( ! empty($request['settings']['syncFutureDays']))
-            {
-                $decodedRequest['settings']['sync_future_days'] = $request['settings']['syncFutureDays'];
-            }
-
-            if ( ! empty($request['settings']['syncPastDays']))
-            {
-                $decodedRequest['settings']['sync_past_days'] = $request['settings']['syncPastDays'];
-            }
-
-            if ( ! empty($request['settings']['workingPlan']))
-            {
-                $decodedRequest['settings']['working_plan'] = json_encode($request['settings']['workingPlan']);
+                $decodedRequest['settings']['calendar_view'] = $request['settings']['calendarView'];
             }
         }
 

@@ -520,7 +520,7 @@ class Appointments_Model extends CI_Model {
      *
      * @return array Returns the appointment with the aggregates.
      */
-    private function get_aggregates(array $appointment)
+    protected function get_aggregates(array $appointment)
     {
         $appointment['service'] = $this->db->get_where('ea_services',
             ['id' => $appointment['id_services']])->row_array();

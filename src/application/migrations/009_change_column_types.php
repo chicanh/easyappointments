@@ -25,7 +25,9 @@ class Migration_Change_column_types extends CI_Migration {
         $this->db->query('ALTER TABLE ea_services DROP FOREIGN KEY ea_services_ibfk_1');
         $this->db->query('ALTER TABLE ea_users DROP FOREIGN KEY ea_users_ibfk_1');
         $this->db->query('ALTER TABLE ea_user_settings DROP FOREIGN KEY ea_user_settings_ibfk_1');
-        $this->db->query('ALTER TABLE ea_appointments_attachments DROP FOREIGN KEY ea_attachments_appointments_ibfk_1');
+        $this->db->query('ALTER TABLE ea_appointments_attachments DROP FOREIGN KEY ea_appointments_attachments_ibfk_1');
+        $this->db->query('ALTER TABLE ea_appointments_attendants DROP FOREIGN KEY ea_appointments_attendants_ibfk_1');
+        $this->db->query('ALTER TABLE ea_appointments_attendants DROP FOREIGN KEY ea_appointments_attendants_ibfk_2');
 
         // Appointments
         $fields = [
@@ -89,6 +91,16 @@ class Migration_Change_column_types extends CI_Migration {
             ],
             'user_settings' => [
                 'name' => 'user_settings',
+                'type' => 'int',
+                'constraint' => '11'
+            ],
+            'appointments_attachments' => [
+                'name' => 'appointments_attachments',
+                'type' => 'int',
+                'constraint' => '11'
+            ],
+            'appointments_attendants' => [
+                'name' => 'appointments_attendants',
                 'type' => 'int',
                 'constraint' => '11'
             ]
@@ -195,6 +207,8 @@ class Migration_Change_column_types extends CI_Migration {
             ]
         ];
 
+        $this->dbforge->modify_column('ea_user_settings', $fields);
+
         // Appointments attachments
         $fields = [
             'id' => [
@@ -209,8 +223,28 @@ class Migration_Change_column_types extends CI_Migration {
                 'constraint' => '11'
             ]
         ];
+        $this->dbforge->modify_column('ea_appointments_attachments', $fields);
 
-        $this->dbforge->modify_column('ea_user_settings', $fields);
+        // Appointments attendants
+        $fields = [
+            'id' => [
+                'name' => 'id',
+                'type' => 'int',
+                'constraint' => '11',
+                'auto_increment' => TRUE
+            ],
+            'id_appointment' => [
+                'name' => 'id_appointment',
+                'type' => 'int',
+                'constraint' => '11'
+            ],
+            'id_users' => [
+                'name' => 'id_users',
+                'type' => 'int',
+                'constraint' => '11'
+            ]
+        ];
+        $this->dbforge->modify_column('ea_appointments_attendants', $fields);
 
         // Add table constraints again.
         $this->db->query('ALTER TABLE `ea_appointments`
@@ -236,7 +270,13 @@ class Migration_Change_column_types extends CI_Migration {
             ADD CONSTRAINT `ea_user_settings_ibfk_1` FOREIGN KEY (`id_users`) REFERENCES `ea_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE');
 
         $this->db->query('ALTER TABLE `ea_appointments_attachments`
-            ADD CONSTRAINT `ea_attachments_appointments_ibfk_1` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE');
+            ADD CONSTRAINT `ea_appointments_attachments_ibfk_1` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE');
+
+        $this->db->query('ALTER TABLE `ea_appointments_attendants`
+            ADD CONSTRAINT `ea_appointments_attendants_ibfk_1` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE');
+
+        $this->db->query('ALTER TABLE `ea_appointments_attendants`
+            ADD CONSTRAINT `ea_appointments_attendants_ibfk_2` FOREIGN KEY (`id_users`) REFERENCES `ea_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE');
 
         // Change charset of ea_secretaries_providers table for databases created with EA! 1.2.1 version
         $this->db->query('ALTER TABLE ea_secretaries_providers CONVERT TO CHARACTER SET utf8');
@@ -255,7 +295,9 @@ class Migration_Change_column_types extends CI_Migration {
         $this->db->query('ALTER TABLE ea_services DROP FOREIGN KEY ea_services_ibfk_1');
         $this->db->query('ALTER TABLE ea_users DROP FOREIGN KEY ea_users_ibfk_1');
         $this->db->query('ALTER TABLE ea_user_settings DROP FOREIGN KEY ea_user_settings_ibfk_1');
-        $this->db->query('ALTER TABLE ea_appointments_attachments DROP FOREIGN KEY ea_attachments_appointments_ibfk_1');
+        $this->db->query('ALTER TABLE ea_appointments_attachments DROP FOREIGN KEY ea_appointments_attachments_ibfk_1');
+        $this->db->query('ALTER TABLE ea_appointments_attendants DROP FOREIGN KEY ea_appointments_attendants_ibfk_1');
+        $this->db->query('ALTER TABLE ea_appointments_attendants DROP FOREIGN KEY ea_appointments_attendants_ibfk_2');
 
         // Appointments
         $fields = [
@@ -441,8 +483,29 @@ class Migration_Change_column_types extends CI_Migration {
                 'constraint' => '20'
             ]
         ];
+        $this->dbforge->modify_column('ea_appointments_attachments', $fields);
 
-        $this->dbforge->modify_column('ea_services', $fields);
+        // Appointments attendants
+        $fields = [
+            'id' => [
+                'name' => 'id',
+                'type' => 'bigint',
+                'constraint' => '20',
+                'auto_increment' => TRUE
+            ],
+            'id_appointment' => [
+                'name' => 'id_appointment',
+                'type' => 'bigint',
+                'constraint' => '20'
+            ],
+            'id_users' => [
+                'name' => 'id_users',
+                'type' => 'bigint',
+                'constraint' => '20'
+            ]
+        ];
+
+        $this->dbforge->modify_column('ea_appointments_attendants', $fields);
 
         // Add database constraints.
         $this->db->query('ALTER TABLE `ea_appointments`
@@ -468,6 +531,10 @@ class Migration_Change_column_types extends CI_Migration {
             ADD CONSTRAINT `ea_user_settings_ibfk_1` FOREIGN KEY (`id_users`) REFERENCES `ea_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE');
 
         $this->db->query('ALTER TABLE `ea_appointments_attachments`
-            ADD CONSTRAINT `ea_attachments_appointments_ibfk_1` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE');
+            ADD CONSTRAINT `ea_appointments_attachments_ibfk_1` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE');
+
+        $this->db->query('ALTER TABLE `ea_appointments_attendants`
+            ADD CONSTRAINT `ea_appointments_attendants_ibfk_1` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+            ADD CONSTRAINT `ea_appointments_attendants_ibfk_2` FOREIGN KEY (`id_users`) REFERENCES `ea_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE');
     }
 }

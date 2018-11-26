@@ -13,6 +13,7 @@
 
 namespace EA\Engine\Api\V2\Parsers;
 use \EA\Engine\Api\V1\Parsers\Services;
+
 /**
  * Services Parser
  *
@@ -26,11 +27,20 @@ class ServicesV2 extends Services {
      */
     public function encode(array &$response)
     {
-        $id_integrated = $response['id_integrated'];
-        
-        parent::encode($response);
-        
-        $response['id_integrated'] = $id_integrated;
+        $encodedResponse = [
+            'id' => $response['id'] !== NULL ? (int)$response['id'] : NULL,
+            'name' => $response['name'],
+            'duration' => (int)$response['duration'],
+            'price' => (float)$response['price'],
+            'currency' => $response['currency'],
+            'description' => $response['description'],
+            'availabilitiesType' => $response['availabilities_type'],
+            'attendantsNumber' => (int)$response['attendants_number'],
+            'categoryId' => $response['id_service_categories'] !== NULL ? (int)$response['id_service_categories'] : NULL,
+            'integratedId' => $response['id_integrated'],
+        ];
+
+        $response = $encodedResponse;
     }
 
     /**
@@ -41,14 +51,58 @@ class ServicesV2 extends Services {
      */
     public function decode(array &$request, array $base = NULL)
     {
-        if ( ! empty($request['id_integrated']))
+        $decodedRequest = $base ?: [];
+
+        if ( ! empty($request['id']))
         {
-            $id_integrated = $request['id_integrated'];
+            $decodedRequest['id'] = $request['id'];
         }
-        parent::decode($request);
-            
-        if(isset($id_integrated)) {
-        $request['id_integrated'] = $id_integrated;
+
+        if ( ! empty($request['name']))
+        {
+            $decodedRequest['name'] = $request['name'];
         }
+
+        if ( ! empty($request['duration']))
+        {
+            $decodedRequest['duration'] = $request['duration'];
+        }
+
+        if ( ! empty($request['price']))
+        {
+            $decodedRequest['price'] = $request['price'];
+        }
+
+        if ( ! empty($request['currency']))
+        {
+            $decodedRequest['currency'] = $request['currency'];
+        }
+
+        if ( ! empty($request['description']))
+        {
+            $decodedRequest['description'] = $request['description'];
+        }
+
+        if ( ! empty($request['availabilitiesType']))
+        {
+            $decodedRequest['availabilities_type'] = $request['availabilitiesType'];
+        }
+
+        if ( ! empty($request['attendantsNumber']))
+        {
+            $decodedRequest['attendants_number'] = $request['attendantsNumber'];
+        }
+
+        if ( ! empty($request['categoryId']))
+        {
+            $decodedRequest['id_service_categories'] = $request['categoryId'];
+        }
+
+        if ( ! empty($request['integratedId']))
+        {
+            $decodedRequest['id_integrated'] = $request['integratedId'];
+        }
+
+        $request = $decodedRequest;
     }
 }

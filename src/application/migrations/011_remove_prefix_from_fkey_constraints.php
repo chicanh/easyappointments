@@ -26,6 +26,9 @@ class Migration_Remove_prefix_from_fkey_constraints extends CI_Migration {
         $this->db->query('ALTER TABLE ea_users DROP FOREIGN KEY ea_users_ibfk_1');
         $this->db->query('ALTER TABLE ea_user_settings DROP FOREIGN KEY ea_user_settings_ibfk_1');
         $this->db->query('ALTER TABLE ea_appointments_attachments DROP FOREIGN KEY ea_attachments_appointments_ibfk_1');
+        $this->db->query('ALTER TABLE ea_appointments_attendants DROP FOREIGN KEY ea_appointments_attendants_ibfk_1');
+        $this->db->query('ALTER TABLE ea_appointments_attendants DROP FOREIGN KEY ea_appointments_attendants_ibfk_2');
+
 
         // Add table constraints again without the "ea" prefix.
         $this->db->query('ALTER TABLE `ea_appointments`
@@ -71,7 +74,17 @@ class Migration_Remove_prefix_from_fkey_constraints extends CI_Migration {
             ON UPDATE CASCADE');
 
         $this->db->query('ALTER TABLE `ea_appointments_attachments`
-            ADD CONSTRAINT `attachments_appointments` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE');
+            ADD CONSTRAINT `attachments_appointments` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`) 
+            ON DELETE CASCADE 
+            ON UPDATE CASCADE');
+
+        $this->db->query('ALTER TABLE `ea_appointments_attendants`
+            ADD CONSTRAINT `attendants_appointments` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`) 
+            ON DELETE CASCADE 
+            ON UPDATE CASCADE,
+            ADD CONSTRAINT `attendants_users` FOREIGN KEY (`id_users`) REFERENCES `ea_users` (`id`) 
+            ON DELETE CASCADE 
+            ON UPDATE CASCADE');
     }
 
     public function down()
@@ -88,6 +101,8 @@ class Migration_Remove_prefix_from_fkey_constraints extends CI_Migration {
         $this->db->query('ALTER TABLE ea_users DROP FOREIGN KEY users_roles');
         $this->db->query('ALTER TABLE ea_user_settings DROP FOREIGN KEY user_settings_users');
         $this->db->query('ALTER TABLE ea_appointments_attachments DROP FOREIGN KEY attachments_appointments');
+        $this->db->query('ALTER TABLE ea_appointments_attendants DROP FOREIGN KEY attendants_appointments');
+        $this->db->query('ALTER TABLE ea_appointments_attendants DROP FOREIGN KEY attendants_users');
 
         // Add table constraints again.
         $this->db->query('ALTER TABLE `ea_appointments`
@@ -114,5 +129,9 @@ class Migration_Remove_prefix_from_fkey_constraints extends CI_Migration {
 
         $this->db->query('ALTER TABLE `ea_appointments_attachments`
             ADD CONSTRAINT `ea_attachments_appointments_ibfk_1` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE');
+
+        $this->db->query('ALTER TABLE `ea_appointments_attendants`
+            ADD CONSTRAINT `ea_appointments_attendants_ibfk_1` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+            ADD CONSTRAINT `ea_appointments_attendants_ibfk_2` FOREIGN KEY (`id_users`) REFERENCES `ea_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE');
     }
 }

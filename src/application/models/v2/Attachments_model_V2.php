@@ -13,92 +13,29 @@
 /**
  * Attachments Model
  *
- * @package Models
+ * @package Models/v2
  */
-class Attachments_Model extends CI_Model {
+class Attachments_Model_V2 extends CI_Model {
+
     /**
-     * Get Attachment values from database.
+     * Get all, or specific records from Attachment's table.
      *
      * This method returns list attachments from the database for an appointment
      *
      * @param string $appointmentId The database attachment appointmentId.
      *
-     * @return string Returns the database value for the selected attachment.
+     * @return string Returns the database value for attachments.
      *
      * @throws Exception If the $appointmentId argument is invalid.
-     * @throws Exception If the requested $appointmentId attachment does not exist in the database.
      */
-    public function get_attachment($appointmentId)
+    public function get_batch($appointmentId)
     {
         if ( ! is_string($appointmentId))
         { // Check argument type.
             throw new Exception('$appointmentId argument is not a string: ' . $appointmentId);
         }
-
-        $query = $this->db->get_where('ea_appointments_attachments', ['id_appointment' => $appointmentId ]);
-
-        if ($query->num_rows() == 0)
-        { // Check if attachment exists in db.
-            throw new Exception('$appointmentId attachment does not exist in DB: ' . $appointmentId);
-        }
-        
-        $attachment = $query->num_rows() > 0 ? $query->row() : '';
-
-        return $attachment->value;
-    }
-
-    /**
-     * This method sets the value for an Attachment on the database.
-     *
-     * If the Attachment doesn't exist, it is going to be created, otherwise updated.
-     *
-     * @param $appointmentId The appointment id.
-     * @param $attachment The attachment object.
-     *
-     * @return int Returns the attachment database id.
-     *
-     * @throws Exception If $name argument is invalid.
-     * @throws Exception If the save operation fails.
-     */
-    public function set_attachment($appointmentId, $attachment)
-    {
-        if ($this->db->get_where('ea_appointments', ['id' => $appointmentId])->num_rows() == 0)
-        {
-            throw new Exception('$appointmentId argument does not exist in DB: ' . $appointmentId);
-        }
-
-        if ( empty($attachment['name']) || empty($attachment['value']))
-        {
-            throw new Exception('$attachment argument is empty. ');
-        }
-
-        $query = $this->db->get_where('ea_appointments_attachments', ['id_appointment' => $appointmentId]);
-
-        if ($query->num_rows() > 0)
-        {
-            // Update attachment
-            if ( ! $this->db->update('ea_appointments_attachments', ['id_appointment' => $appointmentId], ['value' => $attachment['value']], ['name' => $attachment['name']]))
-            {
-                throw new Exception('Could not update database attachment.');
-            }
-            $attachment_id = (int)$this->db->get_where('ea_appointments_attachments', ['id_appointment' => $appointmentId])->row()->id;
-        }
-        else
-        {
-            // Insert attachment
-            $insert_data = [
-                'id_appointment' => $appointmentId,
-                'name' => $attachment['name'],
-                'value' => $attachment['value']
-            ];
-            if ( ! $this->db->insert('ea_appointments_attachments', $insert_data))
-            {
-                throw new Exception('Could not insert database attachment.');
-            }
-            $attachment_id = (int)$this->db->insert_id();
-        }
-
-        return $attachment_id;
+        $attachments = $this->db->get_where('ea_appointments_attachments', ['id_appointment' => $appointmentId ])->result_array();
+        return $attachments;
     }
 
     /**
@@ -107,7 +44,7 @@ class Attachments_Model extends CI_Model {
      * This method is useful when trying to save all the attachments at once instead of
      * saving them one by one.
      *
-     * @param $appointmentId the appointment id
+     * @param $appointmentId The appointment id
      * @param array $attachments Contains all the attachments.
      *
      * @return bool Returns the save operation result.
@@ -154,7 +91,7 @@ class Attachments_Model extends CI_Model {
     }
 
     /**
-     * Remove a attachment from the database.
+     * Remove an attachment from the database.
      *
      * @param string $appointmentId The attachment appointmentId to be removed.
      *
@@ -177,13 +114,4 @@ class Attachments_Model extends CI_Model {
         return $this->db->delete('ea_appointments_attachments', ['id_appointment' => $appointmentId]);
     }
 
-    /**
-     * Returns all the appointment attachment at once.
-     *
-     * @return array Array of all the appointment attachments stored in the 'ea_appointments_attachments' table.
-     */
-    public function get_appointment_attachments()
-    {
-        return $this->db->get('ea_appointments_attachments')->result_array();
-    }
 }

@@ -23,7 +23,7 @@ use \EA\Engine\Types\NonEmptyText;
  * @package Controllers
  * @subpackage API
  */
-class Servicesv2 extends Services {
+class ServicesV2 extends Services {
     /**
      * Services Resource Parser
      *
@@ -38,6 +38,7 @@ class Servicesv2 extends Services {
     {
         parent::__construct();
         $this->load->model('services_model');
+        $this->load->model('/v2/services_model_v2');
         $this->parser = new \EA\Engine\Api\V2\Parsers\ServicesV2;
     }
 
@@ -48,7 +49,27 @@ class Servicesv2 extends Services {
      */
     public function get($id = NULL)
     {
-        parent::get($id);
+        try {
+            $service = NULL;
+            if ($_GET['id_integrated'] !== NULL) {
+                // Get service id that have id_integrated = id_services_integrated in table ea_services
+                $service = $this->services_model_v2->find_by_id_integrated($_GET['id_integrated']);
+                if (!isset($service)) {
+                    throw new \EA\Engine\Api\V1\Exception('$service does not exist in DB: ' . $service, 404, 'Not Found');
+                }
+            }
+
+            $response = new Response($service);
+
+            $response->search()
+                ->sort()
+                ->paginate()
+                ->minimize()
+                ->output();
+
+        } catch (\Exception $exception) {
+            exit($this->_handleException($exception));
+        }
     }
 
     /**

@@ -61,7 +61,9 @@ $resources = [
     'categories',
     'admins',
     'providers',
-    'secretaries'
+    'secretaries',
+    'attachment',
+    'attendants'
 ];
 
 foreach ($resources as $resource)
@@ -71,11 +73,12 @@ foreach ($resources as $resource)
     $route['api/v1/' . $resource . '/(:num)']['delete'] = 'api/v1/' . $resource . '/delete/$1';
     $route['api/v1/' . $resource]['get'] = 'api/v1/' . $resource . '/get';
     $route['api/v1/' . $resource . '/(:num)']['get'] = 'api/v1/' . $resource . '/get/$1';
-    $route['api/v2/' . $resource]['post'] = 'api/v2/' . $resource.'v2' . '/post';
-    $route['api/v2/' . $resource . '/(:num)']['put'] = 'api/v2/' . $resource.'v2' . '/put/$1';
+
+    $route['api/v2/' . $resource]['post'] = 'api/v2/' . $resource .'v2'. '/post';
+    $route['api/v2/' . $resource . '/(:num)']['put'] = 'api/v2/' . $resource .'v2'. '/put/$1';
     $route['api/v2/' . $resource . '/(:num)']['delete'] = 'api/v2/' . $resource.'v2' . '/delete/$1';
     $route['api/v2/' . $resource]['get'] = 'api/v2/' . $resource.'v2' . '/get';
-    $route['api/v2/' . $resource . '/(:num)']['get'] = 'api/v2/' . $resource.'v2' . '/get/$1';
+    $route['api/v2/' . $resource . '/(:num)']['get'] = 'api/v2/' . $resource .'v2'. '/get/$1';
 }
 
 $route['api/v1/settings']['get'] = 'api/v1/settings/get';
@@ -84,6 +87,8 @@ $route['api/v1/settings/(:any)']['put'] = 'api/v1/settings/put/$1';
 $route['api/v1/settings/(:any)']['delete'] = 'api/v1/settings/delete/$1';
 
 $route['api/v1/availabilities']['get'] = 'api/v1/availabilities/get';
+
+$route['api/v2/appointments/(:any)']['get'] = 'api/v2/appointmentsv2/get/$1';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

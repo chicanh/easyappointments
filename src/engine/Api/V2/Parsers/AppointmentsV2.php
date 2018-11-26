@@ -15,14 +15,14 @@ namespace EA\Engine\Api\V2\Parsers;
 use \EA\Engine\Api\V1\Parsers\Providers;
 use \EA\Engine\Api\V1\Parsers\Customers;
 use \EA\Engine\Api\V1\Parsers\Services;
-use \EA\Engine\Api\V1\Parsers\ParsersInterface;
+use \EA\Engine\Api\V1\Parsers\Appointments;
 
 /**
  * Appointments Parser
  *
  * This class will handle the encoding and decoding from the API requests.
  */
-class Appointments implements ParsersInterface {
+class AppointmentsV2 extends Appointments {
     /**
      * Encode Response Array
      *
@@ -42,7 +42,7 @@ class Appointments implements ParsersInterface {
             'serviceId' => $response['id_services'] !== NULL ? (int)$response['id_services'] : NULL,
             'googleCalendarId' => $response['id_google_calendar'] !== NULL ? (int)$response['id_google_calendar'] : NULL,
             'status' => $response['status'],
-            'integratedId' => $response['id_integrated'] !== NULL ? (int)$response['id_integrated'] : NULL,
+            'integratedId' => $response['id_integrated'],
             'cancelReason' => $response['cancel_reason']
         ];
 
@@ -148,6 +148,11 @@ class Appointments implements ParsersInterface {
         if ( ! empty($request['attachment']))
         {
             $decodedRequest['attachment'] = $request['attachment'];
+        }
+
+        if ( ! empty($request['attendants']))
+        {
+            $decodedRequest['attendants'] = $request['attendants'];
         }
 
         $decodedRequest['is_unavailable'] = FALSE;
