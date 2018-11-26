@@ -243,4 +243,24 @@ class Appointments_Model_V2 extends Appointments_Model {
         return $appointments;
     }
 
+    /**
+     * Find appointment by id_integrated
+     * @param $idIntegrated
+     * @return string
+     * @throws Exception
+     */
+    public function find_by_id_integrated($idIntegrated)
+    {
+        if ( ! isset($idIntegrated))
+        {
+            throw new Exception('User idIntegrated is not provided: ' . print_r($idIntegrated, TRUE));
+        }
+
+        $query = $this->db->get_where('ea_appointments', ['id_integrated' => $idIntegrated ]);
+
+        $appointment = $query->num_rows() > 0 ? $query->result() : NULL;
+
+        return $appointment;
+    }
+
 }

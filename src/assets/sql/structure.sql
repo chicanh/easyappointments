@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS `ea_appointments` (
     PRIMARY KEY (`id`),
     KEY `id_users_customer` (`id_users_customer`),
     KEY `id_services` (`id_services`),
-    KEY `id_users_provider` (`id_users_provider`)
+    KEY `id_users_provider` (`id_users_provider`),
+    UNIQUE KEY (`id_integrated`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8;
@@ -85,7 +86,8 @@ CREATE TABLE IF NOT EXISTS `ea_services` (
     `id_service_categories` INT(11),
     `id_integrated` CHAR(36),
     PRIMARY KEY (`id`),
-    KEY `id_service_categories` (`id_service_categories`)
+    KEY `id_service_categories` (`id_service_categories`),
+    UNIQUE KEY (`id_integrated`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8;
@@ -136,7 +138,8 @@ CREATE TABLE IF NOT EXISTS `ea_users` (
     `id_roles` INT(11) NOT NULL,
     `id_integrated` CHAR(36),
     PRIMARY KEY (`id`),
-    KEY `id_roles` (`id_roles`)
+    KEY `id_roles` (`id_roles`),
+    UNIQUE KEY (`id_integrated`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8;
@@ -169,6 +172,17 @@ CREATE TABLE IF NOT EXISTS `ea_appointments_attachments` (
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8;
+
+CREATE TABLE IF NOT EXISTS `ea_appointments_attendants` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `id_appointment` INT(11) NOT NULL,
+    `id_users` INT(11) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY (`id_appointment`, `id_users`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8;
+
 
 ALTER TABLE `ea_appointments`
     ADD CONSTRAINT `appointments_users_customer` FOREIGN KEY (`id_users_customer`) REFERENCES `ea_users` (`id`)
@@ -214,5 +228,13 @@ ALTER TABLE `ea_user_settings`
 
 ALTER TABLE `ea_appointments_attachments`
     ADD CONSTRAINT `attachments_appointments` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+ALTER TABLE `ea_appointments_attendants`
+    ADD CONSTRAINT `attendants_appointments` FOREIGN KEY (`id_appointment`) REFERENCES `ea_appointments` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    ADD CONSTRAINT `attendants_users` FOREIGN KEY (`id_users`) REFERENCES `ea_users` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;

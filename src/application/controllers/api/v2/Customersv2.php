@@ -39,6 +39,7 @@ class CustomersV2 extends Customers {
     {
         parent::__construct();
         $this->load->model('customers_model');
+        $this->load->model('/v2/user_model_v2');
         $this->parser = new \EA\Engine\Api\V2\Parsers\CustomersV2;
     }
 
@@ -49,7 +50,27 @@ class CustomersV2 extends Customers {
      */
     public function get($id = NULL)
     {
-       parent::get($id);
+        try {
+            $customer = NULL;
+            if ($_GET['id_integrated'] !== NULL) {
+                // Get service id that have id_integrated = id_services_integrated in table ea_services
+                $customer = $this->user_model_v2->find_by_id_integrated($_GET['id_integrated']);
+                if ($customer[0]->id_roles != 3) {
+                    throw new \EA\Engine\Api\V1\Exception('$user does not exist in DB: ' . $customer, 404, 'Not Found');
+                }
+            }
+
+            $response = new Response($customer);
+
+            $response->search()
+                ->sort()
+                ->paginate()
+                ->minimize()
+                ->output();
+
+        } catch (\Exception $exception) {
+            exit($this->_handleException($exception));
+        }
        
     }
 

@@ -39,7 +39,7 @@ class User_Model_V2 extends User_Model {
             throw new \EA\Engine\Api\V1\Exception('$idIntegrated does not exist in DB: ' . $idIntegrated, 404, 'Not Found');
         }
 
-        $user = $query->num_rows() > 0 ? $query->row() : ''; // Get first record found
+        $user = $query->num_rows() > 0 ? $query->result() : '';
 
         return $user;
     }
@@ -64,7 +64,7 @@ class User_Model_V2 extends User_Model {
             throw new \EA\Engine\Api\V1\Exception('$id does not exist in DB: ' . $id, 404, 'Not Found');
         }
 
-        return $query->row();
+        return $query->result();
 
     }
 

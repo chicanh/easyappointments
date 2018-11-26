@@ -152,6 +152,11 @@ class AppointmentsV2 extends Appointments {
                 unset($appointment['id']);
             }
 
+            $exist = $this->appointments_model_v2->find_by_id_integrated($appointment['id_integrated']);
+            if (isset($exist)) {
+                throw new \EA\Engine\Api\V1\Exception('$exist existed in DB: ' . $exist, 409, 'Duplicated');
+            }
+
             $id = $this->appointments_model_v2->add($appointment);
 
             // add attachment

@@ -55,36 +55,35 @@ class ProvidersV2 extends Providers {
     public function get($id = NULL)
     {
         try {
-            $conditions = [
-                'is_unavailable' => FALSE
-            ];
 
-            if ($id !== NULL) {
-                $conditions['id_integrated'] = $id;
-            }
-
-            $services_providers = array();
+            $response = NULL;
             $user_model = $this->user_model_v2;
             $services_model = $this->services_model_v2;
             $services_providers_model = $this->services_providers_model_v2;
 
             if ($_GET['id_service_integrated'] !== NULL) {
-                // Get service id that have id_integrated = id_services_integrated in table ea_services
+                $services_providers = array();
+                // Get service that have id_integrated = id_services_integrated in table ea_services
                 $service = $services_model->find_by_id_integrated($_GET['id_service_integrated']);
                 if (isset($service)) {
                     $services_providers = $services_providers_model->get_providers_by_service_id($service->id);
                 }
-            }
-
-            $providers = array();
-            if (count($services_providers) > 0) {
-                foreach ($services_providers as $sp) {
-                    $user = $user_model->find_by_id($sp['id_users']);
-                    array_push($providers, $user);
+                $providers = array();
+                if (count($services_providers) > 0) {
+                    foreach ($services_providers as $sp) {
+                        $user = $user_model->find_by_id($sp['id_users']);
+                        array_push($providers, $user);
+                    }
                 }
+                $response = new Response($providers);
+            } else if ($_GET['id_integrated'] !== NULL) {
+                // Get user that have id_integrated = id_integrated in table ea_users
+                $provider = $user_model->find_by_id_integrated($_GET['id_integrated']);
+                if ($provider[0]->id_roles != 2) {
+                    throw new \EA\Engine\Api\V1\Exception('$user does not exist in DB: ' . $provider, 404, 'Not Found');
+                }
+                $response = new Response($provider);
             }
-
-            $response = new Response($providers);
 
             $response->search()
                 ->sort()

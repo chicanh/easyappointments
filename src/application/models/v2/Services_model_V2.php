@@ -33,12 +33,7 @@ class Services_Model_V2 extends Services_Model {
 
         $query = $this->db->get_where('ea_services', ['id_integrated' => $idIntegrated ]);
 
-        if ($query->num_rows() == 0)
-        { // Check if id_integrated exists in ea_$services
-            throw new \EA\Engine\Api\V1\Exception('$idIntegrated does not exist in DB: ' . $idIntegrated, 404, 'Not Found');
-        }
-
-        $service = $query->num_rows() > 0 ? $query->row() : ''; // Get first record found
+        $service = $query->num_rows() > 0 ? $query->result() : NULL;
 
         return $service;
     }
