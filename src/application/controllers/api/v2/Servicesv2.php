@@ -4,7 +4,7 @@
  * Easy!Appointments - Open Source Web Scheduler
  *
  * @package     EasyAppointments
- * @author      A.Tselegidis <alextselegidis@gmail.com>
+ * @author      Davido Team
  * @copyright   Copyright (c) 2013 - 2018, Alex Tselegidis
  * @license     http://opensource.org/licenses/GPL-3.0 - GPLv3
  * @link        http://easyappointments.org
@@ -14,8 +14,6 @@
 require_once __DIR__ . '/../v1/Services.php';
 
 use \EA\Engine\Api\V1\Response;
-use \EA\Engine\Api\V1\Request;
-use \EA\Engine\Types\NonEmptyText;
 
 /**
  * Services Controller
@@ -50,6 +48,7 @@ class ServicesV2 extends Services {
     public function get($id = NULL)
     {
         try {
+            $result = array();
             $service = NULL;
             if ($_GET['id_integrated'] !== NULL) {
                 // Get service id that have id_integrated = id_services_integrated in table ea_services
@@ -57,11 +56,13 @@ class ServicesV2 extends Services {
                 if (!isset($service)) {
                     throw new \EA\Engine\Api\V1\Exception('$service does not exist in DB: ' . $service, 404, 'Not Found');
                 }
+                array_push($result, $service);
             }
 
-            $response = new Response($service);
+            $response = new Response($result);
 
-            $response->search()
+            $response->encode($this->parser)
+                ->search()
                 ->sort()
                 ->paginate()
                 ->minimize()

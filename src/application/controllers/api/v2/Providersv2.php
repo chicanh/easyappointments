@@ -14,8 +14,6 @@
 require_once __DIR__ . '/../v1/Providers.php';
 
 use \EA\Engine\Api\V1\Response;
-use \EA\Engine\Api\V1\Request;
-use \EA\Engine\Types\NonEmptyText;
 
 /**
  * Providers Controller
@@ -56,7 +54,7 @@ class ProvidersV2 extends Providers {
     {
         try {
 
-            $response = NULL;
+            $providers = array();
             $user_model = $this->user_model_v2;
             $services_model = $this->services_model_v2;
             $services_providers_model = $this->services_providers_model_v2;
@@ -66,9 +64,9 @@ class ProvidersV2 extends Providers {
                 // Get service that have id_integrated = id_services_integrated in table ea_services
                 $service = $services_model->find_by_id_integrated($_GET['id_service_integrated']);
                 if (isset($service)) {
-                    $services_providers = $services_providers_model->get_providers_by_service_id($service[0]->id);
+                    $services_providers = $services_providers_model->get_providers_by_service_id($service['id']);
                 }
-                $providers = array();
+
                 if (count($services_providers) > 0) {
                     foreach ($services_providers as $sp) {
                         $user = $user_model->find_by_id($sp['id_users']);
@@ -79,13 +77,15 @@ class ProvidersV2 extends Providers {
             } else if ($_GET['id_integrated'] !== NULL) {
                 // Get user that have id_integrated = id_integrated in table ea_users
                 $provider = $user_model->find_by_id_integrated($_GET['id_integrated']);
-                if ($provider[0]->id_roles != 2) {
+                if ($provider['id_roles'] != 2) {
                     throw new \EA\Engine\Api\V1\Exception('$user does not exist in DB: ' . $provider, 404, 'Not Found');
                 }
-                $response = new Response($provider);
+                array_push($providers, $provider);
             }
+            $response = new Response($providers);
 
-            $response->search()
+            $response->encode($this->parser)
+                ->search()
                 ->sort()
                 ->paginate()
                 ->minimize()

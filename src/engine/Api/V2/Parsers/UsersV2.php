@@ -1,9 +1,9 @@
 <?php
 namespace EA\Engine\Api\V2\Parsers;
-use \EA\Engine\Api\V1\Parsers\Customers;
+use EA\Engine\Api\V1\Parsers\Customers;
 
-class CustomersV2 extends Customers {
-    public function encode(array &$response)
+class UsersV2 extends Customers {
+	public function encode(array &$response)
     {
         $encodedResponse = [
             'id' => $response['id'] !== NULL ? (int)$response['id'] : NULL,
@@ -20,8 +20,8 @@ class CustomersV2 extends Customers {
         ];
 
         $response = $encodedResponse;
-    }
-    public function decode(array &$request, array $base = NULL)
+	}
+	public function decode(array &$request, array $base = NULL)
     {
         $decodedRequest = $base ?: [];
 
@@ -76,6 +76,6 @@ class CustomersV2 extends Customers {
         }
 
         $request = $decodedRequest;
-    }
+	}
 }
 ?>

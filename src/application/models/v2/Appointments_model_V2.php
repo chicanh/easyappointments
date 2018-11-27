@@ -258,7 +258,7 @@ class Appointments_Model_V2 extends Appointments_Model {
 
         $query = $this->db->get_where('ea_appointments', ['id_integrated' => $idIntegrated ]);
 
-        $appointment = $query->num_rows() > 0 ? $query->result() : NULL;
+        $appointment = $query->num_rows() > 0 ? $query->row_array() : NULL;
 
         return $appointment;
     }

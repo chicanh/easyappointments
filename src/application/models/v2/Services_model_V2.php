@@ -33,7 +33,7 @@ class Services_Model_V2 extends Services_Model {
 
         $query = $this->db->get_where('ea_services', ['id_integrated' => $idIntegrated ]);
 
-        $service = $query->num_rows() > 0 ? $query->result() : NULL;
+        $service = $query->num_rows() > 0 ? $query->row_array() : NULL;
 
         return $service;
     }
