@@ -186,12 +186,14 @@ class AppointmentsV2 extends Appointments {
      *
      * @param int $id The record ID to be updated.
      */
-    public function put($id)
+    public function put($id_integrated)
     {
         try
         {
             // Update the appointment record. 
-            $batch = $this->appointments_model_v2->get_batch('id = ' . $id);
+            $batch = $this->appointments_model_v2->find_by_id_integrated( $id_integrated);
+
+            $id = $this->appointments_model_v2->find_id_by_id_integrated($id_integrated);
 
             if ($id !== NULL && count($batch) === 0)
             {
@@ -200,7 +202,7 @@ class AppointmentsV2 extends Appointments {
 
             $request = new Request();
             $updatedAppointment = $request->getBody();
-            $baseAppointment = $batch[0];
+            $baseAppointment = $batch;
             $this->parser->decode($updatedAppointment, $baseAppointment);
             $updatedAppointment['id'] = $id;
             $id = $this->appointments_model_v2->add($updatedAppointment);
