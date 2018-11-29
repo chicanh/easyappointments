@@ -287,4 +287,28 @@ class AppointmentsV2 extends Appointments {
             exit($this->_handleException($exception));
         }
     }
+
+    public function updateAppointmentStatus($id_integrated) {
+        try
+        {
+            if($id_integrated !== null && $_GET['status'] !==null)
+            {
+                $batch = $this->appointments_model_v2->get_batch("id_integrated = '" . $id_integrated ."'");
+                $id = $this->appointments_model_v2->find_id_by_id_integrated($id_integrated);
+                $this->appointments_model_v2->updateAppointmentStatus($id, $_GET['status']);
+                $batch = $this->appointments_model_v2->get_batch('id = ' . $id);
+                $response = new Response($batch);
+                $status = new NonEmptyText('200 OK');
+                $response->encode($this->parser)->singleEntry(TRUE)->output($status);
+            } 
+            else 
+            {
+                $this->_throwRecordNotFound();
+            }
+        } 
+        catch (\Exception $exception)
+        {
+            exit($this->_handleException($exception));
+        }
+    }
 }
