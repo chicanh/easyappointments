@@ -90,6 +90,7 @@ $route['api/v1/availabilities']['get'] = 'api/v1/availabilities/get';
 
 $route['api/v2/appointments/(:any)']['get'] = 'api/v2/appointmentsv2/get/$1';
 $route['api/v2/appointments/(:any)']['put'] = 'api/v2/appointmentsv2/updateAppointmentByIdIntegrated/$1';
+$route['api/v2/appointments/(:any)']['put'] = 'api/v2/appointmentsv2/updateAppointmentStatus/$1';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

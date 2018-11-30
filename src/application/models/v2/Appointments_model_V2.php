@@ -270,4 +270,19 @@ class Appointments_Model_V2 extends Appointments_Model {
         return $query->row()->id;
     }
 
+    public function updateAppointmentStatus($id, $bookingStatus)
+    {
+        if(!isset($id))
+        {
+            throw new Exception('Not found this appointment: ' . print_r($id, TRUE));
+        }
+        $query = $this->db->set('status',$bookingStatus)->where('id',$id);
+        
+        if ( ! $this->db->update('ea_appointments'))
+        {
+            throw new Exception('Could not update appointment record.');
+        }
+
+    }
+
 }
