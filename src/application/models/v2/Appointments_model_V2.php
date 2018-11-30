@@ -262,5 +262,12 @@ class Appointments_Model_V2 extends Appointments_Model {
 
         return $appointment;
     }
+    public function find_id_by_id_integrated($id_integrated)
+    {
+        $query = $this->db
+        ->select('id')
+        ->from('ea_appointments')->where('id_integrated',$id_integrated)->get();
+        return $query->row()->id;
+    }
 
 }

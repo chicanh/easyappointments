@@ -192,6 +192,42 @@ class AppointmentsV2 extends Appointments {
         {
             // Update the appointment record. 
             $batch = $this->appointments_model_v2->get_batch('id = ' . $id);
+            if ($id !== NULL && count($batch) === 0)
+            {
+                $this->_throwRecordNotFound();
+            }
+            $request = new Request();
+            $updatedAppointment = $request->getBody();
+            $baseAppointment = $batch[0];
+            $this->parser->decode($updatedAppointment, $baseAppointment);
+            $updatedAppointment['id'] = $id;
+            $id = $this->appointments_model_v2->add($updatedAppointment);
+            // Update the appointment attachments
+            if ( ! empty($updatedAppointment['attachment'])) {
+                $this->appointments_model_v2->save_attachments($id, $updatedAppointment['attachment']);
+            }
+            // Update the appointment attendants
+            if ( ! empty($updatedAppointment['attendants'])) {
+                $this->attendants_model_v2->save_attendants($id, $updatedAppointment['attendants']);
+            }
+            // Fetch the updated object from the database and return it to the client.
+            $batch = $this->appointments_model_v2->get_batch('id = ' . $id);
+            $response = new Response($batch);
+            $response->encode($this->parser)->singleEntry($id)->output();
+        }
+        catch (\Exception $exception)
+        {
+            exit($this->_handleException($exception));
+        }
+    }
+
+    public function updateAppointmentByIdIntegrated($id_integrated){
+        try
+        {
+            // Update the appointment record. 
+            $batch = $this->appointments_model_v2->get_batch("id_integrated = '" . $id_integrated ."'");
+
+            $id = $this->appointments_model_v2->find_id_by_id_integrated($id_integrated);
 
             if ($id !== NULL && count($batch) === 0)
             {
