@@ -78,14 +78,11 @@ class ProvidersV2 extends Providers {
                 $response = new Response($providers);
             } else if ($_GET['id_integrated'] !== NULL) {
                 // Get user that have id_integrated = id_integrated in table ea_users
-                $provider = $user_model->find_by_id_integrated($_GET['id_integrated']);
-                if ($provider[0]->id_roles != 2) {
-                    throw new \EA\Engine\Api\V1\Exception('$user does not exist in DB: ' . $provider, 404, 'Not Found');
-                }
+                $provider = $this->providers_model->get_batch("id_integrated = '" . $_GET['id_integrated'] . "'");
                 $response = new Response($provider);
             }
 
-            $response->search()
+            $response->encode($this->parser)->search()
                 ->sort()
                 ->paginate()
                 ->minimize()
