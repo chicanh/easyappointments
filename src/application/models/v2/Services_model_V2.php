@@ -37,5 +37,9 @@ class Services_Model_V2 extends Services_Model {
 
         return $service;
     }
+    public function get_row($id_service_integrated)
+    {
+        return $this->db->get_where('ea_services', ['id_integrated' => $id_service_integrated])->row_array();
+    }
 
 }
