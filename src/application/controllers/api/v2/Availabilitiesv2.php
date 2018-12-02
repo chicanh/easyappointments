@@ -96,10 +96,14 @@ class Availabilitiesv2 extends Availabilities {
             sort($availableHours, SORT_STRING);
             $availableHours = array_values($availableHours);
             $duration = $this->services_model->get_value('duration',$serviceId);
-            print_r($duration);
+            $new_working_hours = array();
+            foreach ( $availableHours as $availableHour) {
+                $end_time = date('H:i',strtotime("+". $duration." minutes", strtotime( $availableHour )));
+                $new_working_hours[] = $availableHour . "-" .  $end_time;
+            }
             $this->output
                 ->set_content_type('application/json')
-                ->set_output(json_encode($availableHours));
+                ->set_output(json_encode($new_working_hours));
         }
         catch (\Exception $exception)
         {
