@@ -87,10 +87,9 @@ $route['api/v1/settings/(:any)']['put'] = 'api/v1/settings/put/$1';
 $route['api/v1/settings/(:any)']['delete'] = 'api/v1/settings/delete/$1';
 
 $route['api/v1/availabilities']['get'] = 'api/v1/availabilities/get';
-
+$route['api/v2/availabilities']['get'] = 'api/v2/availabilitiesv2/get';
 $route['api/v2/appointments/(:any)']['get'] = 'api/v2/appointmentsv2/get/$1';
 $route['api/v2/appointments/(:any)']['put'] = 'api/v2/appointmentsv2/updateAppointmentByIdIntegrated/$1';
 $route['api/v2/appointments/(:any)']['put'] = 'api/v2/appointmentsv2/updateAppointmentStatus/$1';
-
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
