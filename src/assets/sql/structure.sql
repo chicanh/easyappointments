@@ -139,7 +139,8 @@ CREATE TABLE IF NOT EXISTS `ea_users` (
     `id_integrated` CHAR(36),
     PRIMARY KEY (`id`),
     KEY `id_roles` (`id_roles`),
-    UNIQUE KEY (`id_integrated`)
+    UNIQUE KEY (`id_integrated`),
+    UNIQUE KEY (`phone_number`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8;

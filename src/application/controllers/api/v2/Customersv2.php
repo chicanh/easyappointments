@@ -14,8 +14,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 require_once __DIR__ . '/../v1/Customers.php';
 
 use \EA\Engine\Api\V1\Response;
-use \EA\Engine\Api\V1\Request;
-use \EA\Engine\Types\NonEmptyText;
 
 /**
  * Customers Controller
@@ -53,10 +51,16 @@ class CustomersV2 extends Customers {
         try {
             $customer = NULL;
             if ($_GET['id_integrated'] !== NULL) {
-                // Get service id that have id_integrated = id_services_integrated in table ea_services
+                // Get user that have id_integrated = id_integrated in table ea_users
                 $customer = $this->user_model_v2->find_by_id_integrated($_GET['id_integrated']);
-                if ($customer[0]->id_roles != 3) {
-                    throw new \EA\Engine\Api\V1\Exception('$user does not exist in DB: ' . $customer, 404, 'Not Found');
+                if ($customer['id_roles'] != 3) {
+                    throw new \EA\Engine\Api\V1\Exception('$customer does not exist in DB: ' . $customer, 404, 'Not Found');
+                }
+            } else if ($_GET['phone'] !== NULL) {
+                // Get user that have phone = {phone_number or mobile_number} in table ea_users
+                $customer = $this->user_model_v2->find_by_phone($_GET['phone']);
+                if ($customer['id_roles'] != 3) {
+                    throw new \EA\Engine\Api\V1\Exception('$customer does not exist in DB: ' . $customer, 404, 'Not Found');
                 }
             }
 
