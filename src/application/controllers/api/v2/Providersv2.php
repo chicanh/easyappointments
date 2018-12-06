@@ -76,17 +76,23 @@ class ProvidersV2 extends Providers {
                     }
                 }
                 $response = new Response($providers);
-            } else if ($_GET['id_integrated'] !== NULL) {
-                // Get user that have id_integrated = id_integrated in table ea_users
-                $provider = $this->providers_model->get_batch("id_integrated = '" . $_GET['id_integrated'] . "'");
-                $response = new Response($provider);
-            }
-
-            $response->encode($this->parser)->search()
+                $response->search()
                 ->sort()
                 ->paginate()
                 ->minimize()
                 ->output();
+            } else if ($_GET['id_integrated'] !== NULL) {
+                // Get user that have id_integrated = id_integrated in table ea_users
+                $provider = $this->providers_model->get_batch("id_integrated = '" . $_GET['id_integrated'] . "'");
+                $response = new Response($provider);
+                $response->encode($this->parser)->search()
+                ->sort()
+                ->paginate()
+                ->minimize()
+                ->output();
+            }
+            
+
 
         } catch (\Exception $exception) {
             exit($this->_handleException($exception));
