@@ -140,6 +140,7 @@ CREATE TABLE IF NOT EXISTS `ea_users` (
     `birthday` VARCHAR(256),
     `gender` VARCHAR(256),
     `id_integrated` CHAR(36),
+    `photo_profile` VARCHAR(256),
     PRIMARY KEY (`id`),
     KEY `id_roles` (`id_roles`),
     UNIQUE KEY (`id_integrated`)
