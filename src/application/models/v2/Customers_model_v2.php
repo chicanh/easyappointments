@@ -16,7 +16,7 @@
  *
  * @package Models
  */
-class Customers_Model_V2 extends Customers {
+class Customers_Model_V2 extends Customers_Model {
 
     /**
      * Check if a particular customer record already exists.
@@ -49,6 +49,10 @@ class Customers_Model_V2 extends Customers {
             ->get()->num_rows();
 
         return ($num_rows > 0) ? TRUE : FALSE;
+    }
+
+    public function get_batch($where_clause = '') {
+    return  parent::get_batch($where_clause);
     }
 
 }

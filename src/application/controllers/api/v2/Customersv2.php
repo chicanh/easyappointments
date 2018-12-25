@@ -38,7 +38,7 @@ class CustomersV2 extends Customers {
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('customers_model');
+        $this->load->model('/v2/customers_model_v2');
         $this->load->model('/v2/user_model_v2');
         $this->parser = new \EA\Engine\Api\V2\Parsers\CustomersV2;
     }
@@ -58,15 +58,28 @@ class CustomersV2 extends Customers {
                 if ($customer[0]->id_roles != 3) {
                     throw new \EA\Engine\Api\V1\Exception('$user does not exist in DB: ' . $customer, 404, 'Not Found');
                 }
-            }
-
-            $response = new Response($customer);
-
-            $response->search()
+                $response = new Response($customer);
+                $response
+                ->search()
                 ->sort()
                 ->paginate()
                 ->minimize()
                 ->output();
+            } else {
+
+            $condition = $id !== NULL ? 'id = ' . $id : NULL;
+            $customer = $this->customers_model_v2->get_batch($condition);
+            $response = new Response($customer);
+            $response->encode($this->parser)
+                ->search()
+                ->sort()
+                ->paginate()
+                ->minimize()
+                ->output();
+        }
+
+           
+
 
         } catch (\Exception $exception) {
             exit($this->_handleException($exception));
