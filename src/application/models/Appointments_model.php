@@ -528,6 +528,9 @@ class Appointments_Model extends CI_Model {
             ['id' => $appointment['id_users_provider']])->row_array();
         $appointment['customer'] = $this->db->get_where('ea_users',
             ['id' => $appointment['id_users_customer']])->row_array();
+        $appointment['patient'] = $this->db->select('*')->from('ea_users')
+        ->join('ea_appointments_attendants', 'ea_users.id = ea_appointments_attendants.id_users')
+        ->join('ea_appointments', 'ea_appointments.id = ea_appointments_attendants.id_appointment')->get()->row_array();
         return $appointment;
     }
 }

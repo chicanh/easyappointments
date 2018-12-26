@@ -66,6 +66,12 @@ class AppointmentsV2 extends Appointments {
             $serviceParser->encode($response['service']);
             $encodedResponse['service'] = $response['service'];
         }
+        if (isset($response['patient']))
+        {
+            $customerParser = new Customers();
+            $customerParser->encode($response['patient']);
+            $encodedResponse['patient'] = $response['patient'];
+        }
 
         $response = $encodedResponse;
     }
