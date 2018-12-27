@@ -36,7 +36,7 @@ class CustomersV2 extends Customers {
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('customers_model');
+        $this->load->model('/v2/customers_model_v2');
         $this->load->model('/v2/user_model_v2');
         $this->parser = new \EA\Engine\Api\V2\Parsers\CustomersV2;
     }
@@ -51,27 +51,32 @@ class CustomersV2 extends Customers {
         try {
             $customer = NULL;
             if ($_GET['id_integrated'] !== NULL) {
-                // Get user that have id_integrated = id_integrated in table ea_users
-                $customer = $this->user_model_v2->find_by_id_integrated($_GET['id_integrated']);
-                if ($customer['id_roles'] != 3) {
-                    throw new \EA\Engine\Api\V1\Exception('$customer does not exist in DB: ' . $customer, 404, 'Not Found');
-                }
-            } else if ($_GET['phone'] !== NULL) {
+                // Get service id that have id_integrated = id_services_integrated in table ea_services
+                $condition = "id_integrated = '" .$_GET['id_integrated'] . "'";
+                $customer = $this->customers_model_v2->get_batch($condition);
+            }
+            else if ($_GET['phone'] !== NULL) {
                 // Get user that have phone = {phone_number or mobile_number} in table ea_users
                 $customer = $this->user_model_v2->find_by_phone($_GET['phone']);
                 if ($customer['id_roles'] != 3) {
                     throw new \EA\Engine\Api\V1\Exception('$customer does not exist in DB: ' . $customer, 404, 'Not Found');
                 }
+               
+            } else if($id!==NULL) {
+                $condition = 'id = ' . $id;
+                $customer = $this->customers_model_v2->get_CustomerById($condition);
             }
+            else {
 
-            $response = new Response($customer);
-
-            $response->search()
-                ->sort()
-                ->paginate()
-                ->minimize()
-                ->output();
-
+            $customer = $this->customers_model_v2->get_batch($condition);
+            }
+        $response = new Response($customer);
+        $response
+            ->search()
+            ->sort()
+            ->paginate()
+            ->minimize()
+            ->output();
         } catch (\Exception $exception) {
             exit($this->_handleException($exception));
         }

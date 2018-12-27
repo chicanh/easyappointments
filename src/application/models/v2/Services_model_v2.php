@@ -42,4 +42,9 @@ class Services_Model_V2 extends Services_Model {
         return $this->db->get_where('ea_services', ['id_integrated' => $id_service_integrated])->row_array();
     }
 
+    public function get_batch($where_clause = NULL)
+    {
+        return parent::get_batch($where_clause);
+    }
+
 }

@@ -48,18 +48,27 @@ class ServicesV2 extends Services {
     public function get($id = NULL)
     {
         try {
-            $service = NULL;
+            $condition = $id !== NULL ? 'id = ' . $id : NULL;
+            $services = $this->services_model_v2->get_batch($condition);
+            
+            if ($id !== NULL && count($services) === 0)
+                {
+                    $this->_throwRecordNotFound();
+                }
+
             if ($_GET['id_integrated'] !== NULL) {
-                // Get service id that have id_integrated = id_services_integrated in table ea_services
-                $service = $this->services_model_v2->find_by_id_integrated($_GET['id_integrated']);
-                if (!isset($service)) {
-                    throw new \EA\Engine\Api\V1\Exception('$service does not exist in DB: ' . $service, 404, 'Not Found');
+                $condition ="id_integrated = '" . $_GET['id_integrated'] . "'";
+                $services = $this->services_model_v2->get_batch($condition);
+                if (count($services) === 0)
+                {
+                    $this->_throwRecordNotFound();
                 }
             }
 
-            $response = new Response($service);
+            $response = new Response($services);
 
-            $response->search()
+            $response->encode($this->parser)
+                ->search()
                 ->sort()
                 ->paginate()
                 ->minimize()
