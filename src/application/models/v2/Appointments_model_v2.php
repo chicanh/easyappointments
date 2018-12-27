@@ -284,5 +284,18 @@ class Appointments_Model_V2 extends Appointments_Model {
         }
 
     }
+    protected function get_aggregates(array $appointment)
+    {
+        $appointment['service'] = $this->db->get_where('ea_services',
+            ['id' => $appointment['id_services']])->row_array();
+        $appointment['provider'] = $this->db->get_where('ea_users',
+            ['id' => $appointment['id_users_provider']])->row_array();
+        $appointment['customer'] = $this->db->get_where('ea_users',
+            ['id' => $appointment['id_users_customer']])->row_array();
+        $appointment['patient'] = $this->db->select('*')->from('ea_users')
+        ->join('ea_appointments_attendants', 'ea_users.id = ea_appointments_attendants.id_users')
+        ->join('ea_appointments', 'ea_appointments.id = ea_appointments_attendants.id_appointment')->get()->row_array();
+        return $appointment;
+    }
 
 }
