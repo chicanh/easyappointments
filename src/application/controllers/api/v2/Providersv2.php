@@ -14,8 +14,6 @@
 require_once __DIR__ . '/../v1/Providers.php';
 
 use \EA\Engine\Api\V1\Response;
-use \EA\Engine\Api\V1\Request;
-use \EA\Engine\Types\NonEmptyText;
 
 /**
  * Providers Controller

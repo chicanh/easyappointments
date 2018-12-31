@@ -14,8 +14,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 require_once __DIR__ . '/../v1/Customers.php';
 
 use \EA\Engine\Api\V1\Response;
-use \EA\Engine\Api\V1\Request;
-use \EA\Engine\Types\NonEmptyText;
 
 /**
  * Customers Controller
@@ -54,15 +52,26 @@ class CustomersV2 extends Customers {
             $customer = NULL;
             if ($_GET['id_integrated'] !== NULL) {
                 // Get service id that have id_integrated = id_services_integrated in table ea_services
-                $condition = 'id_integrated = ' .$_GET['id_integrated'];
+                $condition = "id_integrated = '" .$_GET['id_integrated'] . "'";
                 $customer = $this->customers_model_v2->get_batch($condition);
-            } else {
+            }
+            else if ($_GET['phone'] !== NULL) {
+                // Get user that have phone = {phone_number or mobile_number} in table ea_users
+                $customer = $this->user_model_v2->find_by_phone($_GET['phone']);
+                if ($customer['id_roles'] != 3) {
+                    throw new \EA\Engine\Api\V1\Exception('$customer does not exist in DB: ' . $customer, 404, 'Not Found');
+                }
+               
+            } else if($id!==NULL) {
+                $condition = 'id = ' . $id;
+                $customer = $this->customers_model_v2->get_CustomerById($condition);
+            }
+            else {
 
-            $condition = $id !== NULL ? 'id = ' . $id : NULL;
             $customer = $this->customers_model_v2->get_batch($condition);
-        }
+            }
         $response = new Response($customer);
-        $response->encode($this->parser)
+        $response
             ->search()
             ->sort()
             ->paginate()

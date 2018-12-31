@@ -39,7 +39,7 @@ class User_Model_V2 extends User_Model {
             throw new \EA\Engine\Api\V1\Exception('$idIntegrated does not exist in DB: ' . $idIntegrated, 404, 'Not Found');
         }
 
-        $user = $query->num_rows() > 0 ? $query->result() : '';
+        $user = $query->num_rows() > 0 ? $query->row_array() : '';
 
         return $user;
     }
@@ -64,8 +64,35 @@ class User_Model_V2 extends User_Model {
             throw new \EA\Engine\Api\V1\Exception('$id does not exist in DB: ' . $id, 404, 'Not Found');
         }
 
-        return $query->result();
+        return $query->row_array();
 
+    }
+
+    /**
+     * Find user by phone (or mobile)
+     * @param $phone
+     * @return string
+     * @throws Exception
+     */
+    public function find_by_phone($phone)
+    {
+        if ( ! isset($phone))
+        {
+            throw new Exception('User phone is not provided: ' . print_r($phone, TRUE));
+        }
+
+        $this->db->where('phone_number', $phone);
+        $this->db->or_where('mobile_number', $phone);
+        $query = $this->db->get('ea_users');
+
+        if ($query->num_rows() == 0)
+        { // Check if phone exists in ea_users
+            throw new \EA\Engine\Api\V1\Exception('$phone does not exist in DB: ' . $phone, 404, 'Not Found');
+        }
+
+        $user = $query->num_rows() > 0 ? $query->row_array() : '';
+
+        return $user;
     }
 
 }
