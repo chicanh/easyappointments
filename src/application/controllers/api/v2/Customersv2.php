@@ -54,6 +54,9 @@ class CustomersV2 extends Customers {
                 // Get service id that have id_integrated = id_services_integrated in table ea_services
                 $condition = "id_integrated = '" .$_GET['id_integrated'] . "'";
                 $customer = $this->customers_model_v2->get_batch($condition);
+                if(count($customer) == 0) {
+                    throw new \EA\Engine\Api\V1\Exception('$customer does not exist in DB: ' . $customer, 404, 'Not Found');
+                }
             }
             else if ($_GET['phone'] !== NULL) {
                 // Get user that have phone = {phone_number or mobile_number} in table ea_users
@@ -67,7 +70,6 @@ class CustomersV2 extends Customers {
                 $customer = $this->customers_model_v2->get_CustomerById($condition);
             }
             else {
-
             $customer = $this->customers_model_v2->get_batch($condition);
             }
         $response = new Response($customer);
