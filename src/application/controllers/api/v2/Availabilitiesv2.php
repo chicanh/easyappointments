@@ -60,6 +60,12 @@ class Availabilitiesv2 extends Availabilities {
             }
 
             $provider = $provider_model->get_row($id_provider_integrated);
+            if($provider ==null) {
+                throw new \EA\Engine\Api\V1\Exception('$provider does not exist in DB: ' . $provider, 404, 'Not Found');
+            } 
+            if($service ==null) {
+                throw new \EA\Engine\Api\V1\Exception('$service does not exist in DB: ' . $service, 404, 'Not Found');
+            }
             $service = $service_model->get_row($id_service_integrated);
             $providerId =  $provider['id'];
             $serviceId = $service['id'];
