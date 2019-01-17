@@ -14,6 +14,8 @@
 require_once __DIR__ . '/../v1/API_V1_Controller.php';
 
 use \EA\Engine\Api\V1\Response;
+use \EA\Engine\Api\V1\Request;
+use \EA\Engine\Types\NonEmptyText;
 
 /**
  * Attendants Controller
@@ -72,9 +74,9 @@ class AttendantsV2 extends API_V1_Controller {
                 // Get user id that have id_integrated = id_user_integrated in table ea_users
                 $user = $user_model->find_by_id_integrated($_GET['id_user_integrated']);
                 if (isset($user)) {
-                    if ($user->id_roles == self::CUSTOMER) {
+                    if ($user['id_roles'] == self::CUSTOMER) {
                         $appointments = $appointments_model->get_by_user($conditions, array_key_exists('aggregates', $_GET), $user['id'], $appointments_model::CUSTOMER);
-                    } else if ($user->id_roles == self::PROVIDER) {
+                    } else if ($user['id_roles'] == self::PROVIDER) {
                         $appointments = $appointments_model->get_by_user($conditions, array_key_exists('aggregates', $_GET), $user['id'], $appointments_model::PROVIDER);
                     }
                 }
