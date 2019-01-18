@@ -52,35 +52,17 @@ class AppointmentsV2 extends Appointments {
      */
     public function index(){
         try{
-            $conditions['start_datetime'] = $this->input->get('startDate');
-            $conditions['end_datetime'] = $this->input->get('endDate');
-    
-            $appointments = array();
-            $user_model = $this->user_model_v2;
-            $appointments_model = $this->appointments_model_v2;
-            $user = $user_model->find_by_id_integrated($this->input->get('id_services_integrated'));
-        
-            if (isset($user)) {
-                $appointments_model = $this->appointments_model_v2;
-                $appointments = $appointments_model->get_batch($conditions, array_key_exists('aggregates', $_GET), 
-                                                                    $user[0]->id, NULL, $appointments_model::PROVIDER);
-            }
-    
-            if (count($appointments) === 0)
-            {
-                $this->_throwRecordNotFound();
-            }
-    
-            $response = new Response($appointments);
-    
+            $startDate= $this->input->get('startDate');
+            $endDate = $this->input->get('endDate');
+            $idService = $this->input->get('id_services_integrated');
+            $resultSet = $this->services_model->getAllAppointmentBy($idService, $startDate, $endDate);
+            $response = new Response($resultSet['records']);
             $response->encode($this->parser)
                 ->search()
                 ->sort()
                 ->paginate()
                 ->minimize()
                 ->output();
-    
-            echo $response;
 
         } catch (Exception $exception) {
             echo $exception;
