@@ -478,9 +478,8 @@ class Services_Model extends CI_Model {
     public function getAllAppointmentBy($service_id, $startDate, $endDate){
         $service = $this->db->get_where('ea_services', ['id_integrated'=>$service_id])->result_array();
         if(count($service) == 0){
-            throw new Exception('Could not found services with id: '.$service_id,404);
+            throw new Exception('Could not found services with id: '.$service_id);
         }
-
 
         $condition['start_datetime'] = $startDate;
         $condition['end_datetime'] = $endDate;
