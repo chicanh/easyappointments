@@ -55,8 +55,9 @@ class AppointmentsV2 extends Appointments {
             $startDate= $this->input->get('startDate');
             $endDate = $this->input->get('endDate');
             $idService = $this->input->get('id_services_integrated');
-            $resultSet = $this->services_model->getAllAppointmentBy($idService, $startDate, $endDate);
-            $response = new Response($resultSet['records']);
+            $appointments = $this->services_model_v2->getAllAppointmentBy($idService, $startDate, $endDate);
+            $response = new Response($appointments);
+
             $response->encode($this->parser)
                 ->search()
                 ->sort()

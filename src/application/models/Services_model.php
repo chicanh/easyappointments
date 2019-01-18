@@ -472,21 +472,4 @@ class Services_Model extends CI_Model {
         }
     }
 
-    /**
-     * Query all relative appointment by service id_integrated, start date & end date
-     */
-    public function getAllAppointmentBy($service_id, $startDate, $endDate){
-        $service = $this->db->get_where('ea_services', ['id_integrated'=>$service_id])->result_array();
-        if(count($service) == 0){
-            throw new Exception('Could not found services with id: '.$service_id);
-        }
-
-        $condition['start_datetime'] = $startDate;
-        $condition['end_datetime'] = $endDate;
-        $condition['id_services'] = $service[0]['id'];
-   
-        $appointment['records'] = $this->db->get_where('ea_appointments', $condition)->result_array();
-        $appointment['total'] = $this->db->get_where('ea_appointments',$condition)->num_rows();
-        return $appointment;
-    }
 }
