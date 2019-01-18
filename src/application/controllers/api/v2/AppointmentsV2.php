@@ -52,8 +52,8 @@ class AppointmentsV2 extends Appointments {
      */
     public function index(){
         try{
-            $conditions['startDate'] = $this->input->get('startDate');
-            $conditions['endDate'] = $this->input->get('endDate');
+            $conditions['start_datetime'] = $this->input->get('startDate');
+            $conditions['end_datetime'] = $this->input->get('endDate');
     
             $appointments = array();
             $user_model = $this->user_model_v2;
@@ -66,7 +66,7 @@ class AppointmentsV2 extends Appointments {
                                                                     $user[0]->id, NULL, $appointments_model::PROVIDER);
             }
     
-            if ($this->input->get('id_services_integrated') == NULL && count($appointments) === 0)
+            if (count($appointments) === 0)
             {
                 $this->_throwRecordNotFound();
             }
@@ -80,9 +80,9 @@ class AppointmentsV2 extends Appointments {
                 ->minimize()
                 ->output();
     
-            echo $appointments;
+            echo $response;
 
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             echo $exception;
         }
  
