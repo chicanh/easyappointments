@@ -74,13 +74,13 @@ class AppointmentsV2 extends Appointments {
                     $appointments = $appointments_model->get_batch($conditions, array_key_exists('aggregates', $_GET), $user['id'], NULL, $appointments_model::CUSTOMER);
                 }
             } else {
-                if ($_GET['id_provider_integrated'] !== NULL && $_GET['id_services_integrated'] !== NULL) {
+                if ($_GET['id_provider_integrated'] !== NULL && $_GET['id_service_integrated'] !== NULL) {
                     // Get user id that have id_integrated = id_provider_integrated in table ea_users
                     $user = $user_model->find_by_id_integrated($_GET['id_provider_integrated']);
                     if (isset($user)) {
-                        if ($_GET['id_services_integrated'] !== NULL) {
-                            // Get service id that have id_integrated = id_services_integrated in table ea_services
-                            $service = $services_model->find_by_id_integrated($_GET['id_services_integrated']);
+                        if ($_GET['id_service_integrated'] !== NULL) {
+                            // Get service id that have id_integrated = id_service_integrated. in table ea_services
+                            $service = $services_model->find_by_id_integrated($_GET['id_service_integrated']);
                             if (isset($service)) {
                                 $appointments = $appointments_model->get_batch($conditions, array_key_exists('aggregates', $_GET), $user['id'], $service->id, $appointments_model::PROVIDER_SERVICE);
                             }
@@ -94,9 +94,9 @@ class AppointmentsV2 extends Appointments {
                         if (isset($user)) {
                             $appointments = $appointments_model->get_batch($conditions, array_key_exists('aggregates', $_GET), $user['id'], NULL, $appointments_model::PROVIDER);
                         }
-                    } else if ($_GET['id_services_integrated'] !== NULL) {
-                        // Get service id that have id_integrated = id_services_integrated in table ea_services
-                        $service = $services_model->find_by_id_integrated($_GET['id_services_integrated']);
+                    } else if ($_GET['id_service_integrated'] !== NULL) {
+                        // Get service id that have id_integrated = id_service_integrated. in table ea_services
+                        $service = $services_model->find_by_id_integrated($_GET['id_service_integrated']);
                         if (isset($service)) {
                             $appointments = $appointments_model->get_batch($conditions, array_key_exists('aggregates', $_GET), NULL, $service[0]->id, $appointments_model::SERVICE);
                         }
