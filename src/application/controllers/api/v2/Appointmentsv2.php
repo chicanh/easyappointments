@@ -321,11 +321,11 @@ class AppointmentsV2 extends Appointments {
 
             $startDate= $this->input->get('startDate');
             $endDate = $this->input->get('endDate');
-            $idService = $this->input->get('id_services_integrated');
-			$page = $this->input->get('page') == '' ? 1 : $this->input->get('page');
-			$size = $this->input->get('size') == '' ? 20 : $this->input->get('size');
+            $id_integrated = $this->input->get('id_service_integrated');
+			$page = $this->input->get('page');
+			$size = $this->input->get('size');
 			
-            $appointments = $this->appointments_model_v2->getAllAppointmentBy($idService, array_key_exists('aggregates', $_GET), $startDate, $endDate, $page, $size);
+            $appointments = $this->appointments_model_v2->getAllAppointmentBy($id_integrated, array_key_exists('aggregates', $_GET), $startDate, $endDate, $page, $size);
             $response = new Response($appointments);
             $response->encode($this->parser)
                 ->output();
