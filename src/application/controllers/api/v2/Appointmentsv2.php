@@ -311,4 +311,27 @@ class AppointmentsV2 extends Appointments {
             exit($this->_handleException($exception));
         }
     }
+
+    /**
+     * Default method, use to get list of record by id , startdate & enddate
+     * jira ticket : https://davidodev.atlassian.net/browse/EAI-28
+     */
+    public function getAllAppointmentByPeriodTime(){
+        try{
+
+            $startDate= $this->input->get('startDate');
+            $endDate = $this->input->get('endDate');
+            $idService = $this->input->get('id_services_integrated');
+			$page = $this->input->get('page') == '' ? 1 : $this->input->get('page');
+			$size = $this->input->get('size') == '' ? 20 : $this->input->get('size');
+			
+            $appointments = $this->appointments_model_v2->getAllAppointmentBy($idService, array_key_exists('aggregates', $_GET), $startDate, $endDate, $page, $size);
+            $response = new Response($appointments);
+            $response->encode($this->parser)
+                ->output();
+        } catch (Exception $exception) {
+            echo $exception;
+        }
+ 
+    }
 }
