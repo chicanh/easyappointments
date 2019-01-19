@@ -114,6 +114,21 @@ class ProvidersV2 extends Providers {
         parent::put($id);
     }
 
+    public function updateProvider() {
+        $id_integrated = $this->input->get('id_integrated');
+        if($id_integrated !=null) {
+         $condition = "id_integrated = '" .$id_integrated . "'";
+         $provider = $this->providers_model->get_batch($condition);
+            if (count($provider) === 0) {
+                $this->_throwRecordNotFound();
+            }
+            parent::put($provider[0]['id']);
+        } else {
+            set_status_header(400);
+            echo 'please enter id_integrated';
+        }
+    }
+
     /**
      * DELETE API Method
      *

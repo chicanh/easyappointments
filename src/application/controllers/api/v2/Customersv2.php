@@ -103,6 +103,21 @@ class CustomersV2 extends Customers {
        parent::put($id);
     }
 
+    public function updateCustomer() {
+        $id_integrated = $this->input->get('id_integrated');
+        if($id_integrated !=null) {
+            $condition = "id_integrated = '" .$id_integrated . "'";
+            $customer = $this->customers_model_v2->get_batch($condition);
+            if (count($customer) === 0){
+                    $this->_throwRecordNotFound();
+            }
+            parent::put($customer['id']);
+        } else {
+            set_status_header(400);
+            echo 'please enter id_integrated';
+        }
+    }
+
     /**
      * DELETE API Method
      *

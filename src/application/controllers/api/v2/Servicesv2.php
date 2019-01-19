@@ -97,6 +97,20 @@ class ServicesV2 extends Services {
        parrent::put($id);
     }
 
+    public function updateService() {
+        $id_integrated = $this->input->get('id_integrated');
+        if($id_integrated !=null) {
+         $condition = "id_integrated = '" .$id_integrated . "'";
+         $service = $this->services_model_v2->get_batch($condition);
+            if (count($service) === 0) {
+                $this->_throwRecordNotFound();
+            }
+            parent::put($service[0]['id']);
+        } else {
+            set_status_header(400);
+            echo 'please enter id_integrated';
+       }
+    }
     /**
      * DELETE API Method
      *
