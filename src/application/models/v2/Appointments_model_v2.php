@@ -301,19 +301,15 @@ class Appointments_Model_V2 extends Appointments_Model {
     /**
      * Query all relative appointment by service id_integrated, start date & end date
      */
-    public function getAllAppointmentBy($id_integrated, $aggregates = FALSE, $startDate, $endDate, $page ,$size){
-        $service = $this->db->get_where('ea_services', ['id_integrated'=>$id_integrated])->result_array();
-        if(count($service) == 0){
-            throw new Exception('Could not found services with id: '.$id_integrated);
-        }
+    public function getAllAppointmentBy($service, $aggregates = FALSE, $startDate, $endDate, $page ,$size){
         if(strlen($startDate) != 0){
             $condition['start_datetime >='] = $startDate;
         }
         if(strlen($endDate) != 0){
             $condition['end_datetime <='] = $endDate;
         }
-        
-        $condition['id_services'] = $service[0]['id'];
+
+        $condition['id_services'] = $service[0]->id;
 		if($page != ''&& $size != ''){
             $offset = ($page - 1 ) * $size;
             $appointments = $this->db->get_where('ea_appointments', $condition, $size, $offset)->result_array();

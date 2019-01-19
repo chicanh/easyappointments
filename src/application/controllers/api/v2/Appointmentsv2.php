@@ -317,21 +317,22 @@ class AppointmentsV2 extends Appointments {
      * jira ticket : https://davidodev.atlassian.net/browse/EAI-28
      */
     public function getAllAppointmentByPeriodTime(){
-        try{
-
-            $startDate= $this->input->get('startDate');
-            $endDate = $this->input->get('endDate');
-            $id_integrated = $this->input->get('id_service_integrated');
-			$page = $this->input->get('page');
-			$size = $this->input->get('size');
-			
-            $appointments = $this->appointments_model_v2->getAllAppointmentBy($id_integrated, array_key_exists('aggregates', $_GET), $startDate, $endDate, $page, $size);
-            $response = new Response($appointments);
-            $response->encode($this->parser)
-                ->output();
-        } catch (Exception $exception) {
-            echo $exception;
-        }
+        $startDate= $this->input->get('startDate');
+        $endDate = $this->input->get('endDate');
+        $id_integrated = $this->input->get('id_service_integrated');
+        $page = $this->input->get('page');
+        $size = $this->input->get('size');
  
+        $service = $this->services_model_v2->find_by_id_integrated($id_integrated);
+        if(count($service) == 0){
+            http_response_code(404);
+            print('Could not found services with id: '.$id_integrated);
+            return;
+        }
+        
+        $appointments = $this->appointments_model_v2->getAllAppointmentBy($service, array_key_exists('aggregates', $_GET), $startDate, $endDate, $page, $size);
+        $response = new Response($appointments);
+        $response->encode($this->parser)
+            ->output();
     }
 }
