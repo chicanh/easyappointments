@@ -43,7 +43,8 @@ class AppointmentsV2 extends Appointments {
             'googleCalendarId' => $response['id_google_calendar'] !== NULL ? (int)$response['id_google_calendar'] : NULL,
             'status' => $response['status'],
             'id_integrated' => $response['id_integrated'],
-            'cancelReason' => $response['cancel_reason']
+            'cancelReason' => $response['cancel_reason'],
+            'attachment' => $response['attachment']
         ];
 
         if (isset($response['provider']))
