@@ -330,9 +330,30 @@ class AppointmentsV2 extends Appointments {
             return;
         }
         
-        $appointments = $this->appointments_model_v2->getAllAppointmentBy($service, array_key_exists('aggregates', $_GET), $startDate, $endDate, $page, $size);
-        $response = new Response($appointments);
+        $resultSet = $this->appointments_model_v2->getAllAppointmentBy($service, array_key_exists('aggregates', $_GET), $startDate, $endDate, $page, $size);
+        $response = new Response($resultSet['appointments']);
         $response->encode($this->parser)
             ->output();
+    }
+
+    
+    /**
+     * Count appointments by gender
+     * jira ticket : https://davidodev.atlassian.net/browse/EAI-30
+     */
+    public function getTotalAppointmentGroupByGender(){
+        $startDate= $this->input->get('startDate');
+        $endDate = $this->input->get('endDate');
+        $id_integrated = $this->input->get('id_service_integrated');
+
+        $service = $this->services_model_v2->find_by_id_integrated($id_integrated);
+        if(count($service) == 0){
+            http_response_code(404);
+            print('Could not found services with id: '.$id_integrated);
+            return;
+        }
+        $resultSet = $this->appointments_model_v2->getAllAppointmentBy($service, array_key_exists('aggregates', $_GET), $startDate, $endDate, $page, $size);
+        $response = new Response($resultSet['statistic']);
+        $response->output();   
     }
 }

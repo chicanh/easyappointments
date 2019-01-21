@@ -306,6 +306,7 @@ class Appointments_Model_V2 extends Appointments_Model {
             $condition['start_datetime >='] = $startDate;
         }
         if(strlen($endDate) != 0){
+            $endDate .= ' 23:59:00';
             $condition['end_datetime <='] = $endDate;
         }
 
@@ -317,12 +318,31 @@ class Appointments_Model_V2 extends Appointments_Model {
             $appointments = $this->db->get_where('ea_appointments', $condition)->result_array();
         }
 
+        $maleBookingCounter = 0;
+        $femaleBookingCounter = 0;
+        $undefinedGenderBooking = 0;
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);
+                $gender = $appointment['customer']['gender'];
+                switch(strtoupper($gender)){
+                    case 'M': $maleAppointment++;
+                        break;
+                    case 'F': $femaleAppointment++;
+                        break;
+                    default: $undefinedGenderBooking++;
+                }
             }
         }
-        return $appointments;
+
+        $statistic['maleBooking'] =  $maleBookingCounter;
+        $statistic['femaleBooking'] =  $femaleBookingCounter;
+        $statistic['undefinedGenderBooking'] =  $undefinedGenderBooking;
+
+        $resultSet['appointments'] = $appointments;
+        $resultSet['statistic'] = $statistic;
+
+        return $resultSet;
     }
 
 }

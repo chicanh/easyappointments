@@ -95,5 +95,6 @@ $route['api/v2/customers']['put'] = 'api/v2/customersv2/updateCustomer';
 $route['api/v2/providers']['put'] = 'api/v2/providersv2/updateProvider';
 $route['api/v2/services']['put'] = 'api/v2/servicesv2/updateService';
 $route['api/v2/appointments']['get'] = 'api/v2/appointmentsv2/getAllAppointmentByPeriodTime';
+$route['api/v2/total/appointments']['get'] = 'api/v2/appointmentsv2/getTotalAppointmentGroupByGender';
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
