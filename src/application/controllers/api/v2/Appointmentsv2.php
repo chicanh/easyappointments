@@ -330,8 +330,8 @@ class AppointmentsV2 extends Appointments {
             return;
         }
         
-        $resultSet = $this->appointments_model_v2->getAllAppointmentBy($service, array_key_exists('aggregates', $_GET), $startDate, $endDate, $page, $size);
-        $response = new Response($resultSet['appointments']);
+        $appointments = $this->appointments_model_v2->getAllAppointmentBy($service, array_key_exists('aggregates', $_GET), $startDate, $endDate, $page, $size);
+        $response = new Response($appointments);
         $response->encode($this->parser)
             ->output();
     }
@@ -352,8 +352,8 @@ class AppointmentsV2 extends Appointments {
             print('Could not found services with id: '.$id_integrated);
             return;
         }
-        $resultSet = $this->appointments_model_v2->getAllAppointmentBy($service, array_key_exists('aggregates', $_GET), $startDate, $endDate, $page, $size);
-        $response = new Response($resultSet['statistic']);
+        $resultSet = $this->appointments_model_v2->getStatisticAppointment($service[0]->id, $startDate, $endDate);
+        $response = new Response($resultSet);
         $response->output();   
     }
 }

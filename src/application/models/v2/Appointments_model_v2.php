@@ -318,31 +318,31 @@ class Appointments_Model_V2 extends Appointments_Model {
             $appointments = $this->db->get_where('ea_appointments', $condition)->result_array();
         }
 
-        $maleBookingCounter = 0;
-        $femaleBookingCounter = 0;
-        $undefinedGenderBooking = 0;
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);
-                $gender = $appointment['customer']['gender'];
-                switch(strtoupper($gender)){
-                    case 'M': $maleAppointment++;
-                        break;
-                    case 'F': $femaleAppointment++;
-                        break;
-                    default: $undefinedGenderBooking++;
-                }
             }
         }
+        return $appointments;
+    }
 
-        $statistic['maleBooking'] =  $maleBookingCounter;
-        $statistic['femaleBooking'] =  $femaleBookingCounter;
-        $statistic['undefinedGenderBooking'] =  $undefinedGenderBooking;
+    public function getStatisticAppointment($id_service,$startDate, $endDate){
+        if(strlen($startDate) != 0){
+            $condition['ea_appointments.start_datetime >='] = $startDate;
+        }
+        if(strlen($endDate) != 0){
+            $endDate .= ' 23:59:00';
+            $condition['ea_appointments.end_datetime <='] = $endDate;
+        }
+        $condition["ea_appointments.id_services"] = $id_service;
 
-        $resultSet['appointments'] = $appointments;
-        $resultSet['statistic'] = $statistic;
-
-        return $resultSet;
+        $this->db->select('ea_users.gender as Gender, COUNT(ea_appointments.id) as Total')
+                 ->from('ea_appointments')
+                 ->where($condition)
+                 ->join('ea_users', 'ea_appointments.id_users_customer = ea_users.id')
+                 ->group_by('ea_users.gender');
+        $result = $this->db->get()->result_array();
+        return $result;
     }
 
 }
