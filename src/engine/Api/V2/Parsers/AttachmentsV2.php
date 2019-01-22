@@ -26,14 +26,21 @@ class AttachmentsV2 implements ParsersInterface {
      */
     public function encode(array &$response)
     {
-        $encodedResponse = [
-            'id' => $response['id'] !== NULL ? (int)$response['id'] : NULL,
-            'appointmentId' => $response['id_appointment'] !== NULL ? (int)$response['id_appointment'] : NULL,
-            'name' => $response['name'],
-            'value' => $response['value']
-        ];
+        if(!isset($response) || empty($response)) {
+            return null; 
+        }
+        
+        $json = array();
 
-        $response = $encodedResponse;
+        foreach ($response as $attachment)
+        {
+            if(isset($attachment['name'])) 
+            {
+                $json[$attachment['name']] = $attachment['value'];
+            }
+        }
+
+        return $json;
     }
 
     /**

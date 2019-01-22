@@ -30,6 +30,7 @@ class AppointmentsV2 extends Appointments {
      * @var \EA\Engine\Api\V2\Parsers\AppointmentsV2
      */
     protected $parser;
+    protected $attachments_parser;
 
     /**
      * Class Constructor
@@ -44,6 +45,7 @@ class AppointmentsV2 extends Appointments {
         $this->load->model('/v2/attendants_model_v2');
         $this->load->model('/v2/services_model_v2');
         $this->parser = new \EA\Engine\Api\V2\Parsers\AppointmentsV2;
+        $this->attachments_parser = new \EA\Engine\Api\V2\Parsers\AttachmentsV2;
     }
 
     /**
@@ -93,9 +95,9 @@ class AppointmentsV2 extends Appointments {
         if (count($appointments) > 0) {
             foreach ($appointments as $appointment) {
                 $attachments = $this->attachments_model_v2->get_batch($appointment['id']);
-                 if (count($attachments) > 0) {
-                     $appointment['attachment'] =  $attachments;
-                 }
+                $attachments = $this->attachments_parser->encode($attachments);
+
+                $appointment['attachment'] =  $attachments;
                 array_push($result, $appointment);
             }
         }
