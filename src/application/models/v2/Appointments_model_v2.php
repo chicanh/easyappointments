@@ -333,7 +333,7 @@ class Appointments_Model_V2 extends Appointments_Model {
             $condition['ea_appointments.end_datetime <='] = $endDate;
         }
         $condition["ea_appointments.id_services"] = $id_service;
-        $this->db->select('ea_users.gender as Gender, COUNT(ea_appointments.id) as Total')
+        $this->db->select('ea_users.gender as gender, COUNT(ea_appointments.id) as total')
                  ->from('ea_appointments')
                  ->where($condition)
                  ->join('ea_users', 'ea_appointments.id_users_customer = ea_users.id')
