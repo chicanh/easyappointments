@@ -334,6 +334,50 @@ class AppointmentsV2 extends Appointments {
         }
         return $appointments;
     }
+
+    private function getAppointmentByUserId($conditions, $id_user_integrated) {
+        $user = $this->user_model_v2->find_by_id_integrated($id_user_integrated);
+        if (isset($user)) {
+            $appointments = $this->appointments_model_v2->get_batch($conditions, array_key_exists('aggregates', $_GET), $user['id'], NULL, $this->appointments_model_v2::CUSTOMER);
+        }
+
+        return $appointments;
+    }
+
+    private function getAppointmentByProviderIdAndServiceId($conditions, $id_provider_integrated, $id_service_integrated) {
+        $user =  $this->user_model_v2->find_by_id_integrated($id_provider_integrated);
+        if (isset($user)) {
+            $service = $this->services_model_v2->find_by_id_integrated($id_service_integrated);
+            if (isset($service)) {
+                $appointments = $this->appointments_model_v2->get_batch($conditions, array_key_exists('aggregates', $_GET), $user['id'], $service[0]->id, $this->appointments_model_v2::PROVIDER_SERVICE);
+            } else {
+                set_status_header(404);
+                echo 'id_service_integrated is not exist in database';
+                exit;
+            }          
+        }
+        return $appointments;
+    }
+
+    private function getAppointmentByProviderId($conditions, $id_provider_integrated) {
+        $provider = $this->user_model_v2->find_by_id_integrated($id_provider_integrated);
+        if (isset($provider)) {
+          $appointments = $this->appointments_model_v2->get_batch($conditions, array_key_exists('aggregates', $_GET), $provider['id'], NULL, $this->appointments_model_v2::PROVIDER);
+        }
+        return $appointments;
+    }
+
+    private function getAppointmentByServiceId($conditions, $id_service_integrated) {
+        $service = $this->services_model_v2->find_by_id_integrated($id_service_integrated);
+        if (isset($service)) {
+           $appointments = $this->appointments_model_v2->get_batch($conditions, array_key_exists('aggregates', $_GET), NULL, $service[0]->id, $this->appointments_model_v2::SERVICE);
+        } else {
+            set_status_header(404);
+            echo 'id_service_integrated is not exist in database';
+            exit;
+        }
+        return $appointments;
+    }
     private function getAppointmentByUserId($conditions, $id_user_integrated) {
         $user = $this->user_model_v2->find_by_id_integrated($id_user_integrated);
         if (isset($user)) {
