@@ -102,9 +102,6 @@ class AppointmentsV2 extends Appointments {
             $response = new Response($result);
 
             $response->encode($this->parser)
-                ->search()
-                ->sort()
-                ->paginate()
                 ->minimize()
                 ->singleEntry($id_integrated)
                 ->output();
