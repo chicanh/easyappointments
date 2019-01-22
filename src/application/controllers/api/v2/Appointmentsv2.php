@@ -54,8 +54,7 @@ class AppointmentsV2 extends Appointments {
     
     public function get($id_integrated = null) {
         try {
-
-        
+        $isGetAppointmentByPeriodDateTime = false;
         $conditions = [
             'is_unavailable' => FALSE
         ];
@@ -79,10 +78,8 @@ class AppointmentsV2 extends Appointments {
                 }
         
                 if($this->input->get('id_service_integrated') !=null) {
-                    $appointments = $this->getAppointmentByServiceId($conditions, $this->input->get('id_service_integrated')); 
-                    if($this->input->get('startDate')!=null && $this->input->get('endDate') !=null) {
-                        $appointments = $this->getAllAppointmentByPeriodTime($this->input->get('startDate'), $this->input->get('endDate'), $this->input->get('id_service_integrated'));
-                    }
+                    $appointments = $this->getAllAppointmentByPeriodTime($this->input->get('startDate'), $this->input->get('endDate'), $this->input->get('id_service_integrated'));
+                    $isGetAppointmentByPeriodDateTime = true;
                 }
             }
         }
@@ -102,16 +99,21 @@ class AppointmentsV2 extends Appointments {
                 array_push($result, $appointment);
             }
         }
-            $response = new Response($result);
-
+        $response = new Response($result);
+        
+        if($isGetAppointmentByPeriodDateTime){
             $response->encode($this->parser)
-                ->search()
-                ->sort()
-                ->paginate()
-                ->minimize()
-                ->singleEntry($id_integrated)
-                ->output();
-
+            ->singleEntry($id_integrated)
+            ->output();
+        }else{
+            $response->encode($this->parser)
+            ->search()
+            ->sort()
+            ->paginate()
+            ->minimize()
+            ->singleEntry($id_integrated)
+            ->output();
+        }
      } catch (\Exception $exception) {
                 exit($this->_handleException($exception));
      }
@@ -301,7 +303,6 @@ class AppointmentsV2 extends Appointments {
     private function getAllAppointmentByPeriodTime($startDate, $endDate, $id_integrated){
         $page = $this->input->get('page');
         $size = $this->input->get('size');
- 
         $service = $this->services_model_v2->find_by_id_integrated($id_integrated);
         if(count($service) == 0){
             http_response_code(404);
@@ -355,5 +356,24 @@ class AppointmentsV2 extends Appointments {
             }          
         }
         return $appointments;
+    }
+
+    /**
+     * Count appointments by gender
+     * jira ticket : https://davidodev.atlassian.net/browse/EAI-30
+     */
+    public function getTotalAppointmentGroupByGender(){
+        $startDate= $this->input->get('startDate');
+        $endDate = $this->input->get('endDate');
+        $id_integrated = $this->input->get('id_service_integrated');
+        $service = $this->services_model_v2->find_by_id_integrated($id_integrated);
+        if(count($service) == 0){
+            http_response_code(404);
+            print('Could not found services with id: '.$id_integrated);
+            return;
+        }
+        $resultSet = $this->appointments_model_v2->getStatisticAppointment($service[0]->id, $startDate, $endDate);
+        $response = new Response($resultSet);
+        $response->output();   
     }
 }

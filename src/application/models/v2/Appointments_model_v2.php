@@ -306,9 +306,9 @@ class Appointments_Model_V2 extends Appointments_Model {
             $condition['start_datetime >='] = $startDate;
         }
         if(strlen($endDate) != 0){
+            $endDate .= ' 23:59:00';
             $condition['end_datetime <='] = $endDate;
         }
-
         $condition['id_services'] = $service[0]->id;
 		if($page != ''&& $size != ''){
             $offset = ($page - 1 ) * $size;
@@ -316,13 +316,30 @@ class Appointments_Model_V2 extends Appointments_Model {
         }else{
             $appointments = $this->db->get_where('ea_appointments', $condition)->result_array();
         }
-
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);
             }
         }
         return $appointments;
+    }
+    
+    public function getStatisticAppointment($id_service,$startDate, $endDate){
+        if(strlen($startDate) != 0){
+            $condition['ea_appointments.start_datetime >='] = $startDate;
+        }
+        if(strlen($endDate) != 0){
+            $endDate .= ' 23:59:00';
+            $condition['ea_appointments.end_datetime <='] = $endDate;
+        }
+        $condition["ea_appointments.id_services"] = $id_service;
+        $this->db->select('ea_users.gender as gender, COUNT(ea_appointments.id) as total')
+                 ->from('ea_appointments')
+                 ->where($condition)
+                 ->join('ea_users', 'ea_appointments.id_users_customer = ea_users.id')
+                 ->group_by('ea_users.gender');
+        $result = $this->db->get()->result_array();
+        return $result;
     }
 
 }

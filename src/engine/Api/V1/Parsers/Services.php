@@ -35,7 +35,8 @@ class Services implements ParsersInterface {
             'description' => $response['description'],
             'availabilitiesType' => $response['availabilities_type'],
             'attendantsNumber' => (int)$response['attendants_number'],
-            'categoryId' => $response['id_service_categories'] !== NULL ? (int)$response['id_service_categories'] : NULL
+            'categoryId' => $response['id_service_categories'] !== NULL ? (int)$response['id_service_categories'] : NULL,
+            'id_integrated'=> $response['id_integrated']
         ];
 
         $response = $encodedResponse;
