@@ -35,7 +35,8 @@ class Customers implements ParsersInterface {
             'address' => $response['address'],
             'city' => $response['city'],
             'zip' => $response['zip_code'],
-            'notes' => $response['notes']
+            'notes' => $response['notes'],
+            'id_integrated'=> $response['id_integrated']
         ];
 
         $response = $encodedResponse;
