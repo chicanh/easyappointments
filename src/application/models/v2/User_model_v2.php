@@ -36,7 +36,9 @@ class User_Model_V2 extends User_Model {
 
         if ($query->num_rows() == 0)
         { // Check if id_integrated exists in ea_users
-            throw new \EA\Engine\Api\V1\Exception('$idIntegrated does not exist in DB: ' . $idIntegrated, 404, 'Not Found');
+            set_status_header(404);
+            echo 'the provided id is not exist in database';
+            exit;
         }
 
         $user = $query->num_rows() > 0 ? $query->row_array() : '';

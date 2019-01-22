@@ -86,6 +86,7 @@ $route['api/v1/settings/(:any)']['get'] = 'api/v1/settings/get/$1';
 $route['api/v1/settings/(:any)']['put'] = 'api/v1/settings/put/$1';
 $route['api/v1/settings/(:any)']['delete'] = 'api/v1/settings/delete/$1';
 
+$route['api/v2/appointments/statistic']['get'] = 'api/v2/appointmentsv2/getTotalAppointmentGroupByGender';
 $route['api/v1/availabilities']['get'] = 'api/v1/availabilities/get';
 $route['api/v2/availabilities']['get'] = 'api/v2/availabilitiesv2/get';
 $route['api/v2/appointments/(:any)']['get'] = 'api/v2/appointmentsv2/get/$1';
@@ -94,7 +95,6 @@ $route['api/v2/appointments/(:any)']['put'] = 'api/v2/appointmentsv2/updateAppoi
 $route['api/v2/customers']['put'] = 'api/v2/customersv2/updateCustomer';
 $route['api/v2/providers']['put'] = 'api/v2/providersv2/updateProvider';
 $route['api/v2/services']['put'] = 'api/v2/servicesv2/updateService';
-$route['api/v2/appointments']['get'] = 'api/v2/appointmentsv2/getAllAppointmentByPeriodTime';
-$route['api/v2/total/appointments']['get'] = 'api/v2/appointmentsv2/getTotalAppointmentGroupByGender';
+
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
