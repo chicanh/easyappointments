@@ -79,10 +79,7 @@ class AppointmentsV2 extends Appointments {
                 }
         
                 if($this->input->get('id_service_integrated') !=null) {
-                    $appointments = $this->getAppointmentByServiceId($conditions, $this->input->get('id_service_integrated')); 
-                    if($this->input->get('startDate')!=null && $this->input->get('endDate') !=null) {
-                        $appointments = $this->getAllAppointmentByPeriodTime($this->input->get('startDate'), $this->input->get('endDate'), $this->input->get('id_service_integrated'));
-                    }
+                    $appointments = $this->getAllAppointmentByPeriodTime($this->input->get('startDate'), $this->input->get('endDate'), $this->input->get('id_service_integrated'));
                 }
             }
         }
@@ -301,7 +298,6 @@ class AppointmentsV2 extends Appointments {
     private function getAllAppointmentByPeriodTime($startDate, $endDate, $id_integrated){
         $page = $this->input->get('page');
         $size = $this->input->get('size');
- 
         $service = $this->services_model_v2->find_by_id_integrated($id_integrated);
         if(count($service) == 0){
             http_response_code(404);
