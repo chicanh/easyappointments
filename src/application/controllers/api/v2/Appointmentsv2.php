@@ -310,9 +310,7 @@ class AppointmentsV2 extends Appointments {
         }
         
         $appointments = $this->appointments_model_v2->getAllAppointmentBy($service, array_key_exists('aggregates', $_GET), $startDate, $endDate, $page, $size);
-        $response = new Response($appointments);
-        $response->encode($this->parser)
-            ->output();
+        return $appointments;
     }
 
     private function getAppointmentByProviderId($conditions, $id_provider_integrated) {
