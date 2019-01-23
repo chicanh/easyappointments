@@ -293,8 +293,7 @@ class Appointments_Model_V2 extends Appointments_Model {
         $appointment['customer'] = $this->db->get_where('ea_users',
             ['id' => $appointment['id_users_customer']])->row_array();
         $appointment['patient'] = $this->db->select('*')->from('ea_users')
-        ->join('ea_appointments_attendants', 'ea_users.id = ea_appointments_attendants.id_users')
-        ->join('ea_appointments', 'ea_appointments.id = ea_appointments_attendants.id_appointment')->get()->row_array();
+        ->join('ea_appointments_attendants', "ea_users.id = ea_appointments_attendants.id_users AND ea_appointments_attendants.id_appointment = $appointment['id']")->get()->row_array();
         return $appointment;
     }
 
