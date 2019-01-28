@@ -309,7 +309,7 @@ class AppointmentsV2 extends Appointments {
      */
     private function getAllAppointmentByPeriodTime($startDate, $endDate, $id_integrated){
         $page = $this->input->get('page');
-        $size = $this->input->get('size');
+        $size = $this->input->get('length');
         $service = $this->services_model_v2->find_by_id_integrated($id_integrated);
         if(count($service) == 0){
             http_response_code(404);
