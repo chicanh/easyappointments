@@ -97,8 +97,7 @@ class ServicesV2 extends Services {
        parrent::put($id);
     }
 
-    public function updateService() {
-        $id_integrated = $this->input->get('id_integrated');
+    public function updateService($id_integrated) {
         if($id_integrated !=null) {
          $condition = "id_integrated = '" .$id_integrated . "'";
          $service = $this->services_model_v2->get_batch($condition);
