@@ -35,7 +35,6 @@ class Appointments_Model_V2 extends Appointments_Model {
      */
     protected function _insert($appointment)
     {
-        $appointment['book_datetime'] = date('Y-m-d H:i:s');
         $appointment['hash'] = $this->generate_hash();
         if (isset($appointment['attachment']))
         {
