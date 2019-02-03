@@ -105,7 +105,7 @@ class AppointmentsV2 extends Appointments {
         
         if($isGetAppointmentByPeriodDateTime){  
             $responseSet['appointments'] = $result;
-            $responseSet['total'] = $totalAppointmentsByPeriodTime;
+            $responseSet['total'] = $totalAppointmentsByPeriodTime == null ? 0 : $totalAppointmentsByPeriodTime;
             $response = new Response($responseSet);
             $response->singleEntry($id_integrated)->output();
         }
