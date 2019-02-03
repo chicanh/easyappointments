@@ -313,9 +313,9 @@ class Appointments_Model_V2 extends Appointments_Model {
             $condition['end_datetime <='] = $endDate;
         }
         $condition['id_services'] = $service[0]->id;
-        $this->db->order_by("start_datetime", $sort);
-
+        
         $totalRecords = $this->db->get_where('ea_appointments', $condition)->num_rows();
+        $this->db->order_by("start_datetime", $sort);
 
 		if($page != ''&& $size != ''){
             $offset = ($page - 1 ) * $size;
