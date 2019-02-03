@@ -314,6 +314,9 @@ class Appointments_Model_V2 extends Appointments_Model {
         }
         $condition['id_services'] = $service[0]->id;
         $this->db->order_by("start_datetime", $sort);
+
+        $totalRecords = $this->db->get_where('ea_appointments', $condition)->num_rows();
+
 		if($page != ''&& $size != ''){
             $offset = ($page - 1 ) * $size;
             $appointments = $this->db->get_where('ea_appointments', $condition, $size, $offset)->result_array();
@@ -325,7 +328,10 @@ class Appointments_Model_V2 extends Appointments_Model {
                 $appointment = $this->get_aggregates($appointment);
             }
         }
-        return $appointments;
+
+        $resultSet['total'] = $totalRecords;
+        $resultSet['appointments'] = $appointments;
+        return $resultSet;
     }
     
     public function getStatisticAppointment($id_service,$startDate, $endDate){

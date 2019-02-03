@@ -56,36 +56,33 @@ class AppointmentsV2 extends Appointments {
     
     public function get($id_integrated = null) {
         try {
+        $sort = $this->input->get('sort') == null ? 'asc' : $this->input->get('sort') ;
         $isGetAppointmentByPeriodDateTime = false;
+        $totalAppointmentsByPeriodTime = 0;
+
         $conditions = [
             'is_unavailable' => FALSE
         ];
 
         if ($id_integrated !== NULL) {
             $conditions['id_integrated'] = $id_integrated;
+            $appointments = $this->appointments_model_v2->get_batch($conditions, array_key_exists('aggregates', $_GET), null, null ,'' , $sort);
         }
-        $sort = $this->input->get('sort') == null ? 'asc' : $this->input->get('sort') ;
-        $appointments = $this->appointments_model_v2->get_batch($conditions, array_key_exists('aggregates', $_GET), null, null ,'' , $sort);
         if($this->input->get('id_user_integrated')) {
             $appointments = $this->getAppointmentByUserId($conditions, $this->input->get('id_user_integrated'), $sort);
         } 
         else {
-
             if($this->input->get('id_provider_integrated') !=null && $this->input->get('id_service_integrated') !=null) {
                 $appointments = $this->getAppointmentByProviderIdAndServiceId($conditions, $this->input->get('id_provider_integrated'), $this->input->get('id_service_integrated'), $sort);
-            } else {
-               
-                if($this->input->get('id_provider_integrated') !=null) {
-                    $appointments = $this->getAppointmentByProviderId($conditions, $this->input->get('id_provider_integrated'), $sort);     
-                }
-                if($this->input->get('id_service_integrated') !=null) {
-                    $appointments = $this->getAppointmentByServiceId($conditions, $this->input->get('id_service_integrated'), $sort);
-                    
-                    if($this->input->get('startDate')!=null || $this->input->get('endDate') !=null){
-                        $appointments = $this->getAllAppointmentByPeriodTime($this->input->get('startDate'), $this->input->get('endDate'), $this->input->get('id_service_integrated'),$sort);
-                        $isGetAppointmentByPeriodDateTime = true;
-                    }
-                }
+            }else if($this->input->get('id_provider_integrated') != null) {
+                $appointments = $this->getAppointmentByProviderId($conditions, $this->input->get('id_provider_integrated'), $sort);     
+            }else if($this->input->get('id_service_integrated') !=null && $this->input->get('startDate') == null && $this->input->get('endDate') == null) {
+                $appointments = $this->getAppointmentByServiceId($conditions, $this->input->get('id_service_integrated'), $sort);
+            }else if($this->input->get('id_service_integrated') !=null && ($this->input->get('startDate')!=null || $this->input->get('endDate') !=null)){
+                $resultSet = $this->getAllAppointmentByPeriodTime($this->input->get('startDate'), $this->input->get('endDate'), $this->input->get('id_service_integrated'),$sort);
+                $appointments = $resultSet['appointments'];
+                $totalAppointmentsByPeriodTime = $resultSet['total'];
+                $isGetAppointmentByPeriodDateTime = true;
             }
         }
 
@@ -104,14 +101,16 @@ class AppointmentsV2 extends Appointments {
                 array_push($result, $appointment);
             }
         }
-        $response = new Response($result);
+  
         
-        if($isGetAppointmentByPeriodDateTime){
-            $response->encode($this->parser)
-            ->singleEntry($id_integrated)
-            ->output();
+        if($isGetAppointmentByPeriodDateTime){  
+            $responseSet['appointments'] = $result;
+            $responseSet['total'] = $totalAppointmentsByPeriodTime;
+            $response = new Response($responseSet);
+            $response->singleEntry($id_integrated)->output();
         }
-         else {
+        else {
+            $response = new Response($result);
             $response->encode($this->parser)
             ->search()
             ->sort()
@@ -315,9 +314,8 @@ class AppointmentsV2 extends Appointments {
             print('Could not found services with id: '.$id_integrated);
             return;
         }
-        
-        $appointments = $this->appointments_model_v2->getAllAppointmentBy($service, array_key_exists('aggregates', $_GET), $startDate, $endDate, $page, $size, $sort);
-        return $appointments;
+        $resultSet = $this->appointments_model_v2->getAllAppointmentBy($service, array_key_exists('aggregates', $_GET), $startDate, $endDate, $page, $size, $sort);
+        return $resultSet;
     }
 
     private function getAppointmentByProviderId($conditions, $id_provider_integrated, $sort) {
