@@ -1,4 +1,4 @@
-FROM php:7.0-apache
+FROM registry.davido.vn/php:7.1.8-apache
 
 ENV PROJECT_DIR=/var/www/html \
     APP_URL=localhost
