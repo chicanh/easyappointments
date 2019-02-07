@@ -173,7 +173,7 @@ class Appointments_Model_V2 extends Appointments_Model {
      * @return array Returns the rows from the database.
      * @throws Exception
      */
-    public function get_batch($where_clause = '', $aggregates = FALSE, $userId = NULL, $serviceId = NULL, $type = '')
+    public function get_batch($where_clause = '', $aggregates = FALSE, $userId = NULL, $serviceId = NULL, $type = '', $sort)
     {
         if ($where_clause != '') {
             $this->db->where($where_clause);
@@ -195,6 +195,7 @@ class Appointments_Model_V2 extends Appointments_Model {
                 break;
         }
 
+        $this->db->order_by("start_datetime",$sort);
         $appointments = $this->db->get('ea_appointments')->result_array();
 
         if ($aggregates) {
@@ -303,7 +304,7 @@ class Appointments_Model_V2 extends Appointments_Model {
     /**
      * Query all relative appointment by service id_integrated, start date & end date
      */
-    public function getAllAppointmentBy($service, $aggregates = FALSE, $startDate, $endDate, $page ,$size){
+    public function getAllAppointmentBy($service, $aggregates = FALSE, $startDate, $endDate, $page ,$size, $sort){
         if(strlen($startDate) != 0){
             $condition['start_datetime >='] = $startDate;
         }
@@ -312,6 +313,10 @@ class Appointments_Model_V2 extends Appointments_Model {
             $condition['end_datetime <='] = $endDate;
         }
         $condition['id_services'] = $service[0]->id;
+        
+        $totalRecords = $this->db->get_where('ea_appointments', $condition)->num_rows();
+        $this->db->order_by("start_datetime", $sort);
+
 		if($page != ''&& $size != ''){
             $offset = ($page - 1 ) * $size;
             $appointments = $this->db->get_where('ea_appointments', $condition, $size, $offset)->result_array();
@@ -323,7 +328,10 @@ class Appointments_Model_V2 extends Appointments_Model {
                 $appointment = $this->get_aggregates($appointment);
             }
         }
-        return $appointments;
+
+        $resultSet['total'] = $totalRecords;
+        $resultSet['appointments'] = $appointments;
+        return $resultSet;
     }
     
     public function getStatisticAppointment($id_service,$startDate, $endDate){
