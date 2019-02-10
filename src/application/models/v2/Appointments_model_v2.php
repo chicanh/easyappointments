@@ -174,7 +174,7 @@ class Appointments_Model_V2 extends Appointments_Model {
      * @return array Returns the rows from the database.
      * @throws Exception
      */
-    public function get_batch($where_clause = '', $aggregates = FALSE, $userId = NULL, $serviceId = NULL, $type = '', $sort)
+    public function get_batch($where_clause = '', $aggregates = FALSE, $userId = NULL, $serviceId = NULL, $type = '')
     {
         if ($where_clause != '') {
             $this->db->where($where_clause);
