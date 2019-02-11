@@ -35,6 +35,7 @@ class Appointments_Model_V2 extends Appointments_Model {
      */
     protected function _insert($appointment)
     {
+        $appointment['book_datetime'] = date('Y-m-d H:i:s');
         $appointment['hash'] = $this->generate_hash();
         if (isset($appointment['attachment']))
         {
@@ -173,7 +174,7 @@ class Appointments_Model_V2 extends Appointments_Model {
      * @return array Returns the rows from the database.
      * @throws Exception
      */
-    public function get_batch($where_clause = '', $aggregates = FALSE, $userId = NULL, $serviceId = NULL, $type = '', $sort)
+    public function get_batch($where_clause = '', $aggregates = FALSE, $userId = NULL, $serviceId = NULL, $type = '')
     {
         if ($where_clause != '') {
             $this->db->where($where_clause);
@@ -195,7 +196,6 @@ class Appointments_Model_V2 extends Appointments_Model {
                 break;
         }
 
-        $this->db->order_by("start_datetime",$sort);
         $appointments = $this->db->get('ea_appointments')->result_array();
 
         if ($aggregates) {
@@ -332,6 +332,45 @@ class Appointments_Model_V2 extends Appointments_Model {
         $resultSet['total'] = $totalRecords;
         $resultSet['appointments'] = $appointments;
         return $resultSet;
+    }
+
+    public function get_batch_paging($where_clause = '', $aggregates = FALSE, $userId = NULL, $serviceId = NULL, $type = '', $sort, $page, $size)
+    {
+        if ($where_clause != '') {
+            $this->db->where($where_clause);
+        }
+        switch ($type) {
+            case self::CUSTOMER:
+                $this->db->where('id_users_customer', $userId);
+                break;
+            case self::PROVIDER:
+                $this->db->where('id_users_provider', $userId);
+                break;
+            case self::SERVICE:
+                $this->db->where('id_services', $serviceId);
+                break;
+            case self::PROVIDER_SERVICE:
+                $this->db->where('id_users_provider', $userId)->where('id_services', $serviceId);
+                break;
+            default:
+                break;
+        }
+        if($sort != null){
+            $this->db->order_by("start_datetime",$sort);
+        }
+        if($page != ''&& $size != ''){
+            $offset = ($page - 1 ) * $size;
+            $this->db->limit($size,$offset);
+        }
+        $appointments = $this->db->get('ea_appointments')->result_array();
+
+        if ($aggregates) {
+            foreach ($appointments as &$appointment) {
+                $appointment = $this->get_aggregates($appointment);
+            }
+        }
+
+        return $appointments;
     }
     
     public function getStatisticAppointment($id_service,$startDate, $endDate){
