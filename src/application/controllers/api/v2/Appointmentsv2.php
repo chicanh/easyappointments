@@ -95,6 +95,24 @@ class AppointmentsV2 extends Appointments {
                 $this->_throwRecordNotFound();
         }
  
+        $result = $this->getAttachments($appointments);
+        $encodedAppointments = $this->encodedAppointments($result);  
+        
+        if($isGetAppointmentByPeriodDateTime){
+            $responseSet['total'] = $totalAppointmentsByPeriodTime == null ? 0 : $totalAppointmentsByPeriodTime;
+            $responseSet['appointments'] = $encodedAppointments;
+            $response = new Response($responseSet);
+            $response->singleEntry($id_integrated)->output();
+            return;
+        }
+        $response = new Response($encodedAppointments);
+        $response->singleEntry($id_integrated)->output();
+     } catch (\Exception $exception) {
+                exit($this->_handleException($exception));
+     }
+    }
+
+    private function getAttachments($appointments){
         $result = array();
         if (count($appointments) > 0) {
             foreach ($appointments as $appointment) {
@@ -105,20 +123,15 @@ class AppointmentsV2 extends Appointments {
                 array_push($result, $appointment);
             }
         }
-  
-        
-        if($isGetAppointmentByPeriodDateTime){  
-            $responseSet['appointments'] = $result;
-            $responseSet['total'] = $totalAppointmentsByPeriodTime == null ? 0 : $totalAppointmentsByPeriodTime;
-            $response = new Response($responseSet);
-            $response->singleEntry($id_integrated)->output();
-            return;
+        return $result;
+    }
+
+    private function encodedAppointments($appointments){
+        $encodedAppointments = [];  
+        foreach ($appointments as &$value){
+            array_push($encodedAppointments,$this->parser->customEncode($value));
         }
-        $response = new Response($result);
-        $response->encode($this->parser)->singleEntry($id_integrated)->output();
-     } catch (\Exception $exception) {
-                exit($this->_handleException($exception));
-     }
+        return $encodedAppointments;
     }
 
     /**
@@ -306,8 +319,7 @@ class AppointmentsV2 extends Appointments {
         $service = $this->services_model_v2->find_by_id_integrated($id_integrated);
         if(count($service) == 0){
             http_response_code(404);
-            print('Could not found services with id: '.$id_integrated);
-            return;
+            exit();
         }
         $resultSet = $this->appointments_model_v2->getAllAppointmentBy($service, array_key_exists('aggregates', $_GET), $startDate, $endDate, $page, $size, $sort);
         return $resultSet;
@@ -368,8 +380,7 @@ class AppointmentsV2 extends Appointments {
         $service = $this->services_model_v2->find_by_id_integrated($id_integrated);
         if(count($service) == 0){
             http_response_code(404);
-            print('Could not found services with id: '.$id_integrated);
-            return;
+            exit();
         }
         $resultSet = $this->appointments_model_v2->getStatisticAppointment($service[0]->id, $startDate, $endDate);
         $response = new Response($resultSet);
