@@ -149,4 +149,14 @@ class Response {
 
         return $this;
     }
+    // just use for get appointment
+    public function singleAppointmentEntry($id)
+    {
+        if ($id !== NULL)
+        {
+            $this->response = array_shift($this->response['appointments']);
+        }
+
+        return $this;
+    }
 }
