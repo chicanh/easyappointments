@@ -91,7 +91,7 @@ class AppointmentsV2 extends Appointments {
             $responseSet['total'] = $totalAppointmentsByPeriodTime == null ? 0 : $totalAppointmentsByPeriodTime;
             $responseSet['appointments'] = $encodedAppointments;
             $response = new Response($responseSet);
-            $response->singleEntry($id_integrated)->output();
+            $response->singleAppointmentEntry($id_integrated)->output();
             
         } catch (\Exception $exception) {
                     exit($this->_handleException($exception));
