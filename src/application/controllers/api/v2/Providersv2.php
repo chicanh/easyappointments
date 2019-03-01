@@ -114,8 +114,7 @@ class ProvidersV2 extends Providers {
         parent::put($id);
     }
 
-    public function updateProvider() {
-        $id_integrated = $this->input->get('id_integrated');
+    public function updateProvider($id_integrated) {
         if($id_integrated !=null) {
          $condition = "id_integrated = '" .$id_integrated . "'";
          $provider = $this->providers_model->get_batch($condition);
@@ -123,6 +122,32 @@ class ProvidersV2 extends Providers {
                 $this->_throwRecordNotFound();
             }
             parent::put($provider[0]['id']);
+        } else {
+            set_status_header(400);
+            echo 'please enter id_integrated';
+        }
+    }
+
+    public function updateProviderByServiceId($id_service_integrated, $id_integrated) {
+        if($id_integrated !=null && $id_service_integrated!=null) {
+        $service = $this->services_model_v2->get_batch("id_integrated='". $id_service_integrated . "'");
+        
+        if (isset($service)) {
+            $services_providers = $this->services_providers_model_v2->get_providers_by_service_id($service[0]['id']);
+        }
+        if (count($services_providers) > 0) {
+            foreach ($services_providers as $sp) {
+                $provider = $this->user_model_v2->find_by_id($sp['id_users']);
+                if (count($provider) === 0) {
+                    $this->_throwRecordNotFound();
+                }
+
+                if($provider['id_integrated'] == $id_integrated) {
+                    
+                    parent::put($provider['id']);
+                }
+            }
+        }
         } else {
             set_status_header(400);
             echo 'please enter id_integrated';

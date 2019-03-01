@@ -166,4 +166,54 @@ class AppointmentsV2 extends Appointments {
 
         $request = $decodedRequest;
     }
+
+    public function customEncode($response)
+    {
+        $encodedResponse = [
+            'id' => $response['id'] !== NULL ? (int)$response['id'] : NULL,
+            'book' => $response['book_datetime'],
+            'start' => $response['start_datetime'],
+            'end' => $response['end_datetime'],
+            'hash' => $response['hash'],
+            'notes' => $response['notes'],
+            'customerId' => $response['id_users_customer'] !== NULL ? (int)$response['id_users_customer'] : NULL,
+            'providerId' => $response['id_users_provider'] !== NULL ? (int)$response['id_users_provider'] : NULL,
+            'serviceId' => $response['id_services'] !== NULL ? (int)$response['id_services'] : NULL,
+            'googleCalendarId' => $response['id_google_calendar'] !== NULL ? (int)$response['id_google_calendar'] : NULL,
+            'status' => $response['status'],
+            'id_integrated' => $response['id_integrated'],
+            'cancelReason' => $response['cancel_reason'],
+            'attachment' => $response['attachment']
+        ];
+
+        if (isset($response['provider']))
+        {
+            $providerParser = new Providers();
+            $providerParser->encode($response['provider']);
+            $encodedResponse['provider'] = $response['provider'];
+        }
+
+        if (isset($response['customer']))
+        {
+            $customerParser = new Customers();
+            $customerParser->encode($response['customer']);
+            $encodedResponse['customer'] = $response['customer'];
+        }
+
+        if (isset($response['service']))
+        {
+            $serviceParser = new Services();
+            $serviceParser->encode($response['service']);
+            $encodedResponse['service'] = $response['service'];
+        }
+        if (isset($response['patient']))
+        {
+            $customerParser = new Customers();
+            $customerParser->encode($response['patient']);
+            $encodedResponse['patient'] = $response['patient'];
+        }
+
+        return $encodedResponse;
+    }
+
 }
