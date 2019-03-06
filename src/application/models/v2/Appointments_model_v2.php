@@ -371,6 +371,9 @@ class Appointments_Model_V2 extends Appointments_Model {
             $this->db->where($where_clause);
         }
         switch ($type) {
+            case self::CUSTOMER:
+                $this->db->where('id_users_customer', $userId);
+                break;
             case self::PROVIDER:
                 $this->db->where('id_users_provider', $userId);
                 break;

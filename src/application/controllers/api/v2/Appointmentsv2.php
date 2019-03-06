@@ -102,8 +102,12 @@ class AppointmentsV2 extends Appointments {
         $id_service_integrated = $this->input->get('id_service_integrated');
 		$id_provider_integrated = $this->input->get('id_provider_integrated');
         $otherRequestParams = $this->input->get();
-
-        if($id_provider_integrated != null) {
+        if($id_provider_integrated != null && $id_service_integrated != null) {
+            return $this->getAppointmentByUserId($conditions, $id_user_integrated, $otherRequestParams);
+        } 
+        else if($id_user_integrated != null ) {
+            return $this->getAppointmentByProviderIdAndServiceId($conditions, $id_provider_integrated, $id_service_integrated, $otherRequestParams);
+        }else if($id_provider_integrated != null) {
             return  $this->getAppointmentByProviderId($conditions, $id_provider_integrated, $otherRequestParams);     
         }else if($id_service_integrated != null) {
             return $this->getAppointmentByServiceId($conditions, $id_service_integrated, $otherRequestParams);
@@ -366,6 +370,15 @@ class AppointmentsV2 extends Appointments {
             echo 'id_service_integrated is not exist in database';
             exit;
         }
+        return $appointments;
+    }
+
+    private function getAppointmentByUserId($conditions, $id_user_integrated, $otherRequestParams) {
+        $user = $this->user_model_v2->find_by_id_integrated($id_user_integrated);
+        if (isset($user)) {
+            $appointments = $this->appointments_model_v2->get_batch_paging($conditions, array_key_exists('aggregates', $_GET), $user['id'], NULL, $this->appointments_model_v2::CUSTOMER, $otherRequestParams);
+        }
+
         return $appointments;
     }
 
