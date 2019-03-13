@@ -97,14 +97,29 @@ class User_Model_V2 extends User_Model {
         return $user;
     }
 
-    public function find_list_userId_by_fullName($fullName){
+    public function find_list_userId_by_fullName($fullName, $id_service_integrated){
         $idList = [];
         if($fullName == null || $fullName == ''){
             return $idList;
         }
         $ID_ROLES_OF_CUSTOMER = 3;
-        $sql = "SELECT id FROM ea_users WHERE CONCAT(first_name, ' ',last_name) LIKE ? AND id_roles = ?";
-        $result = $this->db->query($sql, array('%'.$fullName.'%', $ID_ROLES_OF_CUSTOMER))->result_array();
+
+        $result = [];
+        if(strlen($id_service_integrated) == 0){
+            $sql = "SELECT id FROM ea_users WHERE CONCAT(first_name, ' ',last_name) LIKE ? AND id_roles = ?";
+            $result = $this->db->query($sql, array('%'.$fullName.'%', $ID_ROLES_OF_CUSTOMER))->result_array();
+        }else{
+            $sql = "SELECT eaUsers.id 
+                    FROM ea_users eaUsers  
+                    WHERE CONCAT(eaUsers.first_name, ' ',eaUsers.last_name) LIKE ? 
+                          AND eaUsers.id_roles = ?
+                          AND eaUsers.id IN ( 
+                              SELECT eaAppointments.id_users_customer 
+                              FROM ea_appointments eaAppointments
+                              WHERE eaAppointments.id_services = ?
+                          )";
+            $result = $this->db->query($sql, array('%'.$fullName.'%', $ID_ROLES_OF_CUSTOMER, $id_service_integrated))->result_array();
+        }
         foreach($result as &$record){
             array_push($idList, $record['id']);
         }

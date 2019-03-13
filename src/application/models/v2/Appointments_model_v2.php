@@ -321,7 +321,7 @@ class Appointments_Model_V2 extends Appointments_Model {
         }
 
         if($otherQuery != null && $otherQuery != ''){
-            $idList = $this->find_list_userId_by($otherQuery);
+            $idList = $this->find_list_userId_by($otherQuery, $service[0]->id);
             if(sizeof($idList) > 0){
                 $this->db->where_in('id_users_customer', $idList);
             }else{
@@ -395,7 +395,7 @@ class Appointments_Model_V2 extends Appointments_Model {
         }
 
         if($otherQuery != null && $otherQuery != ''){
-            $idList = $this->find_list_userId_by($otherQuery);
+            $idList = $this->find_list_userId_by($otherQuery, $serviceId);
             if(sizeof($idList) > 0){
                 $this->db->where_in('id_users_customer', $idList);
             }else{
@@ -435,9 +435,9 @@ class Appointments_Model_V2 extends Appointments_Model {
         return $result;
     }
 
-    private function find_list_userId_by($fullName){
+    private function find_list_userId_by($fullName, $id_service_integrated){
         $this->load->model('/v2/user_model_v2');
-        $result = $this->user_model_v2->find_list_userId_by_fullName($fullName);
+        $result = $this->user_model_v2->find_list_userId_by_fullName($fullName, $id_service_integrated);
         return $result;
     }
 }
