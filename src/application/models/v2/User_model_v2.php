@@ -109,16 +109,13 @@ class User_Model_V2 extends User_Model {
             $sql = "SELECT id FROM ea_users WHERE CONCAT(first_name, ' ',last_name) LIKE ? AND id_roles = ?";
             $result = $this->db->query($sql, array('%'.$fullName.'%', $ID_ROLES_OF_CUSTOMER))->result_array();
         }else{
-            $sql = "SELECT eaUsers.id 
-                    FROM ea_users eaUsers  
-                    WHERE CONCAT(eaUsers.first_name, ' ',eaUsers.last_name) LIKE ? 
-                          AND eaUsers.id_roles = ?
-                          AND eaUsers.id IN ( 
-                              SELECT eaAppointments.id_users_customer 
-                              FROM ea_appointments eaAppointments
-                              WHERE eaAppointments.id_services = ?
-                          )";
-            $result = $this->db->query($sql, array('%'.$fullName.'%', $ID_ROLES_OF_CUSTOMER, $id_service_integrated))->result_array();
+           $this->db->select("eaUsers.id")
+                    ->from("ea_users eaUsers")
+                    ->join('ea_appointments eaAppointments', 'eaAppointments.id_users_customer = eaUsers.id')
+                    ->where('eaUsers.id_roles', $ID_ROLES_OF_CUSTOMER)
+                    ->where('eaAppointments.id_services', $id_service_integrated)
+                    ->where("CONCAT(eaUsers.first_name, ' ', eaUsers.last_name) LIKE '%".$fullName."%'", NULL, FALSE);
+            $result = $this->db->get()->result_array();
         }
         foreach($result as &$record){
             array_push($idList, $record['id']);
