@@ -103,10 +103,10 @@ class AppointmentsV2 extends Appointments {
 		$id_provider_integrated = $this->input->get('id_provider_integrated');
         $otherRequestParams = $this->input->get();
         if($id_provider_integrated != null && $id_service_integrated != null) {
-            return $this->getAppointmentByUserId($conditions, $id_user_integrated, $otherRequestParams);
+            return $this->getAppointmentByProviderIdAndServiceId($conditions, $id_provider_integrated, $id_service_integrated, $otherRequestParams);
         } 
         else if($id_user_integrated != null ) {
-            return $this->getAppointmentByProviderIdAndServiceId($conditions, $id_provider_integrated, $id_service_integrated, $otherRequestParams);
+            return $this->getAppointmentByUserId($conditions, $id_user_integrated, $otherRequestParams);
         }else if($id_provider_integrated != null) {
             return  $this->getAppointmentByProviderId($conditions, $id_provider_integrated, $otherRequestParams);     
         }else if($id_service_integrated != null) {
