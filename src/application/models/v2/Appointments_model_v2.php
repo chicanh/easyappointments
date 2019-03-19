@@ -345,25 +345,25 @@ class Appointments_Model_V2 extends Appointments_Model {
 
     public function get_batch_paging($where_clause = '', $aggregates = FALSE, $userId = NULL, $serviceId = NULL, $type = '', $sort, $page, $size)
     {
-        if ($where_clause != '') {
-            $this->db->where($where_clause);
-        }
+
         switch ($type) {
             case self::CUSTOMER:
-                $this->db->where('id_users_customer', $userId);
+                $where_clause['id_users_customer'] = $userId;
                 break;
             case self::PROVIDER:
-                $this->db->where('id_users_provider', $userId);
+                $where_clause['id_users_provider'] = $userId;
                 break;
             case self::SERVICE:
-                $this->db->where('id_services', $serviceId);
+                $where_clause['id_services'] = $serviceId;
                 break;
             case self::PROVIDER_SERVICE:
-                $this->db->where('id_users_provider', $userId)->where('id_services', $serviceId);
+                $where_clause['id_users_provider'] = $userId;
+                $where_clause['id_services'] = $serviceId;
                 break;
             default:
                 break;
         }
+        $totalRecords = $this->db->get_where('ea_appointments', $condition)->num_rows();
         if($sort != null){
             $this->db->order_by("start_datetime",$sort);
         }
@@ -372,7 +372,6 @@ class Appointments_Model_V2 extends Appointments_Model {
             $this->db->limit($size,$offset);
         }
         $appointments = $this->db->get('ea_appointments')->result_array();
-        $totalRecords = sizeof($appointments);
 
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
