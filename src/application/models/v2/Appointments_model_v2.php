@@ -363,15 +363,17 @@ class Appointments_Model_V2 extends Appointments_Model {
             default:
                 break;
         }
-        $totalRecords = $this->db->get_where('ea_appointments', $condition)->num_rows();
+        $appointments = $this->db->get_where('ea_appointments', $where_clause)->result_array();
+        $totalRecords = sizeof($appointments);
+
         if($sort != null){
             $this->db->order_by("start_datetime",$sort);
         }
         if($page != ''&& $size != ''){
             $offset = ($page - 1 ) * $size;
             $this->db->limit($size,$offset);
+            $appointments = $this->db->get_where('ea_appointments', $where_clause, $size, $offset)->result_array();
         }
-        $appointments = $this->db->get('ea_appointments')->result_array();
 
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
