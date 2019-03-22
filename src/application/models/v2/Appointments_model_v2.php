@@ -366,45 +366,45 @@ class Appointments_Model_V2 extends Appointments_Model {
         $page = $requestParams['page'];
         $size = $requestParams['size'];
         $otherQuery = $requestParams['q'];
-        
-        if ($where_clause != '') {
-            $this->db->where($where_clause);
-        }
         switch ($type) {
             case self::CUSTOMER:
-                $this->db->where('id_users_customer', $userId);
+                $where_clause['id_users_customer'] = $userId;
                 break;
             case self::PROVIDER:
-                $this->db->where('id_users_provider', $userId);
+                $where_clause['id_users_provider'] = $userId;
                 break;
             case self::SERVICE:
-                $this->db->where('id_services', $serviceId);
+                $where_clause['id_services'] = $serviceId;
                 break;
             case self::PROVIDER_SERVICE:
-                $this->db->where('id_users_provider', $userId)->where('id_services', $serviceId);
+                $where_clause['id_users_provider'] = $userId;
+                $where_clause['id_services'] = $serviceId;
                 break;
             default:
                 break;
         }
+
+        if($otherQuery != null && $otherQuery != ''){
+            $idList = $this->find_list_userId_by($otherQuery, $serviceId);
+            if(sizeof($idList) > 0){
+                $listId = $this->handlerArrayString($idList);
+                $where_clause["id_users_customer IN (".$listId.")"] = null;
+            }else{
+                $where_clause['id_integrated'] = $otherQuery;
+            }
+        }
+        $appointments = $this->db->get_where('ea_appointments', $where_clause)->result_array();
+        $totalRecords = sizeof($appointments);
+
+
         if($sort != null){
             $this->db->order_by("start_datetime",$sort);
         }
         if($page != ''&& $size != ''){
             $offset = ($page - 1 ) * $size;
             $this->db->limit($size,$offset);
+            $appointments = $this->db->get_where('ea_appointments', $where_clause, $size, $offset)->result_array();
         }
-
-        if($otherQuery != null && $otherQuery != ''){
-            $idList = $this->find_list_userId_by($otherQuery, $serviceId);
-            if(sizeof($idList) > 0){
-                $this->db->where_in('id_users_customer', $idList);
-            }else{
-                $this->db->where('id_integrated', $otherQuery);
-            }
-        }
-
-        $appointments = $this->db->get('ea_appointments')->result_array();
-        $totalRecords = sizeof($appointments);
 
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
@@ -439,5 +439,13 @@ class Appointments_Model_V2 extends Appointments_Model {
         $this->load->model('/v2/user_model_v2');
         $result = $this->user_model_v2->find_list_userId_by_fullName($fullName, $id_service_integrated);
         return $result;
+    }
+
+    private function handlerArrayString($arrays){
+        $result = '';
+        foreach ($arrays as &$value){
+            $result .= $value . ',';
+        }
+        return substr($result, 0 , -1);
     }
 }
