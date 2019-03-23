@@ -304,7 +304,14 @@ class Appointments_Model_V2 extends Appointments_Model {
     /**
      * Query all relative appointment by service id_integrated, start date & end date
      */
-    public function getAllAppointmentBy($service, $aggregates = FALSE, $startDate, $endDate, $page ,$size, $sort, $type = ''){
+    public function getAllAppointmentBy($service, $aggregates = FALSE, $otherRequestParams, $type = ''){
+        $startDate = $otherRequestParams['startDate'];
+        $endDate = $otherRequestParams['endDate'];
+        $page = $otherRequestParams['page'];
+        $size = $otherRequestParams['size'];
+        $sort = $otherRequestParams['sort'];
+        $otherQuery = $otherRequestParams['q'];
+
         if(strlen($startDate) != 0){
             $condition['start_datetime >='] = $startDate;
         }
@@ -312,6 +319,16 @@ class Appointments_Model_V2 extends Appointments_Model {
             $endDate .= ' 23:59:00';
             $condition['end_datetime <='] = $endDate;
         }
+
+        if($otherQuery != null && $otherQuery != ''){
+            $idList = $this->find_list_userId_by($otherQuery, $service[0]->id);
+            if(sizeof($idList) > 0){
+                $this->db->where_in('id_users_customer', $idList);
+            }else{
+                $this->db->where('id_integrated', $otherQuery);
+            }
+        }
+
         switch ($type) {
             case self::CUSTOMER:
                 $condition['id_users_customer'] = $service[0]->id;
@@ -323,7 +340,6 @@ class Appointments_Model_V2 extends Appointments_Model {
                 break;
         }
 
-        $totalRecords = $this->db->get_where('ea_appointments', $condition)->num_rows();
         $this->db->order_by("start_datetime", $sort);
 
 		if($page != ''&& $size != ''){
@@ -332,6 +348,7 @@ class Appointments_Model_V2 extends Appointments_Model {
         }else{
             $appointments = $this->db->get_where('ea_appointments', $condition)->result_array();
         }
+        $totalRecords = sizeof($appointments);
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);
@@ -343,9 +360,12 @@ class Appointments_Model_V2 extends Appointments_Model {
         return $resultSet;
     }
 
-    public function get_batch_paging($where_clause = '', $aggregates = FALSE, $userId = NULL, $serviceId = NULL, $type = '', $sort, $page, $size)
+    public function get_batch_paging($where_clause = '', $aggregates = FALSE, $userId = NULL, $serviceId = NULL, $type = '', $requestParams)
     {
-
+        $sort = $requestParams['sort'];
+        $page = $requestParams['page'];
+        $size = $requestParams['size'];
+        $otherQuery = $requestParams['q'];
         switch ($type) {
             case self::CUSTOMER:
                 $where_clause['id_users_customer'] = $userId;
@@ -363,8 +383,19 @@ class Appointments_Model_V2 extends Appointments_Model {
             default:
                 break;
         }
+
+        if($otherQuery != null && $otherQuery != ''){
+            $idList = $this->find_list_userId_by($otherQuery, $serviceId);
+            if(sizeof($idList) > 0){
+                $listId = $this->handlerArrayString($idList);
+                $where_clause["id_users_customer IN (".$listId.")"] = null;
+            }else{
+                $where_clause['id_integrated'] = $otherQuery;
+            }
+        }
         $appointments = $this->db->get_where('ea_appointments', $where_clause)->result_array();
         $totalRecords = sizeof($appointments);
+
 
         if($sort != null){
             $this->db->order_by("start_datetime",$sort);
@@ -404,4 +435,17 @@ class Appointments_Model_V2 extends Appointments_Model {
         return $result;
     }
 
+    private function find_list_userId_by($fullName, $id_service_integrated){
+        $this->load->model('/v2/user_model_v2');
+        $result = $this->user_model_v2->find_list_userId_by_fullName($fullName, $id_service_integrated);
+        return $result;
+    }
+
+    private function handlerArrayString($arrays){
+        $result = '';
+        foreach ($arrays as &$value){
+            $result .= $value . ',';
+        }
+        return substr($result, 0 , -1);
+    }
 }
