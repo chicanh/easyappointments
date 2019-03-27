@@ -100,7 +100,8 @@ class AppointmentsV2 extends Appointments {
 
     private function getDataWithoutDateRange($conditions){
         $id_service_integrated = $this->input->get('id_service_integrated');
-		$id_provider_integrated = $this->input->get('id_provider_integrated');
+        $id_provider_integrated = $this->input->get('id_provider_integrated');
+        $id_user_integrated = $this->input->get('id_user_integrated');
         $otherRequestParams = $this->input->get();
         if($id_provider_integrated != null && $id_service_integrated != null) {
             return $this->getAppointmentByProviderIdAndServiceId($conditions, $id_provider_integrated, $id_service_integrated, $otherRequestParams);
