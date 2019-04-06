@@ -366,6 +366,8 @@ class Appointments_Model_V2 extends Appointments_Model {
         $page = $requestParams['page'];
         $size = $requestParams['size'];
         $otherQuery = $requestParams['q'];
+
+        $sort = $sort == null || $sort == '' ? 'ASC' : $sort; // set default value for sort
         switch ($type) {
             case self::CUSTOMER:
                 $where_clause['id_users_customer'] = $userId;
@@ -393,17 +395,14 @@ class Appointments_Model_V2 extends Appointments_Model {
                 $where_clause['id_integrated'] = $otherQuery;
             }
         }
-        $appointments = $this->db->get_where('ea_appointments', $where_clause)->result_array();
+
+        $appointments = $this->db->order_by("start_datetime",$sort)->get_where('ea_appointments', $where_clause)->result_array();
         $totalRecords = sizeof($appointments);
 
-
-        if($sort != null){
-            $this->db->order_by("start_datetime",$sort);
-        }
-        if($page != ''&& $size != ''){
+        if($page != '' && $size != ''){
             $offset = ($page - 1 ) * $size;
             $this->db->limit($size,$offset);
-            $appointments = $this->db->get_where('ea_appointments', $where_clause, $size, $offset)->result_array();
+            $appointments = $this->db->order_by("start_datetime",$sort)->get_where('ea_appointments', $where_clause, $size, $offset)->result_array();
         }
 
         if ($aggregates) {
