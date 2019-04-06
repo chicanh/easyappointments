@@ -367,7 +367,7 @@ class Appointments_Model_V2 extends Appointments_Model {
         $size = $requestParams['size'];
         $otherQuery = $requestParams['q'];
 
-        $sort = $sort == null || $sort == '' ? 'ASC' : $sort; // set default value for sort
+        $sort = $sort == null || $sort == '' ? 'DESC' : $sort; // set default value for sort
         switch ($type) {
             case self::CUSTOMER:
                 $where_clause['id_users_customer'] = $userId;
