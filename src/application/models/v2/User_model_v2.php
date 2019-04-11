@@ -97,4 +97,29 @@ class User_Model_V2 extends User_Model {
         return $user;
     }
 
+    public function find_list_userId_by_fullName($fullName, $id_service_integrated){
+        $idList = [];
+        if($fullName == null || $fullName == ''){
+            return $idList;
+        }
+        $ID_ROLES_OF_CUSTOMER = 3;
+
+        $result = [];
+        if(strlen($id_service_integrated) == 0){
+            $sql = "SELECT id FROM ea_users WHERE CONCAT(first_name, ' ',last_name) LIKE ? AND id_roles = ?";
+            $result = $this->db->query($sql, array('%'.$fullName.'%', $ID_ROLES_OF_CUSTOMER))->result_array();
+        }else{
+           $this->db->select("eaUsers.id")
+                    ->from("ea_users eaUsers")
+                    ->join('ea_appointments eaAppointments', 'eaAppointments.id_users_customer = eaUsers.id')
+                    ->where('eaUsers.id_roles', $ID_ROLES_OF_CUSTOMER)
+                    ->where('eaAppointments.id_services', $id_service_integrated)
+                    ->where("CONCAT(eaUsers.first_name, ' ', eaUsers.last_name) LIKE '%".$fullName."%'", NULL, FALSE);
+            $result = $this->db->get()->result_array();
+        }
+        foreach($result as &$record){
+            array_push($idList, $record['id']);
+        }
+        return $idList;
+    }
 }

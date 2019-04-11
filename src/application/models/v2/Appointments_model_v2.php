@@ -304,7 +304,14 @@ class Appointments_Model_V2 extends Appointments_Model {
     /**
      * Query all relative appointment by service id_integrated, start date & end date
      */
-    public function getAllAppointmentBy($service, $aggregates = FALSE, $startDate, $endDate, $page ,$size, $sort, $type = ''){
+    public function getAllAppointmentBy($service, $aggregates = FALSE, $otherRequestParams, $type = ''){
+        $startDate = $otherRequestParams['startDate'];
+        $endDate = $otherRequestParams['endDate'];
+        $page = $otherRequestParams['page'];
+        $size = $otherRequestParams['size'];
+        $sort = $otherRequestParams['sort'];
+        $otherQuery = $otherRequestParams['q'];
+
         if(strlen($startDate) != 0){
             $condition['start_datetime >='] = $startDate;
         }
@@ -312,6 +319,16 @@ class Appointments_Model_V2 extends Appointments_Model {
             $endDate .= ' 23:59:00';
             $condition['end_datetime <='] = $endDate;
         }
+
+        if($otherQuery != null && $otherQuery != ''){
+            $idList = $this->find_list_userId_by($otherQuery, $service[0]->id);
+            if(sizeof($idList) > 0){
+                $this->db->where_in('id_users_customer', $idList);
+            }else{
+                $this->db->where('id_integrated', $otherQuery);
+            }
+        }
+
         switch ($type) {
             case self::CUSTOMER:
                 $condition['id_users_customer'] = $service[0]->id;
@@ -323,7 +340,6 @@ class Appointments_Model_V2 extends Appointments_Model {
                 break;
         }
 
-        $totalRecords = $this->db->get_where('ea_appointments', $condition)->num_rows();
         $this->db->order_by("start_datetime", $sort);
 
 		if($page != ''&& $size != ''){
@@ -332,6 +348,7 @@ class Appointments_Model_V2 extends Appointments_Model {
         }else{
             $appointments = $this->db->get_where('ea_appointments', $condition)->result_array();
         }
+        $totalRecords = sizeof($appointments);
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);
@@ -343,36 +360,50 @@ class Appointments_Model_V2 extends Appointments_Model {
         return $resultSet;
     }
 
-    public function get_batch_paging($where_clause = '', $aggregates = FALSE, $userId = NULL, $serviceId = NULL, $type = '', $sort, $page, $size)
+    public function get_batch_paging($where_clause = '', $aggregates = FALSE, $userId = NULL, $serviceId = NULL, $type = '', $requestParams)
     {
-        if ($where_clause != '') {
-            $this->db->where($where_clause);
-        }
+        $sort = $requestParams['sort'];
+        $page = $requestParams['page'];
+        $size = $requestParams['size'];
+        $otherQuery = $requestParams['q'];
+
+        $sort = $sort == null || $sort == '' ? 'DESC' : $sort; // set default value for sort
         switch ($type) {
             case self::CUSTOMER:
-                $this->db->where('id_users_customer', $userId);
+                $where_clause['id_users_customer'] = $userId;
                 break;
             case self::PROVIDER:
-                $this->db->where('id_users_provider', $userId);
+                $where_clause['id_users_provider'] = $userId;
                 break;
             case self::SERVICE:
-                $this->db->where('id_services', $serviceId);
+                $where_clause['id_services'] = $serviceId;
                 break;
             case self::PROVIDER_SERVICE:
-                $this->db->where('id_users_provider', $userId)->where('id_services', $serviceId);
+                $where_clause['id_users_provider'] = $userId;
+                $where_clause['id_services'] = $serviceId;
                 break;
             default:
                 break;
         }
-        if($sort != null){
-            $this->db->order_by("start_datetime",$sort);
+
+        if($otherQuery != null && $otherQuery != ''){
+            $idList = $this->find_list_userId_by($otherQuery, $serviceId);
+            if(sizeof($idList) > 0){
+                $listId = $this->handlerArrayString($idList);
+                $where_clause["id_users_customer IN (".$listId.")"] = null;
+            }else{
+                $where_clause['id_integrated'] = $otherQuery;
+            }
         }
-        if($page != ''&& $size != ''){
+
+        $appointments = $this->db->order_by("start_datetime",$sort)->get_where('ea_appointments', $where_clause)->result_array();
+        $totalRecords = sizeof($appointments);
+
+        if($page != '' && $size != ''){
             $offset = ($page - 1 ) * $size;
             $this->db->limit($size,$offset);
+            $appointments = $this->db->order_by("start_datetime",$sort)->get_where('ea_appointments', $where_clause, $size, $offset)->result_array();
         }
-        $appointments = $this->db->get('ea_appointments')->result_array();
-        $totalRecords = sizeof($appointments);
 
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
@@ -403,4 +434,17 @@ class Appointments_Model_V2 extends Appointments_Model {
         return $result;
     }
 
+    private function find_list_userId_by($fullName, $id_service_integrated){
+        $this->load->model('/v2/user_model_v2');
+        $result = $this->user_model_v2->find_list_userId_by_fullName($fullName, $id_service_integrated);
+        return $result;
+    }
+
+    private function handlerArrayString($arrays){
+        $result = '';
+        foreach ($arrays as &$value){
+            $result .= $value . ',';
+        }
+        return substr($result, 0 , -1);
+    }
 }
