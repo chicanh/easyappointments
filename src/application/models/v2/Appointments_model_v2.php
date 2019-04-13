@@ -331,7 +331,7 @@ class Appointments_Model_V2 extends Appointments_Model {
 
         switch ($type) {
             case self::CUSTOMER:
-                $condition['id_users_customer'] = $service[0]->id;
+                $condition['id_users_customer'] = $service['id'];
                 break;
             case self::SERVICE:
                 $condition['id_services'] = $service[0]->id;
