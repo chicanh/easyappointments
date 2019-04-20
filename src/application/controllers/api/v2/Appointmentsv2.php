@@ -215,8 +215,8 @@ class AppointmentsV2 extends Appointments {
                 $this->_throwRecordNotFound();
             }
 
-            if($isset($_GET['status'])) {
-                updateAppointmentStatus($id_integrated, $id, $batch);
+            if(isset($_GET['status'])) {
+                return $this->updateAppointmentStatus($id_integrated, $id, $batch);
             }
 
             $request = new Request();
