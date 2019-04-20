@@ -203,16 +203,22 @@ class AppointmentsV2 extends Appointments {
      *
      * @param int $id The record ID to be updated.
      */
-    public function put($id)
+    public function put($id_integrated)
     {
         try
         {
-            // Update the appointment record. 
-            $batch = $this->appointments_model_v2->get_batch('id = ' . $id);
+            $batch = $this->appointments_model_v2->get_batch("id_integrated = '" . $id_integrated ."'");
+            $id = $this->appointments_model_v2->find_id_by_id_integrated($id_integrated);
+            
             if ($id !== NULL && count($batch) === 0)
             {
                 $this->_throwRecordNotFound();
             }
+
+            if($isset($_GET['status'])) {
+                updateAppointmentStatus($id_integrated, $id, $batch);
+            }
+
             $request = new Request();
             $updatedAppointment = $request->getBody();
             $baseAppointment = $batch[0];
@@ -238,7 +244,7 @@ class AppointmentsV2 extends Appointments {
         }
     }
 
-    public function updateAppointmentByIdIntegrated($id_integrated){
+    public function updateAppointmentByIdIntegrated($batch){
         try
         {
             // Update the appointment record. 
@@ -305,13 +311,11 @@ class AppointmentsV2 extends Appointments {
         }
     }
 
-    public function updateAppointmentStatus($id_integrated) {
+    public function updateAppointmentStatus($id_integrated, $id, $batch) {
         try
         {
-            if($id_integrated !== null && $_GET['status'] !==null)
+            if($_GET['status'] !==null)
             {
-                $batch = $this->appointments_model_v2->get_batch("id_integrated = '" . $id_integrated ."'");
-                $id = $this->appointments_model_v2->find_id_by_id_integrated($id_integrated);
                 $this->appointments_model_v2->updateAppointmentStatus($id, $_GET['status']);
                 $batch = $this->appointments_model_v2->get_batch('id = ' . $id);
                 $response = new Response($batch);
