@@ -647,4 +647,21 @@ class Providers_Model_V2 extends CI_Model {
             ['username' => $username, 'id_users <> ' => $user_id])->num_rows();
         return ($num_rows > 0) ? FALSE : TRUE;
     }
+    /**
+     * Update an existing provider record in the database.
+     *
+     * @param int $id the user record id
+     *
+     * @return int Returns the record id.
+     *
+     * @throws Exception When the update operation fails.
+     */
+    public function updateProviderIdIntegrated($id, $id_integrated) {
+        $this->db->set('id_integrated', $id_integrated);
+        $this->db->where('id', $id);
+        if ( !$this->db->update('ea_users'))
+        {
+            throw new Exception('Could not update provider record.');
+        }
+    }
 }
