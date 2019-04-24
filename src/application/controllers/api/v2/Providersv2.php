@@ -41,6 +41,7 @@ class ProvidersV2 extends Providers {
         $this->load->model('/v2/services_model_v2');
         $this->load->model('/v2/services_providers_model_v2');
         $this->load->model('providers_model');
+        $this->load->model('/v2/providers_model_v2');
         $this->parser = new \EA\Engine\Api\V2\Parsers\ProvidersV2;
     }
 
@@ -88,6 +89,8 @@ class ProvidersV2 extends Providers {
                 ->paginate()
                 ->minimize()
                 ->output();
+            } else {
+                $this->getProvider($id);
             }
             
 
@@ -162,6 +165,54 @@ class ProvidersV2 extends Providers {
     public function delete($id)
     {
         parent::delete($id);
+    }
+    
+    private function getProvider($id=null) {
+        $condition = $id !== NULL ? 'id = ' . $id : NULL;
+            $providers = $this->providers_model->get_batch($condition);
+
+            if ($id !== NULL && count($providers) === 0)
+            {
+                $this->_throwRecordNotFound();
+            }
+
+            $response = new Response($providers);
+
+            $response->encode($this->parser)
+                ->search()
+                ->sort()
+                ->paginate()
+                ->minimize()
+                ->singleEntry($id)
+                ->output();
+    }
+
+    public function updateProviderIdIntegrated($id_integrated, $newIdIntegrated) {
+        try
+        {
+            if($id_integrated !=null && $newIdIntegrated != null) {
+                $condition = "id_integrated = '" .$id_integrated . "'";
+                $provider = $this->providers_model->get_batch($condition);
+                if (count($provider) === 0) {
+                    $this->_throwRecordNotFound();
+                }
+                $this->providers_model_v2->updateProviderIdIntegrated($provider[0]['id'], $newIdIntegrated);
+                return $this->output
+                ->set_content_type('application/json')
+                ->set_status_header(200)
+                ->set_output(json_encode(array(
+                        'id_integrated' => $newIdIntegrated
+                )));
+
+
+            } else {
+                set_status_header(400);
+                throw new Exception('Please enter required field.');
+            }
+        } catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
     }
 
 }
