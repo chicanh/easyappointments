@@ -90,7 +90,31 @@ class CustomersV2 extends Customers {
      */
     public function post()
     {
-        parent::post();
+        try
+        {
+            // Insert the customer to the database. 
+            $request = new Request();
+            $customer = $request->getBody();
+            $this->parser->decode($customer);
+
+            if (isset($customer['id']))
+            {
+                unset($customer['id']);
+            }
+
+            $id = $this->customers_model_v2->add($customer);
+
+            // Fetch the new object from the database and return it to the client.
+            $batch = $this->customers_model_v2->get_batch('id = ' . $id);
+            $response = new Response($batch);
+            $status = new NonEmptyText('201 Created');
+            $response->encode($this->parser)->singleEntry(TRUE)->output($status);
+        }
+        catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
+
     }
 
     /**

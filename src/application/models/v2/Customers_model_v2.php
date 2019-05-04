@@ -18,6 +18,15 @@
  */
 class Customers_Model_V2 extends Customers_Model {
 
+    public function add($customer)
+    {
+        // Validate the customer data before doing anything.
+        $this->validate($customer);
+
+	$customer['id'] = $this->_insert($customer);
+        return $customer['id'];
+    }
+
     /**
      * Check if a particular customer record already exists.
      *
@@ -49,6 +58,54 @@ class Customers_Model_V2 extends Customers_Model {
             ->get()->num_rows();
 
         return ($num_rows > 0) ? TRUE : FALSE;
+    }
+
+    /**
+     * Override from v1 to validate customer data before the insert or update operation is executed.
+     * 
+     * This does not validate email address if it is unset
+     *
+     * @param array $customer Contains the customer data.
+     *
+     * @return bool Returns the validation result.
+     *
+     * @throws Exception If customer validation fails.
+     */
+    public function validate($customer)
+    {
+        $this->load->helper('data_validation');
+
+        // If a customer id is provided, check whether the record
+        // exist in the database.
+        if (isset($customer['id']))
+        {
+            $num_rows = $this->db->get_where('ea_users',
+                ['id' => $customer['id']])->num_rows();
+            if ($num_rows == 0)
+            {
+                throw new Exception('Provided customer id does not '
+                    . 'exist in the database.');
+            }
+        }
+        // Validate required fields
+        if ( ! isset($customer['last_name'])
+            || ! isset($customer['phone_number']))
+        {
+            throw new Exception('Not all required fields are provided: '
+                . print_r($customer, TRUE));
+        }
+
+        // Validate email address
+	if(isset($customer['email'])
+	{
+		if ( ! filter_var($customer['email'], FILTER_VALIDATE_EMAIL))
+		{
+		    throw new Exception('Invalid email address provided: '
+		        . $customer['email']);
+		}
+	}
+
+        return TRUE;
     }
 
     public function get_batch($where_clause = '') {
