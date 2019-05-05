@@ -14,6 +14,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 require_once __DIR__ . '/../v1/Customers.php';
 
 use \EA\Engine\Api\V1\Response;
+use \EA\Engine\Api\V1\Request;
+use \EA\Engine\Types\NonEmptyText;
 
 /**
  * Customers Controller

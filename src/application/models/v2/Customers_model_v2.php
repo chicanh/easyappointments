@@ -96,21 +96,22 @@ class Customers_Model_V2 extends Customers_Model {
         }
 
         // Validate email address
-	if(isset($customer['email'])
-	{
-		if ( ! filter_var($customer['email'], FILTER_VALIDATE_EMAIL))
-		{
-		    throw new Exception('Invalid email address provided: '
-		        . $customer['email']);
-		}
-	}
+        if(isset($customer['email']))
+        {
+            if ( ! filter_var($customer['email'], FILTER_VALIDATE_EMAIL))
+            {
+                throw new Exception('Invalid email address provided: '
+                    . $customer['email']);
+            }
+        }
 
         return TRUE;
     }
 
     public function get_batch($where_clause = '') {
-    return  parent::get_batch($where_clause);
+        return  parent::get_batch($where_clause);
     }
+
     public function get_CustomerById($where_clause = '') {
         $customers_role_id = parent::get_customers_role_id();
 
