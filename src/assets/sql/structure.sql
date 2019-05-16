@@ -243,3 +243,6 @@ ALTER TABLE `ea_appointments_attendants`
     ADD CONSTRAINT `attendants_users` FOREIGN KEY (`id_users`) REFERENCES `ea_users` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
+ALTER TABLE `ea_users`
+    ADD COLUMN `price` DECIMAL(10, 2) AFTER `photo_profile`,
+    ADD COLUMN `currency` VARCHAR(32);
