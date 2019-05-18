@@ -118,7 +118,7 @@ class ProvidersV2 extends Providers {
                 unset($provider['id']);
             }
 
-            $id = $this->providers_model->add($provider);
+            $id = $this->providers_model_v2->add($provider);
 
             // Fetch the new object from the database and return it to the client.
             $batch = $this->providers_model->get_batch('id = ' . $id);
