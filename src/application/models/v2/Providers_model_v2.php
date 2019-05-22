@@ -306,25 +306,6 @@ class Providers_Model_V2 extends CI_Model {
                 . '" or "' . CALENDAR_VIEW_TABLE . '", given: ' . $provider['settings']['calendar_view']);
         }
 
-        // When inserting a record the email address must be unique.
-        $provider_id = (isset($provider['id'])) ? $provider['id'] : '';
-
-        $num_rows = $this->db
-            ->select('*')
-            ->from('ea_users')
-            ->join('ea_roles', 'ea_roles.id = ea_users.id_roles', 'inner')
-            ->where('ea_roles.slug', DB_SLUG_PROVIDER)
-            ->where('ea_users.email', $provider['email'])
-            ->where('ea_users.id <>', $provider_id)
-            ->get()
-            ->num_rows();
-
-        if ($num_rows > 0)
-        {
-            throw new Exception('Given email address belongs to another provider record. '
-                . 'Please use a different email.');
-        }
-
         return TRUE;
     }
 
@@ -646,5 +627,22 @@ class Providers_Model_V2 extends CI_Model {
         $num_rows = $this->db->get_where('ea_user_settings',
             ['username' => $username, 'id_users <> ' => $user_id])->num_rows();
         return ($num_rows > 0) ? FALSE : TRUE;
+    }
+    /**
+     * Update an existing provider record in the database.
+     *
+     * @param int $id the user record id
+     *
+     * @return int Returns the record id.
+     *
+     * @throws Exception When the update operation fails.
+     */
+    public function updateProviderIdIntegrated($id, $id_integrated) {
+        $this->db->set('id_integrated', $id_integrated);
+        $this->db->where('id', $id);
+        if ( !$this->db->update('ea_users'))
+        {
+            throw new Exception('Could not update provider record.');
+        }
     }
 }
