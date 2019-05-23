@@ -14,6 +14,8 @@
 require_once __DIR__ . '/../v1/Providers.php';
 
 use \EA\Engine\Api\V1\Response;
+use \EA\Engine\Api\V1\Request;
+use \EA\Engine\Types\NonEmptyText;
 
 /**
  * Providers Controller
@@ -104,7 +106,30 @@ class ProvidersV2 extends Providers {
      */
     public function post()
     {
-        parent::post();
+        try
+        {
+            // Insert the provider to the database. 
+            $request = new Request();
+            $provider = $request->getBody();
+            $this->parser->decode($provider);
+
+            if (isset($provider['id']))
+            {
+                unset($provider['id']);
+            }
+
+            $id = $this->providers_model_v2->add($provider);
+
+            // Fetch the new object from the database and return it to the client.
+            $batch = $this->providers_model->get_batch('id = ' . $id);
+            $response = new Response($batch);
+            $status = new NonEmptyText('201 Created');
+            $response->encode($this->parser)->singleEntry(TRUE)->output($status);
+        }
+        catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
     }
 
     /**
