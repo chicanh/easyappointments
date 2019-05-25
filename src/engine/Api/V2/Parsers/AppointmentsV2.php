@@ -12,7 +12,7 @@
  * ---------------------------------------------------------------------------- */
 
 namespace EA\Engine\Api\V2\Parsers;
-use \EA\Engine\Api\V1\Parsers\Providers;
+use \EA\Engine\Api\V2\Parsers\ProvidersV2;
 use \EA\Engine\Api\V1\Parsers\Customers;
 use \EA\Engine\Api\V1\Parsers\Services;
 use \EA\Engine\Api\V1\Parsers\Appointments;
@@ -49,7 +49,7 @@ class AppointmentsV2 extends Appointments {
 
         if (isset($response['provider']))
         {
-            $providerParser = new Providers();
+            $providerParser = new ProvidersV2();
             $providerParser->encode($response['provider']);
             $encodedResponse['provider'] = $response['provider'];
         }
@@ -188,7 +188,7 @@ class AppointmentsV2 extends Appointments {
 
         if (isset($response['provider']))
         {
-            $providerParser = new Providers();
+            $providerParser = new ProvidersV2();
             $providerParser->encode($response['provider']);
             $encodedResponse['provider'] = $response['provider'];
         }
