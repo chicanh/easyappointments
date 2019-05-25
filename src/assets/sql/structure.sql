@@ -245,4 +245,5 @@ ALTER TABLE `ea_appointments_attendants`
     ON UPDATE CASCADE;
 ALTER TABLE `ea_users`
     ADD COLUMN `price` DECIMAL(10, 2) AFTER `photo_profile`,
-    ADD COLUMN `currency` VARCHAR(32);
+    ADD COLUMN `currency` VARCHAR(32),
+    ADD COLUMN `default` BOOLEAN DEFAULT NULL
