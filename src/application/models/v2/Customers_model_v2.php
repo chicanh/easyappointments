@@ -88,8 +88,7 @@ class Customers_Model_V2 extends Customers_Model {
             }
         }
         // Validate required fields
-        if ( ! isset($customer['last_name'])
-            || ! isset($customer['phone_number']))
+        if (! isset($customer['phone_number']))
         {
             throw new Exception('Not all required fields are provided: '
                 . print_r($customer, TRUE));

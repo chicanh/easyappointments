@@ -240,8 +240,7 @@ class Providers_Model_V2 extends CI_Model {
         }
 
         // Validate required fields.
-        if ( ! isset($provider['last_name'])
-            || ! isset($provider['email'])
+        if (! isset($provider['email'])
             || ! isset($provider['phone_number']))
         {
             throw new Exception('Not all required fields are provided: ' . print_r($provider, TRUE));
