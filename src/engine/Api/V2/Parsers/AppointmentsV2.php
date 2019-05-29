@@ -48,6 +48,8 @@ class AppointmentsV2 extends Appointments {
             'order_status' => $response['order_status'],
             'order_id' => $response['order_id'],
             'order_fail_reason' => $response['order_fail_reason'],
+            'service_notes' => $response['service_notes'],
+            'admin_notes' => $response['admin_notes'],
         ];
 
         if (isset($response['provider']))
@@ -180,6 +182,16 @@ class AppointmentsV2 extends Appointments {
             $decodedRequest['order_fail_reason'] = $request['order_fail_reason'];
         }
 
+        if ( ! empty($request['service_notes']))
+        {
+            $decodedRequest['service_notes'] = $request['service_notes'];
+        }
+
+        if ( ! empty($request['admin_notes']))
+        {
+            $decodedRequest['admin_notes'] = $request['admin_notes'];
+        }
+
         $decodedRequest['is_unavailable'] = FALSE;
 
         $request = $decodedRequest;
@@ -205,6 +217,8 @@ class AppointmentsV2 extends Appointments {
             'order_id' => $response['order_id'],
             'order_status' => $response['order_status'],
             'order_fail_reason' => $response['order_fail_reason'],
+            'service_notes' => $response['service_notes'],
+            'admin_notes' => $response['admin_notes']
         ];
 
         if (isset($response['provider']))
