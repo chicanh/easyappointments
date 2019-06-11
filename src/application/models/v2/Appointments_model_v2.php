@@ -466,4 +466,15 @@ class Appointments_Model_V2 extends Appointments_Model {
         $num_rows = $this->db->select('order_id')->from('ea_appointments')->where('order_id', $orderId)->get()->num_rows();
         return $num_rows;
     }
+
+    public function getAppointmentsWhichCondition($appointments, $aggregates = FALSE) {
+        if ($aggregates) {
+            foreach ($appointments as &$appointment) {
+                $appointment = $this->get_aggregates($appointment);
+            }
+        }
+        $resultSet['appointments'] = $appointments;
+        return $resultSet;
+
+    }
 }
