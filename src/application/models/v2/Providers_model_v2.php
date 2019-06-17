@@ -88,9 +88,9 @@ class Providers_Model_V2 extends CI_Model {
      */
     public function exists($provider)
     {
-        if ( ! isset($provider['email']))
+        if ( ! isset($provider['id_integrated']))
         {
-            throw new Exception('Provider email is not provided:' . print_r($provider, TRUE));
+            throw new Exception('Id integrated is not provided:' . print_r($provider, TRUE));
         }
 
         // This method shouldn't depend on another method of this class.
@@ -98,7 +98,7 @@ class Providers_Model_V2 extends CI_Model {
             ->select('*')
             ->from('ea_users')
             ->join('ea_roles', 'ea_roles.id = ea_users.id_roles', 'inner')
-            ->where('ea_users.email', $provider['email'])
+            ->where('ea_users.id_integrated', $provider['id_integrated'])
             ->where('ea_roles.slug', DB_SLUG_PROVIDER)
             ->get()->num_rows();
 
@@ -240,8 +240,7 @@ class Providers_Model_V2 extends CI_Model {
         }
 
         // Validate required fields.
-        if ( ! isset($provider['last_name'])
-            || ! isset($provider['email'])
+        if (! isset($provider['email'])
             || ! isset($provider['phone_number']))
         {
             throw new Exception('Not all required fields are provided: ' . print_r($provider, TRUE));
@@ -304,25 +303,6 @@ class Providers_Model_V2 extends CI_Model {
         {
             throw new Exception('The calendar view setting must be either "' . CALENDAR_VIEW_DEFAULT
                 . '" or "' . CALENDAR_VIEW_TABLE . '", given: ' . $provider['settings']['calendar_view']);
-        }
-
-        // When inserting a record the email address must be unique.
-        $provider_id = (isset($provider['id'])) ? $provider['id'] : '';
-
-        $num_rows = $this->db
-            ->select('*')
-            ->from('ea_users')
-            ->join('ea_roles', 'ea_roles.id = ea_users.id_roles', 'inner')
-            ->where('ea_roles.slug', DB_SLUG_PROVIDER)
-            ->where('ea_users.email', $provider['email'])
-            ->where('ea_users.id <>', $provider_id)
-            ->get()
-            ->num_rows();
-
-        if ($num_rows > 0)
-        {
-            throw new Exception('Given email address belongs to another provider record. '
-                . 'Please use a different email.');
         }
 
         return TRUE;

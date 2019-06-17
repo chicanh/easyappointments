@@ -419,4 +419,35 @@ class AppointmentsV2 extends Appointments {
         $response = new Response($resultSet);
         $response->output();   
     }
+
+    public function updateAppointmentByOrderId($orderId) {
+        try
+        {
+            $request = new Request();
+            $updatedAppointment = $request->getBody();
+            $this->appointments_model_v2->updateAppointmentByOrderId($orderId, $updatedAppointment);
+            $batch = $this->appointments_model_v2->get_batch('order_id = ' . $orderId);
+            $response = new Response($batch);
+            $status = new NonEmptyText('200 OK');
+            $response->encode($this->parser)->singleEntry(TRUE)->output($status);
+        } 
+        catch (\Exception $exception)
+        {
+            exit($this->_handleException($exception));
+        }
+    }
+
+    public function getAppointmentByOrderId($orderId) {
+       try {
+           $appointment = $this->appointments_model_v2->get_batch("order_id = '" . $orderId ."'");
+           if($appointment == null ) {
+            throw new \EA\Engine\Api\V1\Exception('Provided order id does not exist in the database.', 404, 'Not Found');
+           }
+           $appointment = $this->appointments_model_v2->getAppointmentsWhichCondition($appointment, array_key_exists('aggregates', $_GET));
+           $response = new Response($appointment);
+           $response->output();
+       } catch (\Exception $exception) {
+            exit($this->_handleException($exception));
+       }   
+    }
 }

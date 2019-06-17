@@ -6,10 +6,16 @@ class ProvidersV2 extends Providers {
     {
         $id_integrated = $response['id_integrated'];
         $photo_profile = $response['photo_profile'];
+        $fee = $response['fee'];
+        $currency = $response['currency'];
+        $default = $response['default'];
         parent::encode($response);
         
         $response['id_integrated'] = $id_integrated;
         $response['photo_profile'] = $photo_profile;
+        $response['currency'] = $currency;
+        $response['fee'] = $fee;
+        $response['default'] = $default;
 	}
 	public function decode(array &$request, array $base = NULL)
     {
@@ -21,6 +27,21 @@ class ProvidersV2 extends Providers {
         {
             $photo_profile = $request['photo_profile'];
         }
+        if ( ! empty($request['fee']))
+        {
+            $fee = $request['fee'];
+        }
+
+        if ( ! empty($request['currency']))
+        {
+            $currency = $request['currency'];
+        }
+
+        if ( ! empty($request['default']))
+        {
+            $default = $request['default'];
+        }
+
         parent::decode($request);
             
         if(isset($id_integrated)) {
@@ -28,6 +49,16 @@ class ProvidersV2 extends Providers {
         }
         if(isset($photo_profile)) {
             $request['photo_profile'] = $photo_profile;
+        }
+        if(isset($fee)) {
+            $request['fee'] = $fee;
+        }
+        if(isset($currency)) {
+            $request['currency'] = $currency;
+        }
+
+        if(isset($default)) {
+            $request['default'] = $default;
         }
 	}
 }

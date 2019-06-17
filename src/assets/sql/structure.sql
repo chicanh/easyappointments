@@ -243,3 +243,18 @@ ALTER TABLE `ea_appointments_attendants`
     ADD CONSTRAINT `attendants_users` FOREIGN KEY (`id_users`) REFERENCES `ea_users` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
+
+ALTER TABLE `ea_appointments`
+    ADD COLUMN `order_id` VARCHAR(10) AFTER `cancel_reason`,
+    ADD COLUMN `order_status` VARCHAR(100),
+    ADD COLUMN `order_fail_reason` TEXT,
+    ADD COLUMN `service_notes` TEXT,
+    ADD COLUMN `admin_notes` TEXT;
+
+CREATE UNIQUE INDEX  `appointment_index`
+ON  `ea_appointments` (`order_id`);
+
+ALTER TABLE `ea_users`
+    ADD COLUMN `fee` DECIMAL(10, 2) AFTER `photo_profile`,
+    ADD COLUMN `currency` VARCHAR(32),
+    ADD COLUMN `default` BOOLEAN DEFAULT NULL

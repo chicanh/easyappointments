@@ -44,7 +44,12 @@ class AppointmentsV2 extends Appointments {
             'status' => $response['status'],
             'id_integrated' => $response['id_integrated'],
             'cancelReason' => $response['cancel_reason'],
-            'attachment' => $response['attachment']
+            'attachment' => $response['attachment'],
+            'order_status' => $response['order_status'],
+            'order_id' => $response['order_id'],
+            'order_fail_reason' => $response['order_fail_reason'],
+            'service_notes' => $response['service_notes'],
+            'admin_notes' => $response['admin_notes'],
         ];
 
         if (isset($response['provider']))
@@ -162,6 +167,31 @@ class AppointmentsV2 extends Appointments {
             $decodedRequest['attendants'] = $request['attendants'];
         }
 
+        if ( ! empty($request['order_id']))
+        {
+            $decodedRequest['order_id'] = $request['order_id'];
+        }
+
+        if ( ! empty($request['order_status']))
+        {
+            $decodedRequest['order_status'] = $request['order_status'];
+        }
+
+        if ( ! empty($request['order_fail_reason']))
+        {
+            $decodedRequest['order_fail_reason'] = $request['order_fail_reason'];
+        }
+
+        if ( ! empty($request['service_notes']))
+        {
+            $decodedRequest['service_notes'] = $request['service_notes'];
+        }
+
+        if ( ! empty($request['admin_notes']))
+        {
+            $decodedRequest['admin_notes'] = $request['admin_notes'];
+        }
+
         $decodedRequest['is_unavailable'] = FALSE;
 
         $request = $decodedRequest;
@@ -183,7 +213,12 @@ class AppointmentsV2 extends Appointments {
             'status' => $response['status'],
             'id_integrated' => $response['id_integrated'],
             'cancelReason' => $response['cancel_reason'],
-            'attachment' => $response['attachment']
+            'attachment' => $response['attachment'],
+            'order_id' => $response['order_id'],
+            'order_status' => $response['order_status'],
+            'order_fail_reason' => $response['order_fail_reason'],
+            'service_notes' => $response['service_notes'],
+            'admin_notes' => $response['admin_notes']
         ];
 
         if (isset($response['provider']))

@@ -447,4 +447,34 @@ class Appointments_Model_V2 extends Appointments_Model {
         }
         return substr($result, 0 , -1);
     }
+
+    public function updateAppointmentByOrderId($orderId, $request)
+    {
+        $num_rows = $this->getNumberOfRecord($orderId);
+        if ($num_rows == 0)
+          {
+            throw new \EA\Engine\Api\V1\Exception('Provided order id does not exist in the database.', 404, 'Not Found');
+          }
+
+        if ( ! $this->db->update('ea_appointments', $request))
+        {
+            throw new Exception('Could not update appointment record.');
+        }
+    }
+
+    public function getNumberOfRecord($orderId) {
+        $num_rows = $this->db->select('order_id')->from('ea_appointments')->where('order_id', $orderId)->get()->num_rows();
+        return $num_rows;
+    }
+
+    public function getAppointmentsWhichCondition($appointments, $aggregates = FALSE) {
+        if ($aggregates) {
+            foreach ($appointments as &$appointment) {
+                $appointment = $this->get_aggregates($appointment);
+            }
+        }
+        $resultSet['appointments'] = $appointments;
+        return $resultSet;
+
+    }
 }
