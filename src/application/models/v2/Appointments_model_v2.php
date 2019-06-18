@@ -456,6 +456,8 @@ class Appointments_Model_V2 extends Appointments_Model {
             throw new \EA\Engine\Api\V1\Exception('Provided order id does not exist in the database.', 404, 'Not Found');
           }
 
+        $this->db->where('order_id',$orderId);
+        
         if ( ! $this->db->update('ea_appointments', $request))
         {
             throw new Exception('Could not update appointment record.');
