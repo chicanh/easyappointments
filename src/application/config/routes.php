@@ -99,5 +99,6 @@ $route['api/v2/services/(:any)']['put'] = 'api/v2/servicesv2/updateService/$1';
 $route['api/v2/providers/update/(:any)/(:any)']['put'] = 'api/v2/providersv2/updateProviderIdIntegrated/$1/$2';
 $route['api/v2/appointments/orders/(:any)']['put'] = 'api/v2/appointmentsv2/updateAppointmentByOrderId/$1';
 $route['api/v2/appointments/orders/(:any)']['get'] = 'api/v2/appointmentsv2/getAppointmentByOrderId/$1';
+// $route['api/v2/categories']['get']/(:) = 'api/v2/categoryv2/get';
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

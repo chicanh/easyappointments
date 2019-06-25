@@ -1,0 +1,114 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Category_model_v2 extends CI_Model {
+
+    public function get($id) {
+        if ( ! is_numeric($id))
+        {
+            throw new Exception('Invalid argument type given $id: ' . $id);
+        }
+
+        $result = $this->db->get_where('integrated_categories', ['id' => $id]);
+
+        if ($result->num_rows() == 0)
+        {
+            throw new Exception('Category record does not exist.');
+        }
+
+        return $result->row_array();
+    }
+
+    public function exists($category) {
+        if(!isset($category['name']) ||
+         !isset($category['id_category_integrated'])) {
+            throw new Exception('Record does not exist' . print_r($category, TRUE));
+         }
+         $num_rows = $this->db->get_where('integrated_categories', [
+            'name' => $category['name'],
+            'id_category_integrated' => $category['id_category_integrated']
+        ])->num_rows();
+
+        return ($num_rows > 0) ? TRUE : FALSE;
+    }
+
+    public function validate($category) {
+        $this->load->helper('data_validation');
+        // incase request has provided id
+        if (isset($category['id']))
+        {
+            $num_rows = $this->db->get_where('integrated_categories', ['id' => $category['id']])
+                ->num_rows();
+            if ($num_rows == 0)
+            {
+                throw new Exception('Provided id does not exist in the database.');
+            }
+        }
+        // Incase request has provided id_category_integrated
+        if (empty($category['id_category_integrated']))
+        {
+            throw new Exception('id_category_integrated is required field');
+
+        }
+        // Check for required fields
+        if ($category['name'] == '')
+        {
+            throw new Exception('Name is required '
+                . print_r($category, TRUE));
+        }
+    }
+
+    public function get_batch($where_clause = '')
+    {
+    
+        if ($where_clause != '')
+        {
+            $this->db->where($where_clause);
+        }
+
+        $categories = $this->db->get('integrated_categories')->result_array();
+
+        return $categories;
+    } 
+   
+    public function add($category)
+    {
+        $this->validate($category);
+
+        if ($this->exists($category) && ! isset($category['id']))
+        {
+            $category['id'] = $this->find_record_id($category);
+        }
+
+        if ( ! isset($category['id']))
+        {
+            $category['id'] = $this->_insert($category);
+        }
+        else
+        {
+            $category['id'] = $this->_update($category);
+        }
+
+        return (int)$category['id'];
+    }
+
+    protected function _insert($category)
+    {
+        if ( ! $this->db->insert('integrated_categories', $category))
+        {
+            throw new Exception('Could not insert category record.');
+        }
+
+        return (int)$this->db->insert_id();
+    }
+
+    protected function _update($category)
+    {
+        $this->db->where('id', $category['id']);
+        if ( ! $this->db->update('integrated_categories', $category))
+        {
+            throw new Exception('Could not update category record.');
+        }
+    }
+}
+
+?>
