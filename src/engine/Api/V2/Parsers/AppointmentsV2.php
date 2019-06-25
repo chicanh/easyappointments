@@ -13,8 +13,11 @@
 
 namespace EA\Engine\Api\V2\Parsers;
 use \EA\Engine\Api\V1\Parsers\Providers;
+use \EA\Engine\Api\V2\Parsers\ProvidersV2;
 use \EA\Engine\Api\V1\Parsers\Customers;
+use \EA\Engine\Api\V2\Parsers\CustomersV2;
 use \EA\Engine\Api\V1\Parsers\Services;
+use \EA\Engine\Api\V1\Parsers\ServicesV2;
 use \EA\Engine\Api\V1\Parsers\Appointments;
 
 /**
@@ -61,20 +64,20 @@ class AppointmentsV2 extends Appointments {
 
         if (isset($response['customer']))
         {
-            $customerParser = new Customers();
+            $customerParser = new CustomersV2();
             $customerParser->encode($response['customer']);
             $encodedResponse['customer'] = $response['customer'];
         }
 
         if (isset($response['service']))
         {
-            $serviceParser = new Services();
+            $serviceParser = new ServicesV2();
             $serviceParser->encode($response['service']);
             $encodedResponse['service'] = $response['service'];
         }
         if (isset($response['patient']))
         {
-            $customerParser = new Customers();
+            $customerParser = new CustomersV2();
             $customerParser->encode($response['patient']);
             $encodedResponse['patient'] = $response['patient'];
         }
@@ -223,7 +226,7 @@ class AppointmentsV2 extends Appointments {
 
         if (isset($response['provider']))
         {
-            $providerParser = new Providers();
+            $providerParser = new ProvidersV2();
             $providerParser->encode($response['provider']);
             $encodedResponse['provider'] = $response['provider'];
         }
