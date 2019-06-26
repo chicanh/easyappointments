@@ -443,8 +443,9 @@ class AppointmentsV2 extends Appointments {
            if($appointment == null ) {
             throw new \EA\Engine\Api\V1\Exception('Provided order id does not exist in the database.', 404, 'Not Found');
            }
+           $appointment = $this->appointments_model_v2->getAppointmentsWhichCondition($appointment, array_key_exists('aggregates', $_GET));
            $response = new Response($appointment);
-           $response->singleEntry($orderId)->output();
+           $response->output();
        } catch (\Exception $exception) {
             exit($this->_handleException($exception));
        }   
