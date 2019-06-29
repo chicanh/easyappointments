@@ -84,5 +84,23 @@ class CategoriesV2 extends API_V1_Controller {
             $this->_handleException($exception);
         }
     }
+
+    public function getCategoryByServiceIdIntegrated($id_service_integrated) {
+        try
+        {
+            $categories = $this->category_model_v2->getCategoriesByServiceId($id_service_integrated);
+            $response = new Response($categories);
+
+            $response->search()
+                ->sort()
+                ->paginate()
+                ->minimize()
+                ->output();
+        }
+        catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
+    }
 }
 ?>
