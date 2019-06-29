@@ -648,6 +648,13 @@ class Providers_Model_V2 extends CI_Model {
     public function getProvidersByCategoryAndService($id_category_integrated, $id_service_integrated) {
         $serviceId = $this->db->get_where('ea_services',['id_integrated'=> $id_service_integrated])->row()->id;
         $categoryId = $this->db->get_where('integrated_categories',['id_category_integrated'=> $id_category_integrated])->row()->id;
+        if(empty($serviceId)) {
+            throw new Exception('Can not find any record with id_service_integrated');
+        }
+        if(empty($categoryId)) {
+            throw new Exception('Can not find any record with id_category_integrated');
+        }
+
         $providers = $this->db->select('*')->from('ea_users')
         ->join('integrated_provider_categories','ea_users.id = integrated_provider_categories.id_providers','inner')
         ->where('integrated_provider_categories.id_services', $serviceId)

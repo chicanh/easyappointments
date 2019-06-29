@@ -111,7 +111,12 @@ class Category_model_v2 extends CI_Model {
     }
 
     public function getCategoriesByServiceId($id_service_integrated) {
+
         $serviceId = $this->db->get_where('ea_services',['id_integrated' => $id_service_integrated])->row()->id;
+        if(empty($serviceId)) {
+            throw new Exception('Can not find any record with id_service_integrated');
+        }
+        
         $categories = $this->db->select('*')->from('integrated_categories')
         ->join('integrated_provider_categories','integrated_provider_categories.id_categories = integrated_categories.id')
         ->where('integrated_provider_categories.id_services', $serviceId)->get()->result_array();

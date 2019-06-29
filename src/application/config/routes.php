@@ -101,6 +101,7 @@ $route['api/v2/appointments/orders/(:any)']['put'] = 'api/v2/appointmentsv2/upda
 $route['api/v2/appointments/orders/(:any)']['get'] = 'api/v2/appointmentsv2/getAppointmentByOrderId/$1';
 $route['api/v2/providers/category/(:any)/(:any)']['get'] = 'api/v2/providersv2/getProvidersWithCategoryAndService/$1/$2';
 $route['api/v2/categories/services/(:any)']['get'] = 'api/v2/categoriesV2/getCategoryByServiceIdIntegrated/$1';
+$route['api/v2/appointments/services/(:any)']['get'] = 'api/v2/appointmentsv2/getAppointmentWithServiceIntegrated/$1';
 // $route['api/v2/categories']['get']/(:) = 'api/v2/categoryv2/get';
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
