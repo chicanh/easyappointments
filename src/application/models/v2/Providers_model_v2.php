@@ -126,6 +126,8 @@ class Providers_Model_V2 extends CI_Model {
         unset($provider['services']);
         $settings = $provider['settings'];
         unset($provider['settings']);
+        $categories = $provider['categories'];
+        unset($provider['categories']);
 
         // Insert provider record and save settings.
         if ( ! $this->db->insert('ea_users', $provider))
@@ -139,6 +141,7 @@ class Providers_Model_V2 extends CI_Model {
         $provider['id'] = $this->db->insert_id();
         $this->save_settings($settings, $provider['id']);
         $this->save_services($services, $provider['id']);
+        $this->save_categories($categories, $provider['id'], $services);
 
         // Return the new record id.
         return (int)$provider['id'];
@@ -679,5 +682,37 @@ class Providers_Model_V2 extends CI_Model {
         }
 
         return $providers;
+    }
+
+    protected function save_categories($categories, $provider_id, $services)
+    {
+        // Validate method arguments.
+        if ( ! is_array($categories))
+        {
+            throw new Exception('Invalid argument type $services: ' . $categories);
+        }
+
+        if ( ! is_numeric($provider_id))
+        {
+            throw new Exception('Invalid argument type $provider_id: ' . $provider_id);
+        }
+
+        if ( ! is_numeric($services[0]))
+        {
+            throw new Exception('Invalid argument type $service_id: ' . $services[0]);
+        }
+
+        // Save provider services in the database (delete old records and add new).
+        $this->db->delete('integrated_provider_categories', ['id_providers' => $provider_id]);
+
+        foreach ($categories as $category_id)
+        {
+            $category_provider = [
+                'id_providers' => $provider_id,
+                'id_services' => $services[0],
+                'id_categories' => $category_id
+            ];
+            $this->db->insert('integrated_provider_categories', $category_provider);
+        }
     }
 }
