@@ -644,4 +644,33 @@ class Providers_Model_V2 extends CI_Model {
             throw new Exception('Could not update provider record.');
         }
     }
+
+    public function getProvidersByCategoryAndService($id_category_integrated, $id_service_integrated) {
+        $serviceId = $this->db->get_where('ea_services',['id_integrated'=> $id_service_integrated])->row()->id;
+        $categoryId = $this->db->get_where('integrated_categories',['id_category_integrated'=> $id_category_integrated])->row()->id;
+        $providers = $this->db->select('*')->from('ea_users')
+        ->join('integrated_provider_categories','ea_users.id = integrated_provider_categories.id_providers','inner')
+        ->where('integrated_provider_categories.id_services', $serviceId)
+        ->where('integrated_provider_categories.id_categories', $categoryId)
+        ->where('ea_users.id_roles', 2)
+        ->get()->result_array();
+        foreach ($providers as &$provider)
+        {
+            // Services
+            $services = $this->db->get_where('ea_services_providers',
+                ['id_users' => $provider['id']])->result_array();
+            $provider['services'] = [];
+            foreach ($services as $service)
+            {
+                $provider['services'][] = $service['id_services'];
+            }
+
+            // Settings
+            $provider['settings'] = $this->db->get_where('ea_user_settings',
+                ['id_users' => $provider['id']])->row_array();
+            unset($provider['settings']['id_users']);
+        }
+
+        return $providers;
+    }
 }
