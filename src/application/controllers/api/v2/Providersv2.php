@@ -239,5 +239,22 @@ class ProvidersV2 extends Providers {
             $this->_handleException($exception);
         }
     }
+ 
+    public function getProvidersWithCategoryAndService($category_integrated, $service_integrated) {
+        try {
+            $providers = $this->providers_model_v2->getProvidersByCategoryAndService($category_integrated, $service_integrated);
+            $response = new Response($providers);
+
+            $response->encode($this->parser)
+                ->search()
+                ->sort()
+                ->paginate()
+                ->minimize()
+                ->output();
+        } catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
+    }
 
 }
