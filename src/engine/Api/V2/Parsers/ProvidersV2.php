@@ -9,6 +9,10 @@ class ProvidersV2 extends Providers {
         $fee = $response['fee'];
         $currency = $response['currency'];
         $default = $response['default'];
+        if (array_key_exists('categories', $response))
+        {
+            $categories = $response['categories'];
+        }
         parent::encode($response);
         
         $response['id_integrated'] = $id_integrated;
@@ -16,6 +20,7 @@ class ProvidersV2 extends Providers {
         $response['currency'] = $currency;
         $response['fee'] = $fee;
         $response['default'] = $default;
+        $response['categories'] = $categories;
 	}
 	public function decode(array &$request, array $base = NULL)
     {
@@ -42,6 +47,11 @@ class ProvidersV2 extends Providers {
             $default = $request['default'];
         }
 
+        if ( ! empty($request['categories']))
+        {
+            $categories = $request['categories'];
+        }
+
         parent::decode($request);
             
         if(isset($id_integrated)) {
@@ -59,6 +69,10 @@ class ProvidersV2 extends Providers {
 
         if(isset($default)) {
             $request['default'] = $default;
+        }
+        if ( ! empty($request['categories']))
+        {
+            $request['categories'] = $categories;
         }
 	}
 }

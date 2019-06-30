@@ -165,6 +165,8 @@ class Providers_Model_V2 extends CI_Model {
         unset($provider['services']);
         $settings = $provider['settings'];
         unset($provider['settings']);
+        $categories = $provider['categories'];
+        unset($provider['categories']);
 
         if (isset($settings['password']))
         {
@@ -181,6 +183,7 @@ class Providers_Model_V2 extends CI_Model {
 
         $this->save_services($services, $provider['id']);
         $this->save_settings($settings, $provider['id']);
+        $this->save_categories($categories, $provider['id'], $services);
 
         // Return record id.
         return (int)$provider['id'];
