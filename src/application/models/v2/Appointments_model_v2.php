@@ -479,4 +479,16 @@ class Appointments_Model_V2 extends Appointments_Model {
         return $resultSet;
 
     }
+    public function getAppointmentWithServiceIntegrated($id_service_integrated) {
+        $serviceId = $this->db->get_where('ea_services', ['id_integrated' => $id_service_integrated])->row()->id;
+        if(empty($serviceId)) {
+            throw new Exception('Can not find any record with id_service_integrated');
+        }
+
+        $appointments = $this->db->select('*')->from('ea_appointments')
+        ->join('ea_services', 'ea_services.id = ea_appointments.id_services')
+        ->where('ea_appointments.id_services', $serviceId)->get()->result_array();
+
+        return $appointments;
+    }
 }
