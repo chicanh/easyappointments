@@ -76,7 +76,8 @@ class Category_model_v2 extends CI_Model {
 
         if ($this->exists($category) && ! isset($category['id']))
         {
-            $category['id'] = $this->find_record_id($category);
+            // $category['id'] = $this->find_record_id($category);
+            throw new Exception('Duplicate record in database');
         }
 
         if ( ! isset($category['id']))
@@ -134,6 +135,28 @@ class Category_model_v2 extends CI_Model {
         ->join('integrated_provider_categories','integrated_provider_categories.id_categories = integrated_categories.id')
         ->where('integrated_provider_categories.id_providers', $providerId)->get()->result_array();
         return $categories;
+    }
+
+    public function find_record_id($category)
+    {
+        if ( ! isset($category['id_integrated']))
+        {
+            throw new Exception('id_integrated was not provided:' . print_r($category, TRUE));
+        }
+
+        $result = $this->db
+            ->select('integrated_categories.id')
+            ->from('integrated_categories')
+            ->where('integrated_categories.id_integrated', $category['id_integrated'])
+            ->where('integrated_categories.name', $category['name'])
+            ->get();
+
+        if ($result->num_rows() == 0)
+        {
+            throw new Exception('Could not find category record id.');
+        }
+
+        return (int)$result->row()->id;
     }
 }
 
