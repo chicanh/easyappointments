@@ -36,10 +36,13 @@ class ServicesV2 extends Services {
             'description' => $response['description'],
             'availabilitiesType' => $response['availabilities_type'],
             'attendantsNumber' => (int)$response['attendants_number'],
-            'categoryId' => $response['id_service_categories'] !== NULL ? (int)$response['id_service_categories'] : NULL,
-            'id_integrated' => $response['id_integrated'],
+            'id_integrated' => $response['id_integrated']
         ];
 
+        if (array_key_exists('categories', $response))
+        {
+            $encodedResponse['categories'] = $response['categories'];
+        }
         $response = $encodedResponse;
     }
 
@@ -93,14 +96,14 @@ class ServicesV2 extends Services {
             $decodedRequest['attendants_number'] = $request['attendantsNumber'];
         }
 
-        if ( ! empty($request['categoryId']))
-        {
-            $decodedRequest['id_service_categories'] = $request['categoryId'];
-        }
-
         if ( ! empty($request['id_integrated']))
         {
             $decodedRequest['id_integrated'] = $request['id_integrated'];
+        }
+
+        if ( ! empty($request['categories']))
+        {
+            $decodedRequest['categories'] = $request['categories'];
         }
 
         $request = $decodedRequest;

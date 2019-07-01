@@ -263,6 +263,7 @@ CREATE TABLE IF NOT EXISTS `integrated_categories` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(256),
     `id_category_integrated` VARCHAR(50),
+    `logo` VARCHAR(100),
     PRIMARY KEY (`id`),
      UNIQUE KEY (`name`),
      UNIQUE KEY (`id_category_integrated`)
@@ -290,5 +291,23 @@ ALTER TABLE `integrated_provider_categories`
     ON DELETE CASCADE
     ON UPDATE CASCADE,
     ADD CONSTRAINT `fk_service_category` FOREIGN KEY (`id_services`) REFERENCES `ea_services` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+CREATE TABLE IF NOT EXISTS `integrated_services_categories` (
+    `id_services` INT(11),
+    `id_categories` INT(11),
+    PRIMARY KEY ( `id_categories`,`id_services`),
+    KEY `id_services` (`id_services`),
+    KEY `id_categories` (`id_categories`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8;
+
+ALTER TABLE `integrated_services_categories`
+    ADD CONSTRAINT `fk_services_category` FOREIGN KEY (`id_services`) REFERENCES `ea_services` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    ADD CONSTRAINT `fk_integrated_category` FOREIGN KEY (`id_categories`) REFERENCES `integrated_categories` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
