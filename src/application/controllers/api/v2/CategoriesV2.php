@@ -4,7 +4,7 @@ require_once __DIR__ . '/../v1/API_V1_Controller.php';
 use \EA\Engine\Api\V1\Response;
 use \EA\Engine\Api\V1\Request;
 use \EA\Engine\Types\NonEmptyText;
-class CategoriesV2 extends API_V1_Controller {
+class Categoriesv2 extends API_V1_Controller {
     public function __construct()
     {
         parent::__construct();
@@ -89,6 +89,24 @@ class CategoriesV2 extends API_V1_Controller {
         try
         {
             $categories = $this->category_model_v2->getCategoriesByServiceId($id_service_integrated);
+            $response = new Response($categories);
+
+            $response->search()
+                ->sort()
+                ->paginate()
+                ->minimize()
+                ->output();
+        }
+        catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
+    }
+
+    public function getCategoryByProviderId($id_provider_integrated) {
+        try
+        {
+            $categories = $this->category_model_v2->getCategoriesByProviderId($id_provider_integrated);
             $response = new Response($categories);
 
             $response->search()

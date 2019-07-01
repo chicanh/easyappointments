@@ -262,11 +262,11 @@ ALTER TABLE `ea_users`
 CREATE TABLE IF NOT EXISTS `integrated_categories` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(256),
-    `id_category_integrated` VARCHAR(50),
-    `logo` VARCHAR(100),
+    `id_integrated` VARCHAR(50),
+    `img` TEXT,
     PRIMARY KEY (`id`),
      UNIQUE KEY (`name`),
-     UNIQUE KEY (`id_category_integrated`)
+     UNIQUE KEY (`id_integrated`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8;

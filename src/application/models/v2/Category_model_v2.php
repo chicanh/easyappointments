@@ -20,12 +20,12 @@ class Category_model_v2 extends CI_Model {
 
     public function exists($category) {
         if(!isset($category['name']) ||
-         !isset($category['id_category_integrated'])) {
+         !isset($category['id_integrated'])) {
             throw new Exception('Record does not exist' . print_r($category, TRUE));
          }
          $num_rows = $this->db->get_where('integrated_categories', [
             'name' => $category['name'],
-            'id_category_integrated' => $category['id_category_integrated']
+            'id_integrated' => $category['id_integrated']
         ])->num_rows();
 
         return ($num_rows > 0) ? TRUE : FALSE;
@@ -43,10 +43,10 @@ class Category_model_v2 extends CI_Model {
                 throw new Exception('Provided id does not exist in the database.');
             }
         }
-        // Incase request has provided id_category_integrated
-        if (empty($category['id_category_integrated']))
+        // Incase request has provided id_integrated
+        if (empty($category['id_integrated']))
         {
-            throw new Exception('id_category_integrated is required field');
+            throw new Exception('id_integrated is required field');
 
         }
         // Check for required fields
@@ -118,8 +118,21 @@ class Category_model_v2 extends CI_Model {
         }
         
         $categories = $this->db->select('*')->from('integrated_categories')
+        ->join('integrated_services_categories','integrated_services_categories.id_categories = integrated_categories.id')
+        ->where('integrated_services_categories.id_services', $serviceId)->get()->result_array();
+        return $categories;
+    }
+
+    public function getCategoriesByProviderId($id_provider_integrated) {
+
+        $providerId = $this->db->get_where('ea_users',['id_integrated' => $id_provider_integrated])->row()->id;
+        if(empty($providerId)) {
+            throw new Exception('Can not find any record with id_provider_integrated');
+        }
+        
+        $categories = $this->db->select('*')->from('integrated_categories')
         ->join('integrated_provider_categories','integrated_provider_categories.id_categories = integrated_categories.id')
-        ->where('integrated_provider_categories.id_services', $serviceId)->get()->result_array();
+        ->where('integrated_provider_categories.id_providers', $providerId)->get()->result_array();
         return $categories;
     }
 }
