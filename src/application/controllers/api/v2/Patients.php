@@ -43,6 +43,7 @@ class Patients extends Customersv2 {
     }
 
     public function post() {
+
         try
         {
             $request = new Request();
@@ -71,6 +72,45 @@ class Patients extends Customersv2 {
         
     }
         catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
+    }
+
+    public function get() {
+        try {
+            if($this->input->get('id_user_integrated') != null) {
+                $patients = $this->patient_model->get($this->input->get('id_user_integrated'));
+                $response = new Response($patients);
+                $response
+                    ->search()
+                    ->sort()
+                    ->paginate()
+                    ->minimize()
+                    ->output();
+             } else {
+                 throw new \EA\Engine\Api\V1\Exception('id_user_integrated is required', 400);
+             }
+        }
+        catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
+        
+    }
+
+    public function getPatient($id_integrated) {
+        try {
+            if($this->input->get('id_user_integrated') != null) {
+                $patient = $this->patient_model->getPatient($this->input->get('id_user_integrated'), $id_integrated);
+                $response = new Response($patient);
+                $response->singleEntry(TRUE)->output();
+            }
+         else {
+            throw new \EA\Engine\Api\V1\Exception('id_user_integrated is required', 400);
+        }
+    }
+    catch (\Exception $exception)
         {
             $this->_handleException($exception);
         }
