@@ -311,3 +311,18 @@ ALTER TABLE `integrated_services_categories`
     ADD CONSTRAINT `fk_integrated_category` FOREIGN KEY (`id_categories`) REFERENCES `integrated_categories` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
+
+CREATE TABLE IF NOT EXISTS `integrated_users_patients` (
+    `id_user_integrated` VARCHAR(50),
+    `id_patients` INT(11),
+    PRIMARY KEY ( `id_user_integrated`,`id_patients`),
+    KEY `id_user_integrated` (`id_user_integrated`),
+    KEY `id_patients` (`id_patients`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8;
+
+ALTER TABLE `integrated_users_patients`
+    ADD CONSTRAINT `fk_user_patient` FOREIGN KEY (`id_patients`) REFERENCES `ea_users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
