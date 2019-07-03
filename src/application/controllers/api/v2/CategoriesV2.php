@@ -79,6 +79,12 @@ class Categoriesv2 extends API_V1_Controller {
             $status = new NonEmptyText('201 Created');
             $response->singleEntry(TRUE)->output($status);
         }
+
+        catch (DuplicateException $exception)
+        {
+            set_status_header(400);
+            $this->_handleException($exception);
+        }
         catch (\Exception $exception)
         {
             $this->_handleException($exception);
