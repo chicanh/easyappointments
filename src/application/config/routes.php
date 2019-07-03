@@ -63,7 +63,8 @@ $resources = [
     'providers',
     'secretaries',
     'attachment',
-    'attendants'
+    'attendants',
+    'patients'
 ];
 
 foreach ($resources as $resource)
@@ -79,6 +80,7 @@ foreach ($resources as $resource)
     $route['api/v2/' . $resource . '/(:num)']['delete'] = 'api/v2/' . $resource.'v2' . '/delete/$1';
     $route['api/v2/' . $resource]['get'] = 'api/v2/' . $resource.'v2' . '/get';
     $route['api/v2/' . $resource . '/(:num)']['get'] = 'api/v2/' . $resource .'v2'. '/get/$1';
+    $route['api/v3/' . $resource]['post'] = 'api/v3/' . $resource . '/post';
 }
 
 $route['api/v1/settings']['get'] = 'api/v1/settings/get';
