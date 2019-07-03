@@ -450,4 +450,18 @@ class AppointmentsV2 extends Appointments {
             exit($this->_handleException($exception));
        }   
     }
+
+    public function getAppointmentWithServiceIntegrated($id_service_integrated) {
+        try {
+                $appointments = $this->appointments_model_v2->getAppointmentWithServiceIntegrated($id_service_integrated);
+                $response = new Response($appointments);
+                 $response->search()
+                ->sort()
+                ->paginate()
+                ->minimize()
+                ->output();
+        }catch(\Exception $exception) {
+            exit($this->_handleException($exception));
+        }
+    }
 }

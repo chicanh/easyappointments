@@ -139,7 +139,32 @@ class ProvidersV2 extends Providers {
      */
     public function put($id)
     {
-        parent::put($id);
+        try
+        {
+            // Update the provider record. 
+            $batch = $this->providers_model_v2->get_batch('id = ' . $id);
+
+            if ($id !== NULL && count($batch) === 0)
+            {
+                $this->_throwRecordNotFound();
+            }
+
+            $request = new Request();
+            $updatedProvider = $request->getBody();
+            $baseProvider = $batch[0];
+            $this->parser->decode($updatedProvider, $baseProvider);
+            $updatedProvider['id'] = $id;
+            $id = $this->providers_model_v2->add($updatedProvider);
+
+            // Fetch the updated object from the database and return it to the client.
+            $batch = $this->providers_model_v2->get_batch('id = ' . $id);
+            $response = new Response($batch);
+            $response->encode($this->parser)->singleEntry($id)->output();
+        }
+        catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
     }
 
     public function updateProvider($id_integrated) {
@@ -234,6 +259,23 @@ class ProvidersV2 extends Providers {
                 set_status_header(400);
                 throw new Exception('Please enter required field.');
             }
+        } catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
+    }
+ 
+    public function getProvidersWithCategoryAndService($category_integrated, $service_integrated) {
+        try {
+            $providers = $this->providers_model_v2->getProvidersByCategoryAndService($category_integrated, $service_integrated);
+            $response = new Response($providers);
+
+            $response->encode($this->parser)
+                ->search()
+                ->sort()
+                ->paginate()
+                ->minimize()
+                ->output();
         } catch (\Exception $exception)
         {
             $this->_handleException($exception);

@@ -14,6 +14,8 @@
 require_once __DIR__ . '/../v1/Services.php';
 
 use \EA\Engine\Api\V1\Response;
+use \EA\Engine\Api\V1\Request;
+use \EA\Engine\Types\NonEmptyText;
 
 /**
  * Services Controller
@@ -84,7 +86,30 @@ class ServicesV2 extends Services {
      */
     public function post()
     {
-        parent::post();
+        try
+        {
+            // Insert the service to the database. 
+            $request = new Request();
+            $service = $request->getBody();
+            $this->parser->decode($service);
+
+            if (isset($service['id']))
+            {
+                unset($service['id']);
+            }
+
+            $id = $this->services_model_v2->add($service);
+
+            // Fetch the new object from the database and return it to the client.
+            $batch = $this->services_model_v2->get_batch('id = ' . $id);
+            $response = new Response($batch);
+            $status = new NonEmptyText('201 Created');
+            $response->encode($this->parser)->singleEntry(TRUE)->output($status);
+        }
+        catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
     }
 
     /**
@@ -94,7 +119,32 @@ class ServicesV2 extends Services {
      */
     public function put($id)
     {
-       parrent::put($id);
+        try
+        {
+            // Update the service record. 
+            $batch = $this->services_model_v2->get_batch('id = ' . $id);
+
+            if ($id !== NULL && count($batch) === 0)
+            {
+                $this->_throwRecordNotFound();
+            }
+
+            $request = new Request();
+            $updatedService = $request->getBody();
+            $baseService = $batch[0];
+            $this->parser->decode($updatedService, $baseService);
+            $updatedService['id'] = $id;
+            $id = $this->services_model_v2->add($updatedService);
+
+            // Fetch the updated object from the database and return it to the client.
+            $batch = $this->services_model_v2->get_batch('id = ' . $id);
+            $response = new Response($batch);
+            $response->encode($this->parser)->singleEntry($id)->output();
+        }
+        catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
     }
 
     public function updateService($id_integrated) {

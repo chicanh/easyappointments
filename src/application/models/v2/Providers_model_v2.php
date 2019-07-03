@@ -126,6 +126,8 @@ class Providers_Model_V2 extends CI_Model {
         unset($provider['services']);
         $settings = $provider['settings'];
         unset($provider['settings']);
+        $categories = $provider['categories'];
+        unset($provider['categories']);
 
         // Insert provider record and save settings.
         if ( ! $this->db->insert('ea_users', $provider))
@@ -139,6 +141,7 @@ class Providers_Model_V2 extends CI_Model {
         $provider['id'] = $this->db->insert_id();
         $this->save_settings($settings, $provider['id']);
         $this->save_services($services, $provider['id']);
+        $this->save_categories($categories, $provider['id'], $services);
 
         // Return the new record id.
         return (int)$provider['id'];
@@ -162,6 +165,8 @@ class Providers_Model_V2 extends CI_Model {
         unset($provider['services']);
         $settings = $provider['settings'];
         unset($provider['settings']);
+        $categories = $provider['categories'];
+        unset($provider['categories']);
 
         if (isset($settings['password']))
         {
@@ -178,6 +183,7 @@ class Providers_Model_V2 extends CI_Model {
 
         $this->save_services($services, $provider['id']);
         $this->save_settings($settings, $provider['id']);
+        $this->save_categories($categories, $provider['id'], $services);
 
         // Return record id.
         return (int)$provider['id'];
@@ -642,6 +648,74 @@ class Providers_Model_V2 extends CI_Model {
         if ( !$this->db->update('ea_users'))
         {
             throw new Exception('Could not update provider record.');
+        }
+    }
+
+    public function getProvidersByCategoryAndService($id_category_integrated, $id_service_integrated) {
+        $serviceId = $this->db->get_where('ea_services',['id_integrated'=> $id_service_integrated])->row()->id;
+        $categoryId = $this->db->get_where('integrated_categories',['id_integrated'=> $id_category_integrated])->row()->id;
+        if(empty($serviceId)) {
+            throw new Exception('Can not find any record with id_service_integrated');
+        }
+        if(empty($categoryId)) {
+            throw new Exception('Can not find any record with id_category_integrated');
+        }
+
+        $providers = $this->db->select('*')->from('ea_users')
+        ->join('integrated_provider_categories','ea_users.id = integrated_provider_categories.id_providers','inner')
+        ->where('integrated_provider_categories.id_services', $serviceId)
+        ->where('integrated_provider_categories.id_categories', $categoryId)
+        ->where('ea_users.id_roles', 2)
+        ->get()->result_array();
+        foreach ($providers as &$provider)
+        {
+            // Services
+            $services = $this->db->get_where('ea_services_providers',
+                ['id_users' => $provider['id']])->result_array();
+            $provider['services'] = [];
+            foreach ($services as $service)
+            {
+                $provider['services'][] = $service['id_services'];
+            }
+
+            // Settings
+            $provider['settings'] = $this->db->get_where('ea_user_settings',
+                ['id_users' => $provider['id']])->row_array();
+            unset($provider['settings']['id_users']);
+        }
+
+        return $providers;
+    }
+
+    protected function save_categories($categories, $provider_id, $services)
+    {
+        // Validate method arguments.
+        if ( ! is_array($categories))
+        {
+            throw new Exception('Invalid argument type $services: ' . $categories);
+        }
+
+        if ( ! is_numeric($provider_id))
+        {
+            throw new Exception('Invalid argument type $provider_id: ' . $provider_id);
+        }
+
+        if ( ! is_numeric($services[0]))
+        {
+            throw new Exception('Invalid argument type $service_id: ' . $services[0]);
+        }
+
+        // Save provider services in the database (delete old records and add new).
+        $this->db->delete('integrated_provider_categories', ['id_providers' => $provider_id]);
+
+        foreach ($categories as $category_id)
+        {
+            $category_provider = [
+                'id_providers' => $provider_id,
+                'id_services' => $services[0],
+                'id_categories' => $category_id
+            ];
+            $this->db->insert('integrated_provider_categories', $category_provider);
         }
     }
 }
