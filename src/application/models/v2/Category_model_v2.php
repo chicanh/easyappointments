@@ -135,6 +135,13 @@ class Category_model_v2 extends CI_Model {
         ->where('integrated_provider_categories.id_providers', $providerId)->get()->result_array();
         return $categories;
     }
+
+    public function getCategoryId(array $provider_id_integrateds) {
+        return $this->db->select('integrated_provider_categories.id_categories, ea_users.id_integrated')->from('integrated_provider_categories')
+        ->join('ea_users','integrated_provider_categories.id_providers = ea_users.id')
+        ->where_in('ea_users.id_integrated', $provider_id_integrateds)->get()->result_array();
+        
+    }
 }
 
 ?>
