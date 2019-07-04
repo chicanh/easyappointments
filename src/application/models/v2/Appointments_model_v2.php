@@ -485,10 +485,28 @@ class Appointments_Model_V2 extends Appointments_Model {
             throw new Exception('Can not find any record with id_service_integrated');
         }
 
-        $appointments = $this->db->select('*')->from('ea_appointments')
+        return $this->db->select('*')->from('ea_appointments')
         ->join('ea_services', 'ea_services.id = ea_appointments.id_services')
         ->where('ea_appointments.id_services', $serviceId)->get()->result_array();
+    }
 
-        return $appointments;
+    public function getAppointmentWithIdUserIntegrated($id_user_integrated) {
+
+        return $this->db->select('*')->from('ea_appointments')
+        ->join('integrated_users_patients', 'ea_appointments.id_users_customer = integrated_users_patients.id_patients')
+        ->where('integrated_users_patients.id_user_integrated', $id_user_integrated)->get()->result_array();
+    }
+
+    public function getUserAppointments($id_integrated, $id_user_integrated) {
+        $patientId = $this->db->get_where('ea_users',['id_integrated' => $id_integrated])->row()->id;
+        if(empty($patientId)) {
+            throw new Exception('Can not find any record with id_integrated');
+        }
+
+        return $this->db->select('*')->from('ea_appointments')
+        ->join('integrated_users_patients', 'ea_appointments.id_users_customer = integrated_users_patients.id_patients')
+        ->where('integrated_users_patients.id_user_integrated', $id_user_integrated)
+        ->where('integrated_users_patients.id_patients', $patientId)
+        ->get()->result_array();
     }
 }
