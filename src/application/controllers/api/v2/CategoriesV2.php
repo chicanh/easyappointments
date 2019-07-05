@@ -4,6 +4,7 @@ require_once __DIR__ . '/../v1/API_V1_Controller.php';
 use \EA\Engine\Api\V1\Response;
 use \EA\Engine\Api\V1\Request;
 use \EA\Engine\Types\NonEmptyText;
+use \EA\Engine\Api\V2\DuplicateException;
 class Categoriesv2 extends API_V1_Controller {
     public function __construct()
     {
@@ -77,6 +78,11 @@ class Categoriesv2 extends API_V1_Controller {
             $response = new Response($batch);
             $status = new NonEmptyText('201 Created');
             $response->singleEntry(TRUE)->output($status);
+        }
+
+        catch (DuplicateException $exception)
+        {
+            $this->_handleException($exception);
         }
         catch (\Exception $exception)
         {

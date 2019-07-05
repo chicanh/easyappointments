@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
-
+use \EA\Engine\Api\V2\DuplicateException;
 class Category_model_v2 extends CI_Model {
 
     public function get($id) {
@@ -76,7 +76,8 @@ class Category_model_v2 extends CI_Model {
 
         if ($this->exists($category) && ! isset($category['id']))
         {
-            $category['id'] = $this->find_record_id($category);
+            // $category['id'] = $this->find_record_id($category);
+            throw new DuplicateException('Duplicate record in database');
         }
 
         if ( ! isset($category['id']))
