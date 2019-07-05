@@ -31,7 +31,7 @@ class AppointmentsV3 extends AppointmentsV2 {
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('/v2/appointments_model_v2');
+        $this->load->model('/v3/appointments_model_v3');
         $this->parser = new \EA\Engine\Api\V2\Parsers\AppointmentsV2;
         $this->attachments_parser = new \EA\Engine\Api\V2\Parsers\AttachmentsV2;
     }
@@ -39,7 +39,7 @@ class AppointmentsV3 extends AppointmentsV2 {
     public function get() {
         try {
             if($this->input->get('id_user_integrated') != null) {
-                $appointments = $this->appointments_model_v2->getAppointmentWithIdUserIntegrated($this->input->get('id_user_integrated'));
+                $appointments = $this->appointments_model_v3->getAppointmentWithIdUserIntegrated($this->input->get('id_user_integrated'));
                 $response = new Response($appointments);
                 $response
                     ->search()
@@ -60,7 +60,7 @@ class AppointmentsV3 extends AppointmentsV2 {
     public function getUserAppointments($id_integrated) {
         try {
             if($this->input->get('id_user_integrated') != null) {
-                $appointments = $this->appointments_model_v2->getUserAppointments($id_integrated, $this->input->get('id_user_integrated'));
+                $appointments = $this->appointments_model_v3->getUserAppointments($id_integrated, $this->input->get('id_user_integrated'));
                 $response = new Response($appointments);
                 $response
                     ->search()

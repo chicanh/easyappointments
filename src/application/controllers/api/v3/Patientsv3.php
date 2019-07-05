@@ -37,7 +37,7 @@ class PatientsV3 extends Customersv2 {
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('/v2/patient_model');
+        $this->load->model('/v3/patient_model');
         $this->load->model('/v2/customers_model_v2');
         $this->parser = new \EA\Engine\Api\V2\Parsers\CustomersV2;
     }
