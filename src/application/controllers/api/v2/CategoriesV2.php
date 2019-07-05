@@ -119,5 +119,26 @@ class Categoriesv2 extends API_V1_Controller {
             $this->_handleException($exception);
         }
     }
+
+    public function getCategoryIds() {
+        try
+        {
+            $request = new Request();
+            $requestBody = $request->getBody();
+            if(!empty($requestBody)) {
+                $categoryIds = $this->category_model_v2->getCategoryId($requestBody);
+                $response = new Response($categoryIds);
+                $response->search()
+                    ->sort()
+                    ->paginate()
+                    ->minimize()
+                    ->output();
+            }
+        }
+        catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
+    }
 }
 ?>
