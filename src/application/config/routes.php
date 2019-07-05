@@ -79,6 +79,8 @@ foreach ($resources as $resource)
     $route['api/v2/' . $resource . '/(:num)']['delete'] = 'api/v2/' . $resource.'v2' . '/delete/$1';
     $route['api/v2/' . $resource]['get'] = 'api/v2/' . $resource.'v2' . '/get';
     $route['api/v2/' . $resource . '/(:num)']['get'] = 'api/v2/' . $resource .'v2'. '/get/$1';
+    $route['api/v2/' . $resource . '/(:any)']['get'] = 'api/v2/' . $resource .'v2'. '/get/$1';
+    $route['api/v2/' . $resource . '/(:any)']['put'] = 'api/v2/' . $resource .'v2'. '/put/$1';
 }
 
 $route['api/v1/settings']['get'] = 'api/v1/settings/get';

@@ -108,6 +108,9 @@ class Category_model_v2 extends CI_Model {
         {
             throw new Exception('Could not update category record.');
         }
+
+        return $category['id'];
+
     }
 
     public function getCategoriesByServiceId($id_service_integrated) {
