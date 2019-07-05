@@ -12,12 +12,12 @@ class Categoriesv2 extends API_V1_Controller {
         $this->load->model('/v2/category_model_v2');
     }
 
-    public function get($id = NULL) {
+    public function get($id_integrated = NULL) {
         try {
-            $condition = $id !== NULL ? 'id = ' . $id : NULL;
+            $condition = $id_integrated !== NULL ? "id_integrated = '" . $id_integrated . "'" : NULL;
             $categories = $this->category_model_v2->get_batch($condition);
 
-            if ($id !== NULL && count($categories) === 0)
+            if ($id_integrated !== NULL && count($categories) === 0)
             {
                 $this->_throwRecordNotFound();
             }
@@ -29,28 +29,27 @@ class Categoriesv2 extends API_V1_Controller {
                 ->sort()
                 ->paginate()
                 ->minimize()
-                ->singleEntry($id)
+                ->singleEntry($id_integrated)
                 ->output();
         } catch(\Exception $exception) {
             $this->_handleException($exception);
         }
     }
 
-    public function put($id) {
+    public function put($id_integrated) {
         try
         {
             // Update the appointment record. 
-            $batch = $this->category_model_v2->get_batch('id = ' . $id);
+            $condition = $id_integrated !== NULL ? "id_integrated = '" . $id_integrated . "'" : NULL;
+            $batch = $this->category_model_v2->get_batch($condition);
 
-            if ($id !== NULL && count($batch) === 0)
+            if ($id_integrated !== NULL && count($batch) === 0)
             {
                 $this->_throwRecordNotFound();
             }
 
             $request = new Request();
             $updatedCategory = $request->getBody();
-            $baseCategory = $batch[0];
-            $updatedCategory['id'] = $id;
             $id = $this->category_model_v2->add($updatedCategory);
 
             // Fetch the updated object from the database and return it to the client.
@@ -120,6 +119,27 @@ class Categoriesv2 extends API_V1_Controller {
                 ->paginate()
                 ->minimize()
                 ->output();
+        }
+        catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
+    }
+
+    public function getCategoryIds() {
+        try
+        {
+            $request = new Request();
+            $requestBody = $request->getBody();
+            if(!empty($requestBody)) {
+                $categoryIds = $this->category_model_v2->getCategoryId($requestBody);
+                $response = new Response($categoryIds);
+                $response->search()
+                    ->sort()
+                    ->paginate()
+                    ->minimize()
+                    ->output();
+            }
         }
         catch (\Exception $exception)
         {

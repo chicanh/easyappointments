@@ -109,6 +109,9 @@ class Category_model_v2 extends CI_Model {
         {
             throw new Exception('Could not update category record.');
         }
+
+        return $category['id'];
+
     }
 
     public function getCategoriesByServiceId($id_service_integrated) {
@@ -137,26 +140,10 @@ class Category_model_v2 extends CI_Model {
         return $categories;
     }
 
-    public function find_record_id($category)
-    {
-        if ( ! isset($category['id_integrated']))
-        {
-            throw new Exception('id_integrated was not provided:' . print_r($category, TRUE));
-        }
-
-        $result = $this->db
-            ->select('integrated_categories.id')
-            ->from('integrated_categories')
-            ->where('integrated_categories.id_integrated', $category['id_integrated'])
-            ->where('integrated_categories.name', $category['name'])
-            ->get();
-
-        if ($result->num_rows() == 0)
-        {
-            throw new Exception('Could not find category record id.');
-        }
-
-        return (int)$result->row()->id;
+    public function getCategoryId(array $id_integrateds) {
+        return $this->db->select('id, id_integrated')->from('integrated_categories')
+        ->where_in('id_integrated', $id_integrateds)->get()->result_array();
+        
     }
 }
 
