@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
-
+use \EA\Engine\Api\V2\DuplicateException;
 class Category_model_v2 extends CI_Model {
 
     public function get($id) {
@@ -76,7 +76,8 @@ class Category_model_v2 extends CI_Model {
 
         if ($this->exists($category) && ! isset($category['id']))
         {
-            $category['id'] = $this->find_record_id($category);
+            // $category['id'] = $this->find_record_id($category);
+            throw new DuplicateException('Duplicate record in database');
         }
 
         if ( ! isset($category['id']))
@@ -108,6 +109,9 @@ class Category_model_v2 extends CI_Model {
         {
             throw new Exception('Could not update category record.');
         }
+
+        return $category['id'];
+
     }
 
     public function getCategoriesByServiceId($id_service_integrated) {
@@ -134,6 +138,12 @@ class Category_model_v2 extends CI_Model {
         ->join('integrated_provider_categories','integrated_provider_categories.id_categories = integrated_categories.id')
         ->where('integrated_provider_categories.id_providers', $providerId)->get()->result_array();
         return $categories;
+    }
+
+    public function getCategoryId(array $id_integrateds) {
+        return $this->db->select('id, id_integrated')->from('integrated_categories')
+        ->where_in('id_integrated', $id_integrateds)->get()->result_array();
+        
     }
 }
 
