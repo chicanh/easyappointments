@@ -19,9 +19,9 @@
     public function validate($patient_integrated) {
         $this->load->helper('data_validation');
 
-        if (empty($patient_integrated['id_user_integrated']))
+        if (empty($patient_integrated['id_service_integrated']))
         {
-            throw new Exception('id_user_integrated is required field');
+            throw new Exception('id_service_integrated is required field');
         }
 
         if (empty($patient_integrated['id_patients']))
