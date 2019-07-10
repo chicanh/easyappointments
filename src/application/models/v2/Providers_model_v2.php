@@ -140,8 +140,12 @@ class Providers_Model_V2 extends CI_Model {
 
         $provider['id'] = $this->db->insert_id();
         $this->save_settings($settings, $provider['id']);
-        $this->save_services($services, $provider['id']);
-        $this->save_categories($categories, $provider['id'], $services);
+	$this->save_services($services, $provider['id']);
+
+	if(isset($categories))
+	{
+	   $this->save_categories($categories, $provider['id'], $services);
+	}
 
         // Return the new record id.
         return (int)$provider['id'];
