@@ -23,7 +23,7 @@ class Customers_Model_V2 extends Customers_Model {
         // Validate the customer data before doing anything.
         $this->validate($customer);
 
-	$customer['id'] = $this->_insert($customer);
+	    $customer['id'] = $this->_insert($customer);
         return $customer['id'];
     }
 
