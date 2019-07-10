@@ -70,8 +70,13 @@ class Services_Model_V2 extends Services_Model {
         if ( ! $this->db->insert('ea_services', $service))
         {
             throw new Exception('Could not insert service record.');
-        }
-        $this->save_categories($categories, (int)$this->db->insert_id());
+	}
+
+	if(isset($categories)) 
+	{
+	   $this->save_categories($categories, (int)$this->db->insert_id());
+	}
+
         return (int)$this->db->insert_id();
     }
 
@@ -80,7 +85,7 @@ class Services_Model_V2 extends Services_Model {
         // Validate method arguments.
         if ( ! is_array($categories))
         {
-            throw new Exception('Invalid argument type $services: ' . $categories);
+            throw new Exception('Invalid argument type $categories: ' . $categories);
         }
 
         if ( ! is_numeric($service_id))
