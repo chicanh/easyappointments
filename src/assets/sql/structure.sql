@@ -315,7 +315,7 @@ ALTER TABLE `integrated_services_categories`
 CREATE TABLE IF NOT EXISTS `integrated_users_patients` (
     `id_user_integrated` VARCHAR(50),
     `id_patients` INT(11),
-	`id_service_integrated` VARCHAR(50),
+	`id_service_integrated` VARCHAR(50) NOT NULL,
     PRIMARY KEY ( `id_service_integrated`,`id_patients`),
     KEY `id_user_integrated` (`id_user_integrated`),
     KEY `id_patients` (`id_patients`),
@@ -330,7 +330,7 @@ ALTER TABLE `integrated_users_patients`
 	ON UPDATE CASCADE;
 	
 ALTER TABLE `integrated_users_patients`
-	ADD COLUMN `id_service_integrated` VARCHAR(50) AFTER `id_patients`,
+	ADD COLUMN `id_service_integrated` VARCHAR(50) NOT NULL AFTER `id_patients`,
 	ADD CONSTRAINT `fk_service_patient` FOREIGN KEY (`id_service_integrated`) REFERENCES `ea_services` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
