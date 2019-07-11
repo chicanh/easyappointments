@@ -44,7 +44,21 @@ class Services_Model_V2 extends Services_Model {
 
     public function get_batch($where_clause = NULL)
     {
-        return parent::get_batch($where_clause);
+        if ($where_clause != NULL)
+        {
+            $this->db->where($where_clause);
+        }
+        $batch = $this->db->get('ea_services')->result_array(); 
+        foreach ($batch as &$service)
+        {
+            $categories = $this->db->get_where('integrated_services_categories', ['id_services' => $service['id']]) -> result_array();
+            $service['categories'] = [];
+            foreach ($categories as $category)
+            {
+                $service['categories'][] = $category['id_categories'];
+            }
+        }
+        return $batch;
     }
 
     public function add($service) {
@@ -70,8 +84,13 @@ class Services_Model_V2 extends Services_Model {
         if ( ! $this->db->insert('ea_services', $service))
         {
             throw new Exception('Could not insert service record.');
-        }
-        $this->save_categories($categories, (int)$this->db->insert_id());
+	}
+
+	if(isset($categories)) 
+	{
+	   $this->save_categories($categories, (int)$this->db->insert_id());
+	}
+
         return (int)$this->db->insert_id();
     }
 
@@ -80,7 +99,7 @@ class Services_Model_V2 extends Services_Model {
         // Validate method arguments.
         if ( ! is_array($categories))
         {
-            throw new Exception('Invalid argument type $services: ' . $categories);
+            throw new Exception('Invalid argument type $categories: ' . $categories);
         }
 
         if ( ! is_numeric($service_id))
