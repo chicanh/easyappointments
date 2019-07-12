@@ -39,6 +39,7 @@ class ServicesV2 extends Services {
         parent::__construct();
         $this->load->model('services_model');
         $this->load->model('/v2/services_model_v2');
+        $this->load->model('/v2/category_model_v2');
         $this->parser = new \EA\Engine\Api\V2\Parsers\ServicesV2;
     }
 
@@ -172,5 +173,23 @@ class ServicesV2 extends Services {
     public function delete($id)
     {
         parrent::delete($id);
+    }
+
+    public function removeServiceCategory($id_integrated) {
+        try {
+            $condition = "id_integrated = '" .$id_integrated . "'";
+            $service = $this->services_model_v2->get_batch($condition);
+            $request = new Request();
+            $removedCategory = $request->getBody();
+            if (count(array_intersect($removedCategory['categories'], $service[0]['categories'])) === 0) {
+                $this->_throwRecordNotFound();
+            } else {
+                $this->category_model_v2->removeCategoryService($service[0]["id"], $removedCategory["categories"]);
+            }
+        }
+        catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
     }
 }
