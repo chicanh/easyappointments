@@ -148,17 +148,21 @@ class ServicesV2 extends Services {
     }
 
     public function updateService($id_integrated) {
-        if($id_integrated !=null) {
          $condition = "id_integrated = '" .$id_integrated . "'";
          $service = $this->services_model_v2->get_batch($condition);
-            if (count($service) === 0) {
-                $this->_throwRecordNotFound();
-            }
-            parent::put($service[0]['id']);
-        } else {
-            set_status_header(400);
-            echo 'please enter id_integrated';
-       }
+         $request = new Request();
+         $updatedService = $request->getBody();
+         $baseService = $service[0];
+         $this->parser->decode($updatedService, $baseService);
+         $updatedService['id'] = $baseService['id'];
+         $id = $this->services_model_v2->add($updatedService);
+
+         // Fetch the updated object from the database and return it to the client.
+         $batch = $this->services_model_v2->get_batch('id = ' . $id);
+         $response = new Response($batch);
+         $response->encode($this->parser)->singleEntry($id)->output();
+        
+        
     }
     /**
      * DELETE API Method
