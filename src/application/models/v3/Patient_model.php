@@ -47,12 +47,24 @@
         }
     }
 
-    public function get($id_user_integrated, $id_service_integrated) {
-        return $this->db->select('*')->from('ea_users')
+    public function get($id_user_integrated, $id_service_integrated, $page, $size) {
+         $allRecords = $this->db->select('*')->from('ea_users')
         ->join('integrated_users_patients', 'integrated_users_patients.id_patients  = ea_users.id')
         ->where('integrated_users_patients.id_user_integrated ', $id_user_integrated)
         ->where('integrated_users_patients.id_service_integrated ', $id_service_integrated)
         ->get()->result_array();
+
+        $offset = ($page - 1 ) * $size;
+        
+        $patients = $this->db->select('*')->from('ea_users')->limit($size, $offset)
+        ->join('integrated_users_patients', 'integrated_users_patients.id_patients  = ea_users.id')
+        ->where('integrated_users_patients.id_user_integrated ', $id_user_integrated)
+        ->where('integrated_users_patients.id_service_integrated ', $id_service_integrated)
+        ->get()->result_array();
+        
+        $result['total'] = sizeof($allRecords);
+        $result['patients'] = $patients;
+        return $result;
     }
 
     public function getPatient($id_user_integrated,$id_service_integrated, $id_integrated) {

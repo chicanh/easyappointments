@@ -82,19 +82,16 @@ class PatientsV3 extends Customersv2 {
     public function get() {
         $id_user_integrated = $this->input->get('id_user_integrated');
         $id_service_integrated = $this->input->get('id_service_integrated');
+        $page = $this->input->get('page');
+        $size = $this->input->get('length');
         try {
             if($id_user_integrated == null || $id_service_integrated == null){
                 throw new \EA\Engine\Api\V1\Exception('id_user_integrated and id_service_integrated are required', 400);
             }
-             $patients = $this->patient_model->get($id_user_integrated, $id_service_integrated);
-             $response = new Response($patients);
-             $response
-                 ->search()
-                 ->sort()
-                 ->paginate()
-                 ->minimize()
-                 ->output();
+             $result = $this->patient_model->get($id_user_integrated, $id_service_integrated, $page, $size);
 
+             $response = new Response($result);
+             $response->output();
         }
         catch (\Exception $exception)
         {
