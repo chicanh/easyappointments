@@ -55,7 +55,7 @@
         ->get()->result_array();
     }
 
-    public function getPatient($id_user_integrated, $id_integrated) {
+    public function getPatient($id_user_integrated,$id_service_integrated, $id_integrated) {
         if(empty($id_user_integrated)) {
             throw new Exception('Field $id_user_integrated is required');
         }
@@ -67,6 +67,7 @@
         return $this->db->select('*')->from('ea_users')
         ->join('integrated_users_patients', 'integrated_users_patients.id_patients  = ea_users.id')
         ->where('integrated_users_patients.id_user_integrated ', $id_user_integrated)
+        ->where('integrated_users_patients.id_service_integrated ', $id_service_integrated)
         ->where('ea_users.id_integrated  ', $id_integrated)
         ->get()->result_array();
     }

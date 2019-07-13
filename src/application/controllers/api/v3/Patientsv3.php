@@ -105,16 +105,18 @@ class PatientsV3 extends Customersv2 {
 
     public function getPatient($id_integrated) {
         try {
-            if($this->input->get('id_user_integrated') != null) {
-                $patient = $this->patient_model->getPatient($this->input->get('id_user_integrated'), $id_integrated);
+            $id_user_integrated = $this->input->get('id_user_integrated');
+            $id_service_integrated = $this->input->get('id_service_integrated');
+            if($id_user_integrated == null || $id_service_integrated == null){
+                throw new \EA\Engine\Api\V1\Exception('id_user_integrated and id_service_integrated are required', 400);
+            }
+            else {
+                $patient = $this->patient_model->getPatient($id_user_integrated, $id_service_integrated, $id_integrated);
                 $response = new Response($patient);
                 $response->singleEntry(TRUE)->output();
             }
-         else {
-            throw new \EA\Engine\Api\V1\Exception('id_user_integrated is required', 400);
         }
-    }
-    catch (\Exception $exception)
+        catch (\Exception $exception)
         {
             $this->_handleException($exception);
         }
