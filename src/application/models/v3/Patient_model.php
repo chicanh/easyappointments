@@ -48,20 +48,11 @@
     }
 
     public function get($id_user_integrated, $id_service_integrated, $page, $size) {
-         $allRecords = $this->db->select('*')->from('ea_users')
-        ->join('integrated_users_patients', 'integrated_users_patients.id_patients  = ea_users.id')
-        ->where('integrated_users_patients.id_user_integrated ', $id_user_integrated)
-        ->where('integrated_users_patients.id_service_integrated ', $id_service_integrated)
-        ->get()->result_array();
+        $allRecords = $this->getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated)->get()->result_array();
 
         $offset = ($page - 1 ) * $size;
-        
-        $patients = $this->db->select('*')->from('ea_users')->limit($size, $offset)
-        ->join('integrated_users_patients', 'integrated_users_patients.id_patients  = ea_users.id')
-        ->where('integrated_users_patients.id_user_integrated ', $id_user_integrated)
-        ->where('integrated_users_patients.id_service_integrated ', $id_service_integrated)
-        ->get()->result_array();
-        
+        $patients = $this->getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated)->limit($size, $offset)->get()->result_array();
+       
         $result['total'] = sizeof($allRecords);
         $result['patients'] = $patients;
         return $result;
@@ -82,6 +73,17 @@
         ->where('integrated_users_patients.id_service_integrated ', $id_service_integrated)
         ->where('ea_users.id_integrated  ', $id_integrated)
         ->get()->result_array();
+    }
+
+    private function getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated){
+        $this->db->select('*')->from('ea_users')->join('integrated_users_patients', 'integrated_users_patients.id_patients  = ea_users.id');
+        if(!empty($id_user_integrated)){
+            $this->db->where('integrated_users_patients.id_user_integrated ', $id_user_integrated);
+        }
+        if(!empty($id_service_integrated)){
+            $this->db->where('integrated_users_patients.id_service_integrated ', $id_service_integrated);
+        }
+        return $this->db;
     }
 }
 ?>

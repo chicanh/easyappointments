@@ -85,7 +85,7 @@ class PatientsV3 extends Customersv2 {
         $page = $this->input->get('page');
         $size = $this->input->get('length');
         try {
-            if($id_user_integrated == null || $id_service_integrated == null){
+            if($id_user_integrated == null && $id_service_integrated == null){
                 throw new \EA\Engine\Api\V1\Exception('id_user_integrated and id_service_integrated are required', 400);
             }
              $result = $this->patient_model->get($id_user_integrated, $id_service_integrated, $page, $size);
