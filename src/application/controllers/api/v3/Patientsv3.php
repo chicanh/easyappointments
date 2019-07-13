@@ -64,13 +64,13 @@ class PatientsV3 extends Customersv2 {
             $requestPatient = $request->getBody();
             $patient_integrated['id_user_integrated'] = $requestPatient["id_user_integrated"];
             $patient_integrated['id_patients'] = $user_id;
-
+            $patient_integrated['id_service_integrated'] = $requestPatient["id_service_integrated"];
             $this->patient_model->add($patient_integrated);
             $response = new Response($requestPatient);
             $status = new NonEmptyText('201 Created');
             $response->output($status);
         
-    }
+        }
         catch (\Exception $exception)
         {
             $this->_handleException($exception);
