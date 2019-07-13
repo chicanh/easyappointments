@@ -76,21 +76,25 @@ class PatientsV3 extends Customersv2 {
             $this->_handleException($exception);
         }
     }
-
+    /**
+    * This is entry point: http://localhost/index.php/api/v3/patients
+    */
     public function get() {
+        $id_user_integrated = $this->input->get('id_user_integrated');
+        $id_service_integrated = $this->input->get('id_service_integrated');
         try {
-            if($this->input->get('id_user_integrated') != null) {
-                $patients = $this->patient_model->get($this->input->get('id_user_integrated'));
-                $response = new Response($patients);
-                $response
-                    ->search()
-                    ->sort()
-                    ->paginate()
-                    ->minimize()
-                    ->output();
-             } else {
-                 throw new \EA\Engine\Api\V1\Exception('id_user_integrated is required', 400);
-             }
+            if($id_user_integrated == null || $id_service_integrated == null){
+                throw new \EA\Engine\Api\V1\Exception('id_user_integrated and id_service_integrated are required', 400);
+            }
+             $patients = $this->patient_model->get($id_user_integrated, $id_service_integrated);
+             $response = new Response($patients);
+             $response
+                 ->search()
+                 ->sort()
+                 ->paginate()
+                 ->minimize()
+                 ->output();
+
         }
         catch (\Exception $exception)
         {
