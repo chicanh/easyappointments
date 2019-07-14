@@ -14,6 +14,10 @@ class Categoriesv2 extends API_V1_Controller {
 
     public function get($id_integrated = NULL) {
         try {
+            $categories = $this->input->get('categories');
+            if(isset($categories)) {
+                return $this->getCategoryIds();
+            }
             $condition = $id_integrated !== NULL ? "id_integrated = '" . $id_integrated . "'" : NULL;
             $categories = $this->category_model_v2->get_batch($condition);
 
@@ -129,17 +133,18 @@ class Categoriesv2 extends API_V1_Controller {
     public function getCategoryIds() {
         try
         {
-            $request = new Request();
-            $requestBody = $request->getBody();
-            if(!empty($requestBody)) {
-                $categoryIds = $this->category_model_v2->getCategoryId($requestBody);
+            $categoryIdIntegrated = $this->input->get('categories');
+            if(!isset($categoryIdIntegrated)) {
+                throw new \EA\Engine\Api\V1\Exception('Field categories is required ', 400, 'Bad Request');
+            }
+            $categories = explode(',', $categoryIdIntegrated);
+            $categoryIds = $this->category_model_v2->getCategoryId($categories);
                 $response = new Response($categoryIds);
                 $response->search()
                     ->sort()
                     ->paginate()
                     ->minimize()
                     ->output();
-            }
         }
         catch (\Exception $exception)
         {
