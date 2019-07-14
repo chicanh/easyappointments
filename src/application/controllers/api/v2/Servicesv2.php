@@ -182,12 +182,13 @@ class ServicesV2 extends Services {
                 throw new \EA\Engine\Api\V1\Exception('Field categories is required ', 400, 'Bad Request');
             }
             $categories = explode(',', $categoryIdIntegrated);
+            $category_ids = $this->category_model_v2->getCategoryIdById_Integrated($categories);
             $condition = "id_integrated = '" .$id_integrated . "'";
             $service = $this->services_model_v2->get_batch($condition);
-            if (count(array_intersect($categories, $service[0]['categories'])) === 0) {
+            if (count(array_intersect($category_ids, $service[0]['categories'])) === 0) {
                 $this->_throwRecordNotFound();
             } else {
-                $this->category_model_v2->removeCategoryService($service[0]["id"], $categories);
+                $this->category_model_v2->removeCategoryService($service[0]["id"], $category_ids);
             }
         }
         catch (\Exception $exception)
