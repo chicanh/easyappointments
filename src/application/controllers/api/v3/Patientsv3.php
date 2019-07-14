@@ -89,7 +89,7 @@ class PatientsV3 extends Customersv2 {
                 throw new \EA\Engine\Api\V1\Exception('id_user_integrated and id_service_integrated are required', 400);
             }
              $result = $this->patient_model->get($id_user_integrated, $id_service_integrated, $page, $size);
-
+             $result['patients'] = $this->encodePatients($result['patients']);
              $response = new Response($result);
              $response->output();
         }
@@ -110,12 +110,20 @@ class PatientsV3 extends Customersv2 {
             else {
                 $patient = $this->patient_model->getPatient($id_user_integrated, $id_service_integrated, $id_integrated);
                 $response = new Response($patient);
-                $response->singleEntry(TRUE)->output();
+                $response->encode($this->parser)->singleEntry(TRUE)->output();
             }
         }
         catch (\Exception $exception)
         {
             $this->_handleException($exception);
         }
+    }
+
+    private function encodePatients($patients){
+        $encodedPatients = [];  
+        foreach ($patients as &$value){
+            array_push($encodedPatients,$this->parser->customEncode($value));
+        }
+        return $encodedPatients;
     }
 }
