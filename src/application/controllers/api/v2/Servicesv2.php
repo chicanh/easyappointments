@@ -177,14 +177,17 @@ class ServicesV2 extends Services {
 
     public function removeServiceCategory($id_integrated) {
         try {
+            $categoryIdIntegrated =  $this->input->get('categories');
+            if(!isset($categoryIdIntegrated)) {
+                throw new \EA\Engine\Api\V1\Exception('Field categories is required ', 400, 'Bad Request');
+            }
+            $categories = explode(',', $categoryIdIntegrated);
             $condition = "id_integrated = '" .$id_integrated . "'";
             $service = $this->services_model_v2->get_batch($condition);
-            $request = new Request();
-            $removedCategory = $request->getBody();
-            if (count(array_intersect($removedCategory['categories'], $service[0]['categories'])) === 0) {
+            if (count(array_intersect($categories, $service[0]['categories'])) === 0) {
                 $this->_throwRecordNotFound();
             } else {
-                $this->category_model_v2->removeCategoryService($service[0]["id"], $removedCategory["categories"]);
+                $this->category_model_v2->removeCategoryService($service[0]["id"], $categories);
             }
         }
         catch (\Exception $exception)
