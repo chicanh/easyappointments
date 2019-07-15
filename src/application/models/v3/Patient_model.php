@@ -48,12 +48,10 @@
     }
 
     public function get($id_user_integrated, $id_service_integrated, $page, $size) {
-        $allRecords = $this->getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated)->get()->result_array();
-
         $offset = ($page - 1 ) * $size;
         $patients = $this->getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated)->limit($size, $offset)->get()->result_array();
        
-        $result['total'] = sizeof($allRecords);
+        $result['total'] = $this->getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated)->get()->result_id->num_rows;
         $result['patients'] = $patients;
         return $result;
     }
