@@ -53,6 +53,8 @@ class AppointmentsV2 extends Appointments {
             'order_fail_reason' => $response['order_fail_reason'],
             'service_notes' => $response['service_notes'],
             'admin_notes' => $response['admin_notes'],
+            'specialityId' => $response['speciality_id'],
+            'healthInsuranceUsed' => $response['health_insurance_used']
         ];
 
         if (isset($response['provider']))
@@ -195,6 +197,15 @@ class AppointmentsV2 extends Appointments {
             $decodedRequest['admin_notes'] = $request['admin_notes'];
         }
 
+        if ( ! empty($request['specialityId']))
+        {
+            $decodedRequest['speciality_id'] = $request['specialityId'];
+        }
+        if ( ! empty($request['healthInsuranceUsed']))
+        {
+            $decodedRequest['health_insurance_used'] = $request['healthInsuranceUsed'];
+        }
+
         $decodedRequest['is_unavailable'] = FALSE;
 
         $request = $decodedRequest;
@@ -221,7 +232,9 @@ class AppointmentsV2 extends Appointments {
             'order_status' => $response['order_status'],
             'order_fail_reason' => $response['order_fail_reason'],
             'service_notes' => $response['service_notes'],
-            'admin_notes' => $response['admin_notes']
+            'admin_notes' => $response['admin_notes'],
+            'specialityId' => $response['speciality_id'],
+            'healthInsuranceUsed' => $response['health_insurance_used']
         ];
 
         if (isset($response['provider']))

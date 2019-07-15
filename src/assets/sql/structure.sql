@@ -319,7 +319,7 @@ CREATE TABLE IF NOT EXISTS `integrated_users_patients` (
     PRIMARY KEY ( `id_service_integrated`,`id_patients`),
     KEY `id_user_integrated` (`id_user_integrated`),
     KEY `id_patients` (`id_patients`),
-	KEY `id_service_integrated` (`id_service_integrated`)
+	KEY `id_service_integrated` (`id_integrated`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8;
@@ -330,7 +330,13 @@ ALTER TABLE `integrated_users_patients`
 	ON UPDATE CASCADE;
 	
 ALTER TABLE `integrated_users_patients`
-	ADD COLUMN `id_service_integrated` VARCHAR(50) NOT NULL AFTER `id_patients`,
-	ADD CONSTRAINT `fk_service_patient` FOREIGN KEY (`id_service_integrated`) REFERENCES `ea_services` (`id`)
+	ADD COLUMN `id_service_integrated` INT(11) NOT NULL AFTER `id_patients`,
+	ADD CONSTRAINT `fk_service_patient` FOREIGN KEY (`id_service_integrated`) REFERENCES `ea_services` (`id_integrated`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+ALTER TABLE `ea_appointments`
+    ADD COLUMN `speciality_id` INT(10) ,
+    ADD COLUMN `health_insurance_used` BOOLEAN,
     ON DELETE CASCADE
     ON UPDATE CASCADE;
