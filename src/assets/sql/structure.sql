@@ -334,3 +334,9 @@ ALTER TABLE `integrated_users_patients`
 	ADD CONSTRAINT `fk_service_patient` FOREIGN KEY (`id_service_integrated`) REFERENCES `ea_services` (`id_integrated`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
+
+ALTER TABLE `ea_appointments`
+    ADD COLUMN `speciality_id` INT(10) ,
+    ADD COLUMN `health_insurance_used` BOOLEAN,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;

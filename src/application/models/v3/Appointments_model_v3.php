@@ -25,6 +25,17 @@ class Appointments_Model_V3 extends Appointments_Model {
         ->where('integrated_users_patients.id_user_integrated', $id_user_integrated)->get()->result_array();
     }
 
+    public function getAppointmentWithUserIdAndServiceIdAndPatientId($id_user_integrated, $id_service_integrated, $id_patients){
+        $this->db->select('*')->from('ea_appointments')
+                ->join('integrated_users_patients', 'ea_appointments.id_users_customer = integrated_users_patients.id_patients')
+                ->where('integrated_users_patients.id_user_integrated', $id_user_integrated)
+                ->where('integrated_users_patients.id_service_integrated', $id_service_integrated);
+        if(isset($id_patients)){
+            $this->db->where('integrated_users_patients.id_patients', $id_patients);
+        }
+        return $this->db->get()->result_array();
+    }
+
     public function getUserAppointments($id_integrated, $id_user_integrated) {
         $patientId = $this->db->get_where('ea_users',['id_integrated' => $id_integrated])->row()->id;
         if(empty($patientId)) {
