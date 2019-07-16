@@ -76,21 +76,22 @@ class PatientsV3 extends Customersv2 {
             $this->_handleException($exception);
         }
     }
-
+    /**
+    * This is entry point: http://localhost/index.php/api/v3/patients
+    */
     public function get() {
+        $id_user_integrated = $this->input->get('id_user_integrated');
+        $id_service_integrated = $this->input->get('id_service_integrated');
+        $page = $this->input->get('page');
+        $size = $this->input->get('length');
         try {
-            if($this->input->get('id_user_integrated') != null) {
-                $patients = $this->patient_model->get($this->input->get('id_user_integrated'));
-                $response = new Response($patients);
-                $response
-                    ->search()
-                    ->sort()
-                    ->paginate()
-                    ->minimize()
-                    ->output();
-             } else {
-                 throw new \EA\Engine\Api\V1\Exception('id_user_integrated is required', 400);
-             }
+            if($id_user_integrated == null && $id_service_integrated == null){
+                throw new \EA\Engine\Api\V1\Exception('id_user_integrated and id_service_integrated are required', 400);
+            }
+             $result = $this->patient_model->get($id_user_integrated, $id_service_integrated, $page, $size);
+             $result['patients'] = $this->encodePatients($result['patients']);
+             $response = new Response($result);
+             $response->output();
         }
         catch (\Exception $exception)
         {
@@ -101,18 +102,28 @@ class PatientsV3 extends Customersv2 {
 
     public function getPatient($id_integrated) {
         try {
-            if($this->input->get('id_user_integrated') != null) {
-                $patient = $this->patient_model->getPatient($this->input->get('id_user_integrated'), $id_integrated);
-                $response = new Response($patient);
-                $response->singleEntry(TRUE)->output();
+            $id_user_integrated = $this->input->get('id_user_integrated');
+            $id_service_integrated = $this->input->get('id_service_integrated');
+            if($id_user_integrated == null || $id_service_integrated == null){
+                throw new \EA\Engine\Api\V1\Exception('id_user_integrated and id_service_integrated are required', 400);
             }
-         else {
-            throw new \EA\Engine\Api\V1\Exception('id_user_integrated is required', 400);
+            else {
+                $patient = $this->patient_model->getPatient($id_user_integrated, $id_service_integrated, $id_integrated);
+                $response = new Response($patient);
+                $response->encode($this->parser)->singleEntry(TRUE)->output();
+            }
         }
-    }
-    catch (\Exception $exception)
+        catch (\Exception $exception)
         {
             $this->_handleException($exception);
         }
+    }
+
+    private function encodePatients($patients){
+        $encodedPatients = [];  
+        foreach ($patients as &$value){
+            array_push($encodedPatients,$this->parser->customEncode($value));
+        }
+        return $encodedPatients;
     }
 }

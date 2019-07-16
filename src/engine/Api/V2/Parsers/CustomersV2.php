@@ -67,6 +67,26 @@ class CustomersV2 extends Customers {
         if(isset($birthday)) {
             $request['birthday'] = $birthday;
         }
-	}
+    }
+    
+
+    public function customEncode($response)
+    {
+        $encodedResponse = [
+            'id' => $response['id'] !== NULL ? (int)$response['id'] : NULL,
+            'firstName' => $response['first_name'],
+            'lastName' => $response['last_name'],
+            'email' => $response['email'],
+            'phone' => $response['phone_number'],
+            'address' => $response['address'],
+            'id_integrated' => $response['id_integrated'],
+            'gender' => $response['gender'],
+            'national_id' => $response['national_id'],
+            'birthday' => $response['birthday'],
+            'photo_profile' => $response['photo_profile']
+        ];
+
+        return $encodedResponse;
+    }
 }
 ?>
