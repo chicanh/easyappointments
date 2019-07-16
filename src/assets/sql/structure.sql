@@ -336,7 +336,7 @@ ALTER TABLE `integrated_users_patients`
     ON UPDATE CASCADE;
 
 ALTER TABLE `ea_appointments`
-    ADD COLUMN `speciality_id` INT(10) ,
+    ADD COLUMN `id_category_integrated` VARCHAR(50),
     ADD COLUMN `health_insurance_used` BOOLEAN,
     ON DELETE CASCADE
     ON UPDATE CASCADE;
