@@ -176,19 +176,27 @@ class ServicesV2 extends Services {
     }
 
     public function addCategoryToService($id_integrated) {
-         $condition = "id_integrated = '" .$id_integrated . "'";
-         $service = $this->services_model_v2->get_batch($condition);
-         $request = new Request();
-         $listCategoryIdIntegrated = $request->getBody();
-         $category_ids = $this->category_model_v2->getCategoryIdById_Integrated($listCategoryIdIntegrated['categories']);
-         $this->services_model_v2->save_categories($category_ids, $service[0]['id']);   
-         // Fetch all of the category belong to service
-         $categories = $this->category_model_v2->getCategoriesByServiceId($id_integrated);
-         $response = new Response($categories);
-                $response->search()
-                    ->sort()
-                    ->paginate()
-                    ->minimize()
-                    ->output();
+        try {
+
+            $condition = "id_integrated = '" .$id_integrated . "'";
+             $service = $this->services_model_v2->get_batch($condition);
+             $request = new Request();
+             $listCategoryIdIntegrated = $request->getBody();
+             $category_ids = $this->category_model_v2->getCategoryIdById_Integrated($listCategoryIdIntegrated['categories']);
+             if(empty($category_ids)) {
+                $this->_throwRecordNotFound();
+             }
+             $this->services_model_v2->save_categories($category_ids, $service[0]['id']);   
+             // Fetch all of the category belong to service
+             $categories = $this->category_model_v2->getCategoriesByServiceId($id_integrated);
+             $response = new Response($categories);
+                    $response->search()
+                        ->sort()
+                        ->paginate()
+                        ->minimize()
+                        ->output();
+        }  catch(\Exception $exception) {
+            $this->_handleException($exception);
+        }
     }
 }
