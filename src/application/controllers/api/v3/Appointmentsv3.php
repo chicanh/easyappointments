@@ -11,7 +11,7 @@
  * @since       v1.2.0
  * ---------------------------------------------------------------------------- */
 
-require_once __DIR__ . '/../v2/AppointmentsV2.php';
+require_once __DIR__ . '/../v2/Appointmentsv2.php';
 
 use \EA\Engine\Api\V1\Response;
 use \EA\Engine\Api\V1\Request;
@@ -62,6 +62,23 @@ class AppointmentsV3 extends AppointmentsV2 {
         }
     }
 
+    public function getAppointmentWithServiceIdAndPatientId($idServiceIntegrated, $idPatientIntegrated) {
+        
+        try {
+		$appointments =  $this->appointments_model_v3->getAppointmentWithServiceIdAndPatientId($idServiceIntegrated, $idPatientIntegrated);
+            $appointments = $this->encodedAppointments($appointments);
+            $response = new Response($appointments);
+            $response->search()
+                     ->sort()
+                    ->paginate()
+                    ->minimize()
+                    ->output();
+           
+            
+        } catch (\Exception $exception) {
+                    exit($this->_handleException($exception));
+        }
+    }
     public function getUserAppointments($id_integrated) {
         try {
             if($this->input->get('id_user_integrated') != null) {
