@@ -53,7 +53,7 @@ class AppointmentsV2 extends Appointments {
             'order_fail_reason' => $response['order_fail_reason'],
             'service_notes' => $response['service_notes'],
             'admin_notes' => $response['admin_notes'],
-            'specialityId' => $response['speciality_id'],
+            'id_category_integrated' => $response['id_category_integrated'],
             'healthInsuranceUsed' => $response['health_insurance_used']
         ];
 
@@ -197,9 +197,9 @@ class AppointmentsV2 extends Appointments {
             $decodedRequest['admin_notes'] = $request['admin_notes'];
         }
 
-        if ( ! empty($request['specialityId']))
+        if ( ! empty($request['id_category_integrated']))
         {
-            $decodedRequest['speciality_id'] = $request['specialityId'];
+            $decodedRequest['id_category_integrated'] = $request['id_category_integrated'];
         }
         if ( ! empty($request['healthInsuranceUsed']))
         {
@@ -233,7 +233,7 @@ class AppointmentsV2 extends Appointments {
             'order_fail_reason' => $response['order_fail_reason'],
             'service_notes' => $response['service_notes'],
             'admin_notes' => $response['admin_notes'],
-            'specialityId' => $response['speciality_id'],
+            'id_category_integrated' => $response['id_category_integrated'],
             'healthInsuranceUsed' => $response['health_insurance_used']
         ];
 
