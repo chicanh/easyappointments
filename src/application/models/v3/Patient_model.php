@@ -57,20 +57,22 @@
     }
 
     public function getPatient($id_user_integrated,$id_service_integrated, $id_integrated) {
-        if(empty($id_user_integrated)) {
-            throw new Exception('Field $id_user_integrated is required');
+        if(empty($id_service_integrated)) {
+            throw new Exception('Field $id_service_integrated is required');
         }
  
         if(empty($id_integrated)) {
             throw new Exception('Field $id_integrated is required');
         }
  
-        return $this->db->select('*')->from('ea_users')
-        ->join('integrated_users_patients', 'integrated_users_patients.id_patients  = ea_users.id')
-        ->where('integrated_users_patients.id_user_integrated ', $id_user_integrated)
-        ->where('integrated_users_patients.id_service_integrated ', $id_service_integrated)
-        ->where('ea_users.id_integrated  ', $id_integrated)
-        ->get()->result_array();
+        $this->db->select('*')->from('ea_users')->join('integrated_users_patients', 'integrated_users_patients.id_patients  = ea_users.id');
+        if(!empty($id_user_integrated)){
+            $this->db->where('integrated_users_patients.id_user_integrated ', $id_user_integrated);
+        }
+        if(!empty($id_service_integrated)){
+            $this->db->where('integrated_users_patients.id_service_integrated ', $id_service_integrated);
+        }
+        return $this->db->where('ea_users.id_integrated  ', $id_integrated)->get()->result_array();
     }
 
     private function getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated){
