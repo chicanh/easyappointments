@@ -467,6 +467,13 @@ class Providers_Model_V2 extends CI_Model {
             $provider['settings'] = $this->db->get_where('ea_user_settings',
                 ['id_users' => $provider['id']])->row_array();
             unset($provider['settings']['id_users']);
+
+            $categories = $this->getCategoryByProvider($provider['id']);
+            $provider['categories'] = [];
+            foreach ($categories as $category)
+            {
+                $provider['categories'][] = $category;
+            }
         }
 
         // Return provider records in an array.
@@ -721,5 +728,11 @@ class Providers_Model_V2 extends CI_Model {
             ];
             $this->db->insert('integrated_provider_categories', $category_provider);
         }
+    }
+
+    protected function getCategoryByProvider($provider_id) {
+        return $this->db->select('id, name, logo')->from('integrated_categories')
+        ->join('integrated_provider_categories', 'integrated_provider_categories.id_categories = integrated_categories.id', 'inner')
+        ->where('integrated_provider_categories.id_providers', $provider_id)->get()->result_array();;
     }
 }
