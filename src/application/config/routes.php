@@ -105,6 +105,7 @@ $route['api/v2/providers/category/(:any)/(:any)']['get'] = 'api/v2/providersv2/g
 $route['api/v2/categories/services/(:any)']['get'] = 'api/v2/categoriesv2/getCategoryByServiceIdIntegrated/$1';
 $route['api/v2/appointments/services/(:any)']['get'] = 'api/v2/appointmentsv2/getAppointmentWithServiceIntegrated/$1';
 $route['api/v2/categories/providers/(:any)']['get'] = 'api/v2/categoriesv2/getCategoryByProviderId/$1';
+$route['api/v2/services/(:any)/categories']['put'] = 'api/v2/servicesv2/addCategoryToService/$1';
 // $route['api/v2/categories']['get']/(:) = 'api/v2/categoryv2/get';
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

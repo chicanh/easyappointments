@@ -94,7 +94,7 @@ class Services_Model_V2 extends Services_Model {
         return (int)$this->db->insert_id();
     }
 
-    protected function save_categories($categories, $service_id)
+    public function save_categories($categories, $service_id)
     {
         // Validate method arguments.
         if ( ! is_array($categories))
