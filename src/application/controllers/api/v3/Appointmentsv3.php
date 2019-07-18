@@ -11,7 +11,7 @@
  * @since       v1.2.0
  * ---------------------------------------------------------------------------- */
 
-require_once __DIR__ . '/../v2/AppointmentsV2.php';
+require_once __DIR__ . '/../v2/Appointmentsv2.php';
 
 use \EA\Engine\Api\V1\Response;
 use \EA\Engine\Api\V1\Request;
@@ -37,26 +37,48 @@ class AppointmentsV3 extends AppointmentsV2 {
     }
     
     public function get() {
+        
         try {
-            if($this->input->get('id_user_integrated') != null) {
-                $appointments = $this->appointments_model_v3->getAppointmentWithIdUserIntegrated($this->input->get('id_user_integrated'));
-                $response = new Response($appointments);
-                $response
-                    ->search()
-                    ->sort()
+            $idUserIntegrated = $this->input->get('id_user_integrated');
+            $idPatientIntegrated = $this->input->get('id_patient_integrated');
+            $idServiceIntegrated = $this->input->get('id_service_integrated');
+            if($idUserIntegrated == null || $idServiceIntegrated == null){
+                throw new \EA\Engine\Api\V1\Exception('id_user_integrated & id_service_integrated are  required', 400);
+            }
+          
+            
+            $appointments =  $this->appointments_model_v3->getAppointmentWithUserIdAndServiceIdAndPatientId($idUserIntegrated, $idServiceIntegrated, $idPatientIntegrated);
+            $appointments = $this->encodedAppointments($appointments);
+            $response = new Response($appointments);
+            $response->search()
+                     ->sort()
                     ->paginate()
                     ->minimize()
                     ->output();
-            }
-            else {
-                throw new \EA\Engine\Api\V1\Exception('id_user_integrated is required', 400);
-            }
+           
             
         } catch (\Exception $exception) {
                     exit($this->_handleException($exception));
         }
     }
 
+    public function getAppointmentWithServiceIdAndPatientId($idServiceIntegrated, $idPatientIntegrated) {
+        
+        try {
+		$appointments =  $this->appointments_model_v3->getAppointmentWithServiceIdAndPatientId($idServiceIntegrated, $idPatientIntegrated);
+            $appointments = $this->encodedAppointments($appointments);
+            $response = new Response($appointments);
+            $response->search()
+                     ->sort()
+                    ->paginate()
+                    ->minimize()
+                    ->output();
+           
+            
+        } catch (\Exception $exception) {
+                    exit($this->_handleException($exception));
+        }
+    }
     public function getUserAppointments($id_integrated) {
         try {
             if($this->input->get('id_user_integrated') != null) {
@@ -76,6 +98,14 @@ class AppointmentsV3 extends AppointmentsV2 {
         } catch (\Exception $exception) {
                     exit($this->_handleException($exception));
         }
+    }
+
+    private function encodedAppointments($appointments){
+        $encodedAppointments = [];  
+        foreach ($appointments as &$value){
+            array_push($encodedAppointments,$this->parser->customEncode($value));
+        }
+        return $encodedAppointments;
     }
 
     

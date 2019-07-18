@@ -64,8 +64,9 @@ class PatientsV3 extends Customersv2 {
             $requestPatient = $request->getBody();
             $patient_integrated['id_user_integrated'] = $requestPatient["id_user_integrated"];
             $patient_integrated['id_patients'] = $user_id;
-            $patient_integrated['id_service_integrated'] = $requestPatient["id_service_integrated"];
-            $this->patient_model->add($patient_integrated);
+	    $patient_integrated['id_service_integrated'] = $requestPatient["id_service_integrated"];
+	    $this->patient_model->add($patient_integrated);
+	    $requestPatient['id'] = $user_id;
             $response = new Response($requestPatient);
             $status = new NonEmptyText('201 Created');
             $response->output($status);
@@ -85,13 +86,13 @@ class PatientsV3 extends Customersv2 {
         $page = $this->input->get('page');
         $size = $this->input->get('length');
         try {
-            if($id_user_integrated == null && $id_service_integrated == null){
-                throw new \EA\Engine\Api\V1\Exception('id_user_integrated and id_service_integrated are required', 400);
+            if($id_service_integrated == null){
+                throw new \EA\Engine\Api\V1\Exception('id_service_integrated are required', 400);
             }
-             $result = $this->patient_model->get($id_user_integrated, $id_service_integrated, $page, $size);
-             $result['patients'] = $this->encodePatients($result['patients']);
-             $response = new Response($result);
-             $response->output();
+            $result = $this->patient_model->get($id_user_integrated, $id_service_integrated, $page, $size);
+            $result['patients'] = $this->encodePatients($result['patients']);
+            $response = new Response($result);
+            $response->output();
         }
         catch (\Exception $exception)
         {
@@ -108,9 +109,13 @@ class PatientsV3 extends Customersv2 {
                 throw new \EA\Engine\Api\V1\Exception('id_user_integrated and id_service_integrated are required', 400);
             }
             else {
-                $patient = $this->patient_model->getPatient($id_user_integrated, $id_service_integrated, $id_integrated);
-                $response = new Response($patient);
-                $response->encode($this->parser)->singleEntry(TRUE)->output();
+		$patients = $this->patient_model->getPatient($id_user_integrated, $id_service_integrated, $id_integrated);
+		if(!empty($patients)) {
+	                $response = new Response($patients);
+			$response->encode($this->parser)->singleEntry(TRUE)->output();
+		} else {
+			$this->_throwRecordNotFound();				
+		}
             }
         }
         catch (\Exception $exception)
