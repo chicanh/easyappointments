@@ -693,6 +693,12 @@ class Providers_Model_V2 extends CI_Model {
             $provider['settings'] = $this->db->get_where('ea_user_settings',
                 ['id_users' => $provider['id']])->row_array();
             unset($provider['settings']['id_users']);
+            $categories = $this->getCategoryByProvider($provider['id']);
+            $provider['categories'] = [];
+            foreach ($categories as $category)
+            {
+                $provider['categories'][] = $category;
+            }
         }
 
         return $providers;
