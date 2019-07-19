@@ -141,8 +141,12 @@ CREATE TABLE IF NOT EXISTS `ea_users` (
     `gender` VARCHAR(256),
     `id_integrated` CHAR(36),
     `photo_profile` VARCHAR(256),
+    `city_id` INT(11),
+    `district_id` VARCHAR(256),
+    `ward_id` VARCHAR(256),
     PRIMARY KEY (`id`),
     KEY `id_roles` (`id_roles`),
+    KEY `city_id` (`city_id`),
     UNIQUE KEY (`id_integrated`),
     UNIQUE KEY (`phone_number`)
 )
@@ -338,5 +342,47 @@ ALTER TABLE `integrated_users_patients`
 ALTER TABLE `ea_appointments`
     ADD COLUMN `id_category_integrated` VARCHAR(50),
     ADD COLUMN `health_insurance_used` BOOLEAN,
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+
+CREATE TABLE IF NOT EXISTS `integrated_cities` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `city` VARCHAR(60) NOT NULL,
+    PRIMARY KEY (`id`)
+)
+
+CREATE TABLE IF NOT EXISTS `integrated_district` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `id_city` INT(11) NOT NULL,
+    `name` VARCHAR(60) NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+ALTER TABLE `integrated_district`
+    ADD CONSTRAINT `fk_id_city` FOREIGN KEY (`id_city`) REFERENCES `integrated_cities` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+CREATE TABLE IF NOT EXISTS `integrated_wards` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `id_district` INT(11) NOT NULL,
+    `name` VARCHAR(60) NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+ALTER TABLE `integrated_wards`
+    ADD CONSTRAINT `fk_id_district` FOREIGN KEY (`id_district`) REFERENCES `integrated_district` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+
+ALTER TABLE `ea_users`
+    ADD COLUMN `city_id` INT(11),
+    ADD COLUMN `district_id` INT(11),
+    ADD COLUMN `ward_id` INT(11),
+    ADD CONSTRAINT `fk_city_id` FOREIGN KEY (`city_id`) REFERENCES `integrated_cities` (`id`),
+    ADD CONSTRAINT `fk_district_id` FOREIGN KEY (`district_id`) REFERENCES `integrated_district` (`id`),
+    ADD CONSTRAINT `fk_ward_id` FOREIGN KEY (`ward_id`) REFERENCES `integrated_wards` (`id`),
     ON DELETE CASCADE
     ON UPDATE CASCADE;
