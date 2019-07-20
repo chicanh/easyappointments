@@ -100,6 +100,13 @@ $route['api/v1/cities/get/all']['get'] = 'api/v1/cities/get';
 $route['api/v1/cities/get']['get'] = 'api/v1/cities/getByIdAndName';
 $route['api/v1/cities/delete/']['delete'] = 'api/v1/cities/delete/$1';
 
+//District API
+$route['api/v1/districts/create']['post'] = 'api/v1/districts/post';
+$route['api/v1/districts/get/all']['get'] = 'api/v1/districts/get';
+$route['api/v1/districts/get']['get'] = 'api/v1/districts/getByIdAndNameAndCity';
+$route['api/v1/districts/delete/']['delete'] = 'api/v1/districts/delete/$1';
+
+
 $route['api/v2/appointments/statistic']['get'] = 'api/v2/appointmentsv2/getTotalAppointmentGroupByGender';
 $route['api/v1/availabilities']['get'] = 'api/v1/availabilities/get';
 $route['api/v2/availabilities']['get'] = 'api/v2/availabilitiesv2/get';

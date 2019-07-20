@@ -13,12 +13,12 @@
             return (int)$this->db->insert_id();
         }
 
-        public function findCityBy($id, $city){
+        public function findCityBy($id = null, $city = null){
              $this->db->select('*')->from(CITY_TABLE);
-            if(isset($id)){
+            if(!empty($id)){
                 $this->db->where('id', $id);
             }
-            if(isset($city)){
+            if(!empty($city)){
                 $this->db->where('name', $city);
             }
             

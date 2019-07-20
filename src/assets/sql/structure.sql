@@ -353,14 +353,14 @@ CREATE TABLE IF NOT EXISTS `integrated_cities` (
     PRIMARY KEY (`id`)
 )
 
-CREATE TABLE IF NOT EXISTS `integrated_district` (
+CREATE TABLE IF NOT EXISTS `integrated_districts` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `id_city` INT(11) NOT NULL,
     `name` VARCHAR(60) NOT NULL,
     PRIMARY KEY (`id`)
 );
 
-ALTER TABLE `integrated_district`
+ALTER TABLE `integrated_districts`
     ADD CONSTRAINT `fk_id_city` FOREIGN KEY (`id_city`) REFERENCES `integrated_cities` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
@@ -373,7 +373,7 @@ CREATE TABLE IF NOT EXISTS `integrated_wards` (
 );
 
 ALTER TABLE `integrated_wards`
-    ADD CONSTRAINT `fk_id_district` FOREIGN KEY (`id_district`) REFERENCES `integrated_district` (`id`)
+    ADD CONSTRAINT `fk_id_district` FOREIGN KEY (`id_district`) REFERENCES `integrated_districts` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
 
@@ -383,7 +383,7 @@ ALTER TABLE `ea_users`
     ADD COLUMN `district_id` INT(11),
     ADD COLUMN `ward_id` INT(11),
     ADD CONSTRAINT `fk_city_id` FOREIGN KEY (`city_id`) REFERENCES `integrated_cities` (`id`),
-    ADD CONSTRAINT `fk_district_id` FOREIGN KEY (`district_id`) REFERENCES `integrated_district` (`id`),
+    ADD CONSTRAINT `fk_district_id` FOREIGN KEY (`district_id`) REFERENCES `integrated_districts` (`id`),
     ADD CONSTRAINT `fk_ward_id` FOREIGN KEY (`ward_id`) REFERENCES `integrated_wards` (`id`),
     ON DELETE CASCADE
     ON UPDATE CASCADE;
