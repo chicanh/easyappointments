@@ -106,6 +106,11 @@ $route['api/v1/districts/get/all']['get'] = 'api/v1/districts/get';
 $route['api/v1/districts/get']['get'] = 'api/v1/districts/getByIdAndNameAndCity';
 $route['api/v1/districts/delete/']['delete'] = 'api/v1/districts/delete/$1';
 
+//WARD API
+$route['api/v1/wards/create']['post'] = 'api/v1/wards/post';
+$route['api/v1/wards/get/all']['get'] = 'api/v1/wards/get';
+$route['api/v1/wards/get']['get'] = 'api/v1/wards/getAllByCityAndDistrict';
+$route['api/v1/wards/delete/']['delete'] = 'api/v1/wards/delete/$1';
 
 $route['api/v2/appointments/statistic']['get'] = 'api/v2/appointmentsv2/getTotalAppointmentGroupByGender';
 $route['api/v1/availabilities']['get'] = 'api/v1/availabilities/get';

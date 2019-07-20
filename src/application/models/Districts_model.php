@@ -13,17 +13,20 @@
             return (int)$this->db->insert_id();
         }
 
-        public function findDistrictBy($id, $district, $cityId){
+        public function findDistrictBy($id = null, $cityId = null){
 
-            $this->db->select('*')->from(DISTRICT_TABLE);
+            $this->db->select(' integrated_districts.id as id,
+                                integrated_districts.name as district,
+                                integrated_cities.id as id_city,
+                                integrated_cities.name as city')
+            
+            ->from(DISTRICT_TABLE)
+            ->join('integrated_cities', 'integrated_districts.id_city  = integrated_cities.id');
             if(isset($cityId)){
                 $this->db->where(DISTRICT_TABLE.'.id_city', $cityId);
             }
             if(isset($id)){
                 $this->db->where(DISTRICT_TABLE.'.id', $id);
-            }
-            if(isset($district)){
-                $this->db->where(DISTRICT_TABLE.'.name', $district);
             }
             $result = $this->db->get()->result_array();
             
@@ -37,8 +40,6 @@
                 throw new Exception('Could not delete district with id '.$id);
             }
         }
-
-
     }
 
 ?>

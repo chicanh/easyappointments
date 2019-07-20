@@ -3,7 +3,7 @@ require_once __DIR__ . '/API_V1_Controller.php';
 use \EA\Engine\Api\V1\Response;
 use \EA\Engine\Api\V1\Request;
 use \EA\Engine\Types\UnsignedInteger;
-class Districts extends API_V1_Controller {
+class Wards extends API_V1_Controller {
     protected $parser;
 
     /**
@@ -14,14 +14,15 @@ class Districts extends API_V1_Controller {
         parent::__construct();
         $this->load->model('cities_model');
         $this->load->model('districts_model');
-        $this->parser = new \EA\Engine\Api\V1\Parsers\Districts;
+        $this->load->model('wards_model');
+        $this->parser = new \EA\Engine\Api\V1\Parsers\Wards;
     }
 
     public function get(){
         try{
-            $district = $this->districts_model->getAllDistricts();
+            $ward = $this->wards_model->getAllWards();
          
-            $response = new Response($district);
+            $response = new Response($ward);
         
             $response->encode($this->parser)->output();
         }
@@ -34,16 +35,16 @@ class Districts extends API_V1_Controller {
     public function post(){
         try{
             $request = new Request();
-            $district = $request->getBody();
-            $this->parser->decode($district);
-            if (isset($district['id']))
+            $ward = $request->getBody();
+            $this->parser->decode($ward);
+            if (isset($ward['id']))
             {
-                unset($district['id']);
+                unset($ward['id']);
             }
-            $this->validateRequestBody($district);
-            $district['id'] = $this->districts_model->createDistrict($district);
+            $this->validateRequestBody($ward);
+            $ward['id'] = $this->wards_model->createWard($ward);
             
-            $response = new Response($district);
+            $response = new Response($ward);
             $response->output();
         }
         catch (\Exception $exception)
@@ -52,27 +53,31 @@ class Districts extends API_V1_Controller {
         }
     }
 
-    private function validateRequestBody($district){ 
-        if(!isset($district['name'])){
-            $this->_throwBadRequest('District name is required field');
+    private function validateRequestBody($ward){ 
+        if(!isset($ward['name'])){
+            $this->_throwBadRequest('ward name is required field');
         }
-        $cityId = $district['id_city'];
-        if(empty($this->cities_model->findCityById($cityId))){
-            $this->_throwBadRequest('City id "'.$cityId.'" is not found');
+        $districtId = $ward['id_district'];
+        if(empty($this->districts_model->findDistrictBy($districtId))){
+            $this->_throwBadRequest('District id "'.$districtId.'" is not found');
         }
     }
 
-    public function getByIdAndNameAndCity(){
+    public function getAllByCityAndDistrict(){
         try{
-            $id = $this->input->get('id');
-            $id_city = $this->input->get('city');
-            if(!isset($id) && !isset($id_city)){
-                $this->_throwBadRequest('Either district_id or id_city must be defined in request param field to find District');
+            $city = $this->input->get('city');
+            $district = $this->input->get('district');
+            $id_wards = $this->input->get('id');
+            if(!isset($city) && !isset($district) && !isset($id_wards)){
+                $this->_throwBadRequest('Either city or id or district must be defined in request param field to find ward');
             }
-            $result = $this->districts_model->findDistrictBy($id, $id_city);
+            $result = $this->wards_model->findWardBy($id_wards, $city, $district);
             if(empty($result)){
                 $this->_throwRecordNotFound();
-            }       
+            }
+
+            $result = $this->cities_model->mappingAggregateCityIfAny(array_key_exists('aggregates', $_GET),$result);
+           
             $response = new Response($result);
             $response->output();
         }catch(\Exception $exception){
@@ -83,10 +88,10 @@ class Districts extends API_V1_Controller {
     public function delete($id){
         try{
             if(!isset($id)){
-                $this->_throwBadRequest(' id must be defined in request param field to delete district');
+                $this->_throwBadRequest(' id must be defined in request param field to delete ward');
             }
             
-            $this->districts_model->delete($id);
+            $this->wards_model->delete($id);
 
             $response = new Response([
                 'code' => 200,
