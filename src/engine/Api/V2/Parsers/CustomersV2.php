@@ -23,7 +23,10 @@ class CustomersV2 extends Customers {
             'gender' => $response['gender'],
             'national_id' => $response['national_id'],
             'birthday' => $response['birthday'],
-            'photo_profile' => $response['photo_profile']
+            'photo_profile' => $response['photo_profile'],
+            'cityId' => $response['city_id'],
+            'districtId' => $response['district_id'],
+            'wardId' => $response['ward_id']
         ];
 
         $response = $encodedResponse;
@@ -67,6 +70,15 @@ class CustomersV2 extends Customers {
         if(isset($birthday)) {
             $request['birthday'] = $birthday;
         }
+        if(!empty($request['cityId'])){
+            $request['city_id'] = $request['cityId'];
+        }
+        if(!empty($request['districtId'])){
+            $request['district_id'] = $request['districtId'];
+        }
+        if(!empty($request['wardId'])){
+            $request['ward_id'] = $request['wardId'];
+        }
     }
     
 
@@ -83,7 +95,10 @@ class CustomersV2 extends Customers {
             'gender' => $response['gender'],
             'national_id' => $response['national_id'],
             'birthday' => $response['birthday'],
-            'photo_profile' => $response['photo_profile']
+            'photo_profile' => $response['photo_profile'],
+            'cityId' => $response['city_id'],
+            'districtId' => $response['district_id'],
+            'wardId' => $response['ward_id']
         ];
 
         return $encodedResponse;
