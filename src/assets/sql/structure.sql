@@ -349,6 +349,7 @@ ALTER TABLE `ea_appointments`
 CREATE TABLE IF NOT EXISTS `integrated_cities` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `city` VARCHAR(60) NOT NULL,
+    UNIQUE KEY (`city`),
     PRIMARY KEY (`id`)
 )
 

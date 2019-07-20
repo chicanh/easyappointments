@@ -90,6 +90,8 @@ class API_V1_Controller extends CI_Controller {
         $this->output
             ->set_content_type('application/json')
             ->set_output(json_encode($error, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
+            
+        exit($this->output->final_output);
     }
 
     /**
@@ -100,5 +102,10 @@ class API_V1_Controller extends CI_Controller {
     protected function _throwRecordNotFound()
     {
         throw new \EA\Engine\Api\V1\Exception('The requested record was not found!', 404, 'Not Found');
+    }
+
+    protected function _throwBadRequest($message)
+    {
+        throw new \EA\Engine\Api\V1\Exception($message, 400, 'Bad Request');
     }
 }

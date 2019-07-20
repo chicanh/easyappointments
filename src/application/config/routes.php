@@ -64,7 +64,10 @@ $resources = [
     'secretaries',
     'attachment',
     'attendants',
-    'patients'
+    'patients',
+    'cities',
+    'districts',
+    'wards'
 ];
 
 foreach ($resources as $resource)
@@ -90,6 +93,12 @@ $route['api/v1/settings']['get'] = 'api/v1/settings/get';
 $route['api/v1/settings/(:any)']['get'] = 'api/v1/settings/get/$1';
 $route['api/v1/settings/(:any)']['put'] = 'api/v1/settings/put/$1';
 $route['api/v1/settings/(:any)']['delete'] = 'api/v1/settings/delete/$1';
+
+// City api
+$route['api/v1/cities/create']['post'] = 'api/v1/cities/post';
+$route['api/v1/cities/get/all']['get'] = 'api/v1/cities/get';
+$route['api/v1/cities/get']['get'] = 'api/v1/cities/getByIdAndName';
+$route['api/v1/cities/delete/']['delete'] = 'api/v1/cities/delete/$1';
 
 $route['api/v2/appointments/statistic']['get'] = 'api/v2/appointmentsv2/getTotalAppointmentGroupByGender';
 $route['api/v1/availabilities']['get'] = 'api/v1/availabilities/get';
