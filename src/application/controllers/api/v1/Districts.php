@@ -75,11 +75,8 @@ class Districts extends API_V1_Controller {
                 $this->_throwRecordNotFound();
             }
 
-            if(array_key_exists('aggregates', $_GET)){
-                $result[0]['city'] = $this->cities_model->findCityBy($result[0]['id_city']);
-                unset($result[0]['id_city']);
-            }
-
+            $result = $this->cities_model->mappingAggregateCityIfAny(array_key_exists('aggregates', $_GET),$result);
+           
             $response = new Response($result);
             $response->singleEntry(TRUE)->output();
         }catch(\Exception $exception){

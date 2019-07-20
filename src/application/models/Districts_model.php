@@ -37,6 +37,8 @@
                 throw new Exception('Could not delete district with id '.$id);
             }
         }
+
+
     }
 
 ?>

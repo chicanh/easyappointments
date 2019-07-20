@@ -33,6 +33,14 @@
                 throw new Exception('Could not delete city with id '.$id);
             }
         }
+
+        public function mappingAggregateCityIfAny($isAggregatesRequest, $result){
+            if($isAggregatesRequest && !empty($result[0]['id_city'])){
+                $result[0]['city'] = $this->findCityBy($result[0]['id_city']);
+                unset($result[0]['id_city']);
+            }
+            return $result;
+        }
     }
 
 ?>
