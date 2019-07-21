@@ -89,7 +89,7 @@ class PatientsV3 extends Customersv2 {
             if($id_service_integrated == null){
                 throw new \EA\Engine\Api\V1\Exception('id_service_integrated is required', 400);
             }
-            $result = $this->patient_model->get($id_user_integrated, $id_service_integrated, $page, $size);
+            $result = $this->patient_model->get($id_user_integrated, $id_service_integrated, $page, $size, array_key_exists('aggregates', $_GET));
             $result['patients'] = $this->encodePatients($result['patients']);
             $response = new Response($result);
             $response->output();
@@ -109,7 +109,7 @@ class PatientsV3 extends Customersv2 {
                 throw new \EA\Engine\Api\V1\Exception('id_service_integrated are required', 400);
             }
             else {
-		$patients = $this->patient_model->getPatient($id_user_integrated, $id_service_integrated, $id_integrated);
+		$patients = $this->patient_model->getPatient($id_user_integrated, $id_service_integrated, $id_integrated, array_key_exists('aggregates', $_GET));
 		if(!empty($patients)) {
 	                $response = new Response($patients);
 			$response->encode($this->parser)->singleEntry(TRUE)->output();

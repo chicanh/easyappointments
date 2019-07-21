@@ -47,16 +47,21 @@
         }
     }
 
-    public function get($id_user_integrated, $id_service_integrated, $page, $size) {
+    public function get($id_user_integrated, $id_service_integrated, $page, $size, $isAggregates) {
         $offset = ($page - 1 ) * $size;
         $patients = $this->getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated)->limit($size, $offset)->get()->result_array();
-       
+        if($isAggregates){
+            foreach ($patients as &$patient) {
+                $patient =  $this->get_aggregates($patient);
+            }
+           
+        }
         $result['total'] = $this->getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated)->get()->result_id->num_rows;
         $result['patients'] = $patients;
         return $result;
     }
 
-    public function getPatient($id_user_integrated,$id_service_integrated, $id_integrated) {
+    public function getPatient($id_user_integrated,$id_service_integrated, $id_integrated, $isAggregates) {
         if(empty($id_service_integrated)) {
             throw new Exception('Field $id_service_integrated is required');
         }
@@ -72,7 +77,16 @@
         if(!empty($id_service_integrated)){
             $this->db->where('integrated_users_patients.id_service_integrated ', $id_service_integrated);
         }
-        return $this->db->where('ea_users.id_integrated  ', $id_integrated)->get()->result_array();
+
+
+        $patients = $this->db->where('ea_users.id_integrated  ', $id_integrated)->get()->result_array();
+        if($isAggregates){
+            foreach ($patients as &$patient) {
+                $patient =  $this->get_aggregates($patient);
+            }
+           
+        }
+        return $patients;
     }
 
     private function getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated){
@@ -84,6 +98,14 @@
             $this->db->where('integrated_users_patients.id_service_integrated ', $id_service_integrated);
         }
         return $this->db;
+    }
+
+    protected function get_aggregates(array $patients)
+    {
+        $patients['city_id'] = $this->db->select('id, name')->from('integrated_cities')->where('id', $patients['city_id'])->get()->result_array()[0];
+        $patients['district_id'] = $this->db->select('id, name')->from('integrated_districts')->where('id', $patients['district_id'])->get()->result_array()[0];
+        $patients['ward_id'] = $this->db->select('id, name')->from('integrated_wards')->where('id', $patients['ward_id'])->get()->result_array()[0];
+        return $patients;
     }
 }
 ?>
