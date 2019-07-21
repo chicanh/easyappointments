@@ -72,6 +72,7 @@ class PatientsV3 extends Customersv2 {
             $patient['id_service_integrated'] = $patient_integrated['id_service_integrated'] ;
 
             $patient = $this->patient_model->get_aggregates($patient);
+            $patient = $this->parser->customEncode($patient);
             $response = new Response($patient);
             $status = new NonEmptyText('201 Created');
             $response->output($status);
