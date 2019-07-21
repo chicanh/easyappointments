@@ -53,6 +53,7 @@ class CustomersV2 extends Customers {
         {
             $birthday = $request['birthday'];
         }
+       
         parent::decode($request);
             
         if(isset($id_integrated)) {
@@ -69,15 +70,6 @@ class CustomersV2 extends Customers {
         }
         if(isset($birthday)) {
             $request['birthday'] = $birthday;
-        }
-        if(!empty($request['cityId'])){
-            $request['city_id'] = $request['cityId'];
-        }
-        if(!empty($request['districtId'])){
-            $request['district_id'] = $request['districtId'];
-        }
-        if(!empty($request['wardId'])){
-            $request['ward_id'] = $request['wardId'];
         }
     }
     

@@ -100,7 +100,7 @@
         return $this->db;
     }
 
-    protected function get_aggregates(array $patients)
+    public function get_aggregates(array $patients)
     {
         $patients['city_id'] = $this->db->select('id, name')->from('integrated_cities')->where('id', $patients['city_id'])->get()->result_array()[0];
         $patients['district_id'] = $this->db->select('id, name')->from('integrated_districts')->where('id', $patients['district_id'])->get()->result_array()[0];

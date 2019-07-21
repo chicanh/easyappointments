@@ -61,13 +61,18 @@ class PatientsV3 extends Customersv2 {
             }
 
             $user_id = $this->customers_model_v2->add($patient);
-            $requestPatient = $request->getBody();
-            $patient_integrated['id_user_integrated'] = $requestPatient["id_user_integrated"];
+
+            $patient_integrated['id_user_integrated'] = $request->getBody()["id_user_integrated"];
             $patient_integrated['id_patients'] = $user_id;
-            $patient_integrated['id_service_integrated'] = $requestPatient["id_service_integrated"];
+            $patient_integrated['id_service_integrated'] = $request->getBody()["id_service_integrated"];
             $this->patient_model->add($patient_integrated);
-            $requestPatient['id'] = $user_id;
-            $response = new Response($requestPatient);
+
+            $patient['id'] = $user_id;
+            $patient['id_user_integrated'] = $patient_integrated['id_user_integrated'];
+            $patient['id_service_integrated'] = $patient_integrated['id_service_integrated'] ;
+
+            $patient = $this->patient_model->get_aggregates($patient);
+            $response = new Response($patient);
             $status = new NonEmptyText('201 Created');
             $response->output($status);
         
