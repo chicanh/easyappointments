@@ -19,6 +19,18 @@ class Wards extends API_V1_Controller {
     }
 
     public function get(){
+        $city = $this->input->get('city');
+        $district = $this->input->get('district');
+        $id_wards = $this->input->get('id');
+        if(!isset($city) && !isset($district) && !isset($id_wards)){
+            $this->getAll();
+        } else {
+            $this->getAllByCityAndDistrict($id_wards, $city, $district);
+        }
+       
+    }
+
+    public function getAll(){
         try{
             $ward = $this->wards_model->getAllWards();
          
@@ -63,21 +75,12 @@ class Wards extends API_V1_Controller {
         }
     }
 
-    public function getAllByCityAndDistrict(){
-        try{
-            $city = $this->input->get('city');
-            $district = $this->input->get('district');
-            $id_wards = $this->input->get('id');
-            if(!isset($city) && !isset($district) && !isset($id_wards)){
-                $this->_throwBadRequest('Either city or id or district must be defined in request param field to find ward');
-            }
+    public function getAllByCityAndDistrict($id_wards, $city, $district){
+        try {
             $result = $this->wards_model->findWardBy($id_wards, $city, $district);
             if(empty($result)){
                 $this->_throwRecordNotFound();
             }
-
-            $result = $this->cities_model->mappingAggregateCityIfAny(array_key_exists('aggregates', $_GET),$result);
-           
             $response = new Response($result);
             $response->output();
         }catch(\Exception $exception){
@@ -86,11 +89,7 @@ class Wards extends API_V1_Controller {
     }
 
     public function delete($id){
-        try{
-            if(!isset($id)){
-                $this->_throwBadRequest(' id must be defined in request param field to delete ward');
-            }
-            
+        try{            
             $this->wards_model->delete($id);
 
             $response = new Response([

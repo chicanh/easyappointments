@@ -36,7 +36,6 @@
             }
            
             $result = $this->db->get()->result_array();
-            
             return $result;
         }
 

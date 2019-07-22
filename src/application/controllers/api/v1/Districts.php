@@ -18,6 +18,17 @@ class Districts extends API_V1_Controller {
     }
 
     public function get(){
+        $id = $this->input->get('id');
+        $id_city = $this->input->get('city');
+        if(!isset($id) && !isset($id_city)){
+            $this->getAll();
+        }else{
+            $this->getByIdAndNameAndCity($id, $id_city);
+        }
+       
+    }
+
+    private function getAll(){
         try{
             $district = $this->districts_model->getAllDistricts();
          
@@ -62,13 +73,8 @@ class Districts extends API_V1_Controller {
         }
     }
 
-    public function getByIdAndNameAndCity(){
+    public function getByIdAndNameAndCity($id, $id_city){
         try{
-            $id = $this->input->get('id');
-            $id_city = $this->input->get('city');
-            if(!isset($id) && !isset($id_city)){
-                $this->_throwBadRequest('Either district_id or id_city must be defined in request param field to find District');
-            }
             $result = $this->districts_model->findDistrictBy($id, $id_city);
             if(empty($result)){
                 $this->_throwRecordNotFound();
@@ -82,10 +88,6 @@ class Districts extends API_V1_Controller {
 
     public function delete($id){
         try{
-            if(!isset($id)){
-                $this->_throwBadRequest(' id must be defined in request param field to delete district');
-            }
-            
             $this->districts_model->delete($id);
 
             $response = new Response([

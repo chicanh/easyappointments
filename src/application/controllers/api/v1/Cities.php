@@ -17,6 +17,16 @@ class Cities extends API_V1_Controller {
     }
 
     public function get(){
+        $id = $this->input->get('id');
+        $city = $this->input->get('city');
+        if(!isset($id) && !isset($city)){
+            $this->getAll();
+        }else{
+            $this->getByEitherIdOrName($id, $city);
+        }
+    }
+
+    public function getAll(){
         try{
             $cities = $this->cities_model->getAllCities();
          
@@ -55,14 +65,9 @@ class Cities extends API_V1_Controller {
         }
     }
 
-    public function getByIdAndName(){
+    public function getByEitherIdOrName($id, $name){
         try{
-            $id = $this->input->get('id');
-            $city = $this->input->get('city');
-            if(!isset($id) && !isset($city)){
-                $this->_throwBadRequest('Either city or id must be defined in request param field to find city');
-            }
-            $result = $this->cities_model->findCityBy($id, $city);
+            $result = $this->cities_model->findCityBy($id, $name);
             if(empty($result)){
                 $this->_throwRecordNotFound();
             }
@@ -75,10 +80,6 @@ class Cities extends API_V1_Controller {
 
     public function delete($id){
         try{
-            if(!isset($id)){
-                $this->_throwBadRequest(' id must be defined in request param field to delete city');
-            }
-            
             $this->cities_model->delete($id);
 
             $response = new Response([
