@@ -197,7 +197,7 @@ class ProvidersV2 extends Providers {
 
                 if($provider['id_integrated'] == $id_integrated) {
                     
-                    parent::put($provider['id']);
+                    return $this->put($provider['id']);
                 }
             }
         }
