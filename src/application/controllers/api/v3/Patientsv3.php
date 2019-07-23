@@ -68,9 +68,6 @@ class PatientsV3 extends Customersv2 {
             $this->patient_model->add($patient_integrated);
 
             $patient['id'] = $user_id;
-            $patient['id_user_integrated'] = $patient_integrated['id_user_integrated'];
-            $patient['id_service_integrated'] = $patient_integrated['id_service_integrated'] ;
-
             $patient = $this->patient_model->get_aggregates($patient);
             $patient = $this->parser->customEncode($patient);
             $response = new Response($patient);
@@ -83,6 +80,36 @@ class PatientsV3 extends Customersv2 {
             $this->_handleException($exception);
         }
     }
+
+    public function put($id){
+        try
+        {
+            $request = new Request();
+            $patient = $request->getBody();
+
+            $this->parser->decode($patient);
+
+            $this->customers_model_v2->update($id, $patient);
+           
+            $patient_integrated['id_user_integrated'] = $request->getBody()["id_user_integrated"];
+            $patient_integrated['id_patients'] = $id;
+            $patient_integrated['id_service_integrated'] = $request->getBody()["id_service_integrated"];
+            $this->patient_model->update($patient_integrated);
+            $patient['id'] = $id;
+            $patient = $this->patient_model->get_aggregates($patient);
+            $patient = $this->parser->customEncode($patient);
+            $response = new Response($patient);
+            $status = new NonEmptyText('201 Created');
+            $response->output($status);
+        
+        }
+        catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
+    }
+
+
     /**
     * This is entry point: http://localhost/index.php/api/v3/patients
     */

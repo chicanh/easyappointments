@@ -27,6 +27,14 @@ class Customers_Model_V2 extends Customers_Model {
         return $customer['id'];
     }
 
+    public function update($id, $customer)
+    {
+        // Validate the customer data before doing anything
+        $updated_status = $this->db->update('ea_users', $customer, array('id' => $id));
+        return $updated_status;
+    }
+
+
     /**
      * Check if a particular customer record already exists.
      *

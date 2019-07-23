@@ -85,6 +85,7 @@ foreach ($resources as $resource)
     $route['api/v2/' . $resource . '/(:num)']['get'] = 'api/v2/' . $resource .'v2'. '/get/$1';
     $route['api/v3/' . $resource]['post'] = 'api/v3/' . $resource .'v3'. '/post';
     $route['api/v3/' . $resource]['get'] = 'api/v3/' . $resource .'v3'. '/get';
+    $route['api/v3/' . $resource . '/(:num)']['put'] = 'api/v3/' . $resource .'v3'. '/put/$1';
     $route['api/v2/' . $resource . '/(:any)']['get'] = 'api/v2/' . $resource .'v2'. '/get/$1';
     $route['api/v2/' . $resource . '/(:any)']['put'] = 'api/v2/' . $resource .'v2'. '/put/$1';
 }

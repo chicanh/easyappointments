@@ -16,9 +16,7 @@
         public function findDistrictBy($id = null, $cityId = null){
 
             $this->db->select(' integrated_districts.id as id,
-                                integrated_districts.name as district,
-                                integrated_cities.id as id_city,
-                                integrated_cities.name as city')
+                                integrated_districts.name as name')
             
             ->from(DISTRICT_TABLE)
             ->join('integrated_cities', 'integrated_districts.id_city  = integrated_cities.id');

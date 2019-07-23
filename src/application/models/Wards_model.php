@@ -17,11 +17,7 @@
 
             $this->db
             ->select('integrated_wards.id as id, 
-                               integrated_wards.name as ward,
-                               integrated_districts.id as id_district,
-                               integrated_districts.name as district,
-                               integrated_cities.id as id_city,
-                               integrated_cities.name as city')
+                               integrated_wards.name as name')
             ->from(WARD_TABLE)
             ->join('integrated_districts', 'integrated_districts.id  = integrated_wards.id_district')
             ->join('integrated_cities', 'integrated_districts.id_city  = integrated_cities.id');

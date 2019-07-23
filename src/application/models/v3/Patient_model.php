@@ -107,5 +107,10 @@
         $patients['ward_id'] = $this->db->select('id, name')->from('integrated_wards')->where('id', $patients['ward_id'])->get()->result_array()[0];
         return $patients;
     }
+
+    public function update($patient_integrated){
+        $this->db->update('integrated_users_patients', $patient_integrated, array('id_patients' => $patient_integrated['id_patients']));
+        return $patient_integrated;
+    }
 }
 ?>
