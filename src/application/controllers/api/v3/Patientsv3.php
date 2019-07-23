@@ -81,7 +81,7 @@ class PatientsV3 extends Customersv2 {
         }
     }
 
-    public function put($id){
+    public function put($idPatients, $idUserIntegrated, $idServiceIntegrated){
         try
         {
             $request = new Request();
@@ -89,13 +89,13 @@ class PatientsV3 extends Customersv2 {
 
             $this->parser->decode($patient);
 
-            $this->customers_model_v2->update($id, $patient);
+            $this->customers_model_v2->update($idPatients, $patient);
            
-            $patient_integrated['id_user_integrated'] = $request->getBody()["id_user_integrated"];
-            $patient_integrated['id_patients'] = $id;
-            $patient_integrated['id_service_integrated'] = $request->getBody()["id_service_integrated"];
+            $patient_integrated['id_user_integrated'] = $idUserIntegrated;
+            $patient_integrated['id_patients'] = $idPatients;
+            $patient_integrated['id_service_integrated'] = $idServiceIntegrated;
             $this->patient_model->update($patient_integrated);
-            $patient['id'] = $id;
+            $patient['id'] = $idPatients;
             $patient = $this->patient_model->get_aggregates($patient);
             $patient = $this->parser->customEncode($patient);
             $response = new Response($patient);
