@@ -24,21 +24,26 @@ class Services_Providers_Model_V2 extends CI_Model {
      * @return string
      * @throws Exception
      */
-    public function get_providers_by_service_id($serviceId)
+    public function get_providers_by_service_id($serviceId, $providerId)
     {
         if ( ! isset($serviceId))
         {
             throw new Exception('$serviceId is not provided: ' . print_r($serviceId, TRUE));
         }
 
-        $query = $this->db->get_where('ea_services_providers', ['id_services' => $serviceId ]);
+        if ( ! isset($providerId))
+        {
+            throw new Exception('$providerId is not provided: ' . print_r($providerId, TRUE));
+        }
+
+        $query = $this->db->get_where('ea_services_providers', ['id_services' => $serviceId, 'id_users' => $providerId ]);
 
         if ($query->num_rows() == 0)
         { // Check if id_integrated exists in ea_$services
             throw new \EA\Engine\Api\V1\Exception('$serviceId does not exist in DB: ' . $serviceId, 404, 'Not Found');
         }
 
-        $services_providers = $query->num_rows() > 0 ? $query->result_array() : '';
+        $services_providers = $query->row();
 
         return $services_providers;
     }

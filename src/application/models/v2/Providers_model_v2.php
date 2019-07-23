@@ -187,7 +187,9 @@ class Providers_Model_V2 extends CI_Model {
 
         $this->save_services($services, $provider['id']);
         $this->save_settings($settings, $provider['id']);
-        $this->save_categories($categories, $provider['id'], $services);
+        if(!empty($category)) {
+            $this->save_categories($categories, $provider['id'], $services);
+        }
 
         // Return record id.
         return (int)$provider['id'];
@@ -265,7 +267,7 @@ class Providers_Model_V2 extends CI_Model {
         // Validate provider services.
         if ( ! isset($provider['services']) || ! is_array($provider['services']))
         {
-            throw new Exception('Invalid provider services given: ' . print_r($provider, TRUE));
+            throw new Exception('services field is missing or Invalid provider services given: ' . print_r($provider, TRUE));
         }
         else
         { // Check if services are valid int values.
@@ -709,7 +711,7 @@ class Providers_Model_V2 extends CI_Model {
         // Validate method arguments.
         if ( ! is_array($categories))
         {
-            throw new Exception('Invalid argument type $services: ' . $categories);
+            throw new Exception('Invalid argument type $categories: ' . $categories);
         }
 
         if ( ! is_numeric($provider_id))
