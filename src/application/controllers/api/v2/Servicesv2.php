@@ -174,7 +174,28 @@ class ServicesV2 extends Services {
     {
         parrent::delete($id);
     }
-
+    public function removeServiceCategory($id_integrated) {
+        try {
+            $categoryIdIntegrated =  $this->input->get('categories');
+            if(!isset($categoryIdIntegrated)) {
+                throw new \EA\Engine\Api\V1\Exception('Field categories is required ', 400, 'Bad Request');
+            }
+            $categories = explode(',', $categoryIdIntegrated);
+            $category_ids = $this->category_model_v2->getCategoryIdById_Integrated($categories);
+            $condition = "id_integrated = '" .$id_integrated . "'";
+            $service = $this->services_model_v2->get_batch($condition);
+            if (count(array_intersect($category_ids, $service[0]['categories'])) === 0) {
+                $this->_throwRecordNotFound();
+            } else {
+                $this->category_model_v2->removeCategoryService($service[0]["id"], $category_ids);
+            }
+        }
+        catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
+    }
+ 
     public function addCategoryToService($id_integrated) {
         try {
 

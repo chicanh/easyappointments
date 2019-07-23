@@ -154,6 +154,21 @@ class Category_model_v2 extends CI_Model {
         }
         return $ids;
     }
+
+    public function removeCategoryService($id_service, $categoryIds) {
+        $this->db->where("id_services", $id_service)->where_in("id_categories", $categoryIds)
+        ->delete("integrated_services_categories");
+    }
+
+    public function getCategoryIdById_Integrated(array $id_integrateds) {
+        $categoryIds = $this->db->select('id')->from('integrated_categories')
+        ->where_in('id_integrated', $id_integrateds)->get()->result_array();
+        $ids = [];
+        foreach ($categoryIds as $entry) {
+            array_push($ids, $entry['id']);
+        }
+        return $ids;
+    }
 }
 
 ?>
