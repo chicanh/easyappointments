@@ -188,7 +188,7 @@ class ProvidersV2 extends Providers {
                 $provider = $this->providers_model_v2->get_batch("id_integrated='". $id_integrated . "'");
                 if (!empty($service) && isset($provider)) {
                         $services_providers = $this->services_providers_model_v2->get_providers_by_service_id($service[0]['id'], $provider[0]['id']);
-                        if(empty($service_integrated)) {
+                        if(!empty($services_providers)) {
                             return $this->put($provider[0]['id']);
                         } else {
                             $this->_throwRecordNotFound();
