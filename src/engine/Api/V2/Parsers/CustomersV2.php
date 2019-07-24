@@ -23,7 +23,10 @@ class CustomersV2 extends Customers {
             'gender' => $response['gender'],
             'national_id' => $response['national_id'],
             'birthday' => $response['birthday'],
-            'photo_profile' => $response['photo_profile']
+            'photo_profile' => $response['photo_profile'],
+            'cityId' => $response['city_id'],
+            'districtId' => $response['district_id'],
+            'wardId' => $response['ward_id']
         ];
 
         $response = $encodedResponse;
@@ -50,6 +53,7 @@ class CustomersV2 extends Customers {
         {
             $birthday = $request['birthday'];
         }
+       
         parent::decode($request);
             
         if(isset($id_integrated)) {
@@ -83,7 +87,12 @@ class CustomersV2 extends Customers {
             'gender' => $response['gender'],
             'national_id' => $response['national_id'],
             'birthday' => $response['birthday'],
-            'photo_profile' => $response['photo_profile']
+            'photo_profile' => $response['photo_profile'],
+            'zip' => $response['zip_code'],
+            'notes' => $response['notes'],
+            'city' => $response['city_id'],
+            'district' => $response['district_id'],
+            'ward' => $response['ward_id']
         ];
 
         return $encodedResponse;

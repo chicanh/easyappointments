@@ -61,13 +61,16 @@ class PatientsV3 extends Customersv2 {
             }
 
             $user_id = $this->customers_model_v2->add($patient);
-            $requestPatient = $request->getBody();
-            $patient_integrated['id_user_integrated'] = $requestPatient["id_user_integrated"];
+
+            $patient_integrated['id_user_integrated'] = $request->getBody()["id_user_integrated"];
             $patient_integrated['id_patients'] = $user_id;
-	    $patient_integrated['id_service_integrated'] = $requestPatient["id_service_integrated"];
-	    $this->patient_model->add($patient_integrated);
-	    $requestPatient['id'] = $user_id;
-            $response = new Response($requestPatient);
+            $patient_integrated['id_service_integrated'] = $request->getBody()["id_service_integrated"];
+            $this->patient_model->add($patient_integrated);
+
+            $patient['id'] = $user_id;
+            $patient = $this->patient_model->get_aggregates($patient);
+            $patient = $this->parser->customEncode($patient);
+            $response = new Response($patient);
             $status = new NonEmptyText('201 Created');
             $response->output($status);
         
@@ -77,6 +80,36 @@ class PatientsV3 extends Customersv2 {
             $this->_handleException($exception);
         }
     }
+
+    public function put($idPatients, $idUserIntegrated, $idServiceIntegrated){
+        try
+        {
+            $request = new Request();
+            $patient = $request->getBody();
+
+            $this->parser->decode($patient);
+
+            $this->customers_model_v2->update($idPatients, $patient);
+           
+            $patient_integrated['id_user_integrated'] = $idUserIntegrated;
+            $patient_integrated['id_patients'] = $idPatients;
+            $patient_integrated['id_service_integrated'] = $idServiceIntegrated;
+            $this->patient_model->update($patient_integrated);
+            $patient['id'] = $idPatients;
+            $patient = $this->patient_model->get_aggregates($patient);
+            $patient = $this->parser->customEncode($patient);
+            $response = new Response($patient);
+            $status = new NonEmptyText('201 Created');
+            $response->output($status);
+        
+        }
+        catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
+    }
+
+
     /**
     * This is entry point: http://localhost/index.php/api/v3/patients
     */
@@ -89,7 +122,7 @@ class PatientsV3 extends Customersv2 {
             if($id_service_integrated == null){
                 throw new \EA\Engine\Api\V1\Exception('id_service_integrated is required', 400);
             }
-            $result = $this->patient_model->get($id_user_integrated, $id_service_integrated, $page, $size);
+            $result = $this->patient_model->get($id_user_integrated, $id_service_integrated, $page, $size, array_key_exists('aggregates', $_GET));
             $result['patients'] = $this->encodePatients($result['patients']);
             $response = new Response($result);
             $response->output();
@@ -109,7 +142,7 @@ class PatientsV3 extends Customersv2 {
                 throw new \EA\Engine\Api\V1\Exception('id_service_integrated are required', 400);
             }
             else {
-		$patients = $this->patient_model->getPatient($id_user_integrated, $id_service_integrated, $id_integrated);
+		$patients = $this->patient_model->getPatient($id_user_integrated, $id_service_integrated, $id_integrated, array_key_exists('aggregates', $_GET));
 		if(!empty($patients)) {
 	                $response = new Response($patients);
 			$response->encode($this->parser)->singleEntry(TRUE)->output();
