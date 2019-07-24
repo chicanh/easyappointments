@@ -57,7 +57,7 @@ class Wards extends API_V1_Controller {
             $ward['id'] = $this->wards_model->createWard($ward);
             
             $response = new Response($ward);
-            $response->output();
+            $response->encode($this->parser)->output();
         }
         catch (\Exception $exception)
         {
@@ -82,7 +82,7 @@ class Wards extends API_V1_Controller {
                 $this->_throwRecordNotFound();
             }
             $response = new Response($result);
-            $response->output();
+            $response->encode($this->parser)->output();
         }catch(\Exception $exception){
             exit($this->_handleException($exception));
         }
