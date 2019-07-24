@@ -349,14 +349,16 @@ ALTER TABLE `ea_appointments`
 CREATE TABLE IF NOT EXISTS `integrated_cities` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
     `city` VARCHAR(60) NOT NULL,
+    `type` VARCHAR(50) NOT NULL,
     UNIQUE KEY (`city`),
     PRIMARY KEY (`id`)
 )
 
 CREATE TABLE IF NOT EXISTS `integrated_districts` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `id_city` INT(11) NOT NULL,
     `name` VARCHAR(60) NOT NULL,
+    `type` VARCHAR(50) NOT NULL,
+    `id_city` INT(11) NOT NULL,
     PRIMARY KEY (`id`)
 );
 
@@ -367,8 +369,9 @@ ALTER TABLE `integrated_districts`
 
 CREATE TABLE IF NOT EXISTS `integrated_wards` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
-    `id_district` INT(11) NOT NULL,
     `name` VARCHAR(60) NOT NULL,
+    `type` VARCHAR(50) NOT NULL,
+    `id_district` INT(11) NOT NULL,
     PRIMARY KEY (`id`)
 );
 
