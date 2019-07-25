@@ -182,28 +182,26 @@ class ProvidersV2 extends Providers {
     }
 
     public function updateProviderByServiceId($id_service_integrated, $id_integrated) {
-        if($id_integrated !=null && $id_service_integrated!=null) {
-        $service = $this->services_model_v2->get_batch("id_integrated='". $id_service_integrated . "'");
-        
-        if (isset($service)) {
-            $services_providers = $this->services_providers_model_v2->get_providers_by_service_id($service[0]['id']);
-        }
-        if (count($services_providers) > 0) {
-            foreach ($services_providers as $sp) {
-                $provider = $this->user_model_v2->find_by_id($sp['id_users']);
-                if (count($provider) === 0) {
-                    $this->_throwRecordNotFound();
+        try {
+            if($id_integrated !=null && $id_service_integrated!=null) {
+                $service = $this->services_model_v2->get_batch("id_integrated='". $id_service_integrated . "'");
+                $provider = $this->providers_model_v2->get_batch("id_integrated='". $id_integrated . "'");
+                if (!empty($service) && isset($provider)) {
+                        $services_providers = $this->services_providers_model_v2->get_providers_by_service_id($service[0]['id'], $provider[0]['id']);
+                        if(!empty($services_providers)) {
+                            return $this->put($provider[0]['id']);
+                        } else {
+                            $this->_throwRecordNotFound();
+                        }
+                    } else {
+                        $this->_throwRecordNotFound();
+                    }
+                } else {
+                    set_status_header(400);
+                    echo 'please enter id_integrated';
                 }
-
-                if($provider['id_integrated'] == $id_integrated) {
-                    
-                    return $this->put($provider['id']);
-                }
-            }
-        }
-        } else {
-            set_status_header(400);
-            echo 'please enter id_integrated';
+        } catch(\Exception $exception) {
+            $this->_handleException($exception);
         }
     }
 
