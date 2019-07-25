@@ -57,7 +57,7 @@ class Cities extends API_V1_Controller {
             $city['id'] = $this->cities_model->createCity($city);
           
             $response = new Response($city);
-            $response->output();
+            $response->encode($this->parser)->output();
         }
         catch (\Exception $exception)
         {
@@ -72,7 +72,7 @@ class Cities extends API_V1_Controller {
                 $this->_throwRecordNotFound();
             }
             $response = new Response($result);
-            $response->singleEntry(TRUE)->output();
+            $response->encode($this->parser)->singleEntry(TRUE)->output();
         }catch(\Exception $exception){
             exit($this->_handleException($exception));
         }

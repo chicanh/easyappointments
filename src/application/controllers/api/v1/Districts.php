@@ -55,7 +55,7 @@ class Districts extends API_V1_Controller {
             $district['id'] = $this->districts_model->createDistrict($district);
             
             $response = new Response($district);
-            $response->output();
+            $response->encode($this->parser)->output();
         }
         catch (\Exception $exception)
         {
@@ -80,7 +80,7 @@ class Districts extends API_V1_Controller {
                 $this->_throwRecordNotFound();
             }       
             $response = new Response($result);
-            $response->output();
+            $response->encode($this->parser)->output();
         }catch(\Exception $exception){
             exit($this->_handleException($exception));
         }
