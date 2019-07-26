@@ -160,15 +160,6 @@ class Category_model_v2 extends CI_Model {
         ->delete("integrated_services_categories");
     }
 
-    public function getCategoryIdById_Integrated(array $id_integrateds) {
-        $categoryIds = $this->db->select('id')->from('integrated_categories')
-        ->where_in('id_integrated', $id_integrateds)->get()->result_array();
-        $ids = [];
-        foreach ($categoryIds as $entry) {
-            array_push($ids, $entry['id']);
-        }
-        return $ids;
-    }
 }
 
 ?>
