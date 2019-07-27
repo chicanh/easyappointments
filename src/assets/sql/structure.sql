@@ -141,12 +141,8 @@ CREATE TABLE IF NOT EXISTS `ea_users` (
     `gender` VARCHAR(256),
     `id_integrated` CHAR(36),
     `photo_profile` VARCHAR(256),
-    `city_id` INT(11),
-    `district_id` VARCHAR(256),
-    `ward_id` VARCHAR(256),
     PRIMARY KEY (`id`),
     KEY `id_roles` (`id_roles`),
-    KEY `city_id` (`city_id`),
     UNIQUE KEY (`id_integrated`),
     UNIQUE KEY (`phone_number`)
 )
@@ -261,7 +257,7 @@ ON  `ea_appointments` (`order_id`);
 ALTER TABLE `ea_users`
     ADD COLUMN `fee` DECIMAL(10, 2) AFTER `photo_profile`,
     ADD COLUMN `currency` VARCHAR(32),
-    ADD COLUMN `default` BOOLEAN DEFAULT NULL
+    ADD COLUMN `default` BOOLEAN DEFAULT NULL;
 
 CREATE TABLE IF NOT EXISTS `integrated_categories` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -323,7 +319,7 @@ CREATE TABLE IF NOT EXISTS `integrated_users_patients` (
     PRIMARY KEY ( `id_service_integrated`,`id_patients`),
     KEY `id_user_integrated` (`id_user_integrated`),
     KEY `id_patients` (`id_patients`),
-	KEY `id_service_integrated` (`id_integrated`)
+    KEY `id_service_integrated` (`id_service_integrated`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8;
@@ -334,16 +330,13 @@ ALTER TABLE `integrated_users_patients`
 	ON UPDATE CASCADE;
 	
 ALTER TABLE `integrated_users_patients`
-	ADD COLUMN `id_service_integrated` INT(11) NOT NULL AFTER `id_patients`,
 	ADD CONSTRAINT `fk_service_patient` FOREIGN KEY (`id_service_integrated`) REFERENCES `ea_services` (`id_integrated`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
 
 ALTER TABLE `ea_appointments`
     ADD COLUMN `id_category_integrated` VARCHAR(50),
-    ADD COLUMN `health_insurance_used` BOOLEAN,
-    ON DELETE CASCADE
-    ON UPDATE CASCADE;
+    ADD COLUMN `health_insurance_used` BOOLEAN;
 
 
 CREATE TABLE IF NOT EXISTS `integrated_cities` (
@@ -352,7 +345,7 @@ CREATE TABLE IF NOT EXISTS `integrated_cities` (
     `type` VARCHAR(50) NOT NULL,
     UNIQUE KEY (`city`),
     PRIMARY KEY (`id`)
-)
+);
 
 CREATE TABLE IF NOT EXISTS `integrated_districts` (
     `id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -387,6 +380,6 @@ ALTER TABLE `ea_users`
     ADD COLUMN `ward_id` INT(11),
     ADD CONSTRAINT `fk_city_id` FOREIGN KEY (`city_id`) REFERENCES `integrated_cities` (`id`),
     ADD CONSTRAINT `fk_district_id` FOREIGN KEY (`district_id`) REFERENCES `integrated_districts` (`id`),
-    ADD CONSTRAINT `fk_ward_id` FOREIGN KEY (`ward_id`) REFERENCES `integrated_wards` (`id`),
+    ADD CONSTRAINT `fk_ward_id` FOREIGN KEY (`ward_id`) REFERENCES `integrated_wards` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;

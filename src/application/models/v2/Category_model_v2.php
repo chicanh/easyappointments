@@ -154,6 +154,12 @@ class Category_model_v2 extends CI_Model {
         }
         return $ids;
     }
+
+    public function removeCategoryService($id_service, $categoryIds) {
+        $this->db->where("id_services", $id_service)->where_in("id_categories", $categoryIds)
+        ->delete("integrated_services_categories");
+    }
+
 }
 
 ?>
