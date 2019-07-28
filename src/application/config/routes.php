@@ -121,6 +121,7 @@ $route['api/v2/categories/providers/(:any)']['get'] = 'api/v2/categoriesv2/getCa
 $route['api/v3/patients/(:any)']['get'] = 'api/v3/patientsv3/getPatient/$1';
 $route['api/v3/appointments/(:any)']['get'] = 'api/v3/appointmentsv3/getUserAppointments/$1';
 $route['api/v3/appointments/services/(:any)/patients/(:any)']['get'] = 'api/v3/appointmentsv3/getAppointmentWithServiceIdAndPatientId/$1/$2';
+$route['api/v3/appointments/services/(:any)/users/(:any)/patients/(:any)']['get'] = 'api/v3/appointmentsv3/getAppointmentWithServiceAndUserAndPatient/$1/$2/$3';
 $route['api/v2/categories/id']['post'] = 'api/v2/categoriesv2/getCategoryIds';
 $route['api/v2/services/(:any)/categories']['delete'] = 'api/v2/servicesv2/removeServiceCategory/$1';
 $route['api/v2/services/(:any)/categories']['put'] = 'api/v2/servicesv2/addCategoryToService/$1';
