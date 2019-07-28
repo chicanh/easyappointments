@@ -42,12 +42,25 @@ class AppointmentsV3 extends AppointmentsV2 {
             $idUserIntegrated = $this->input->get('id_user_integrated');
             $idPatientIntegrated = $this->input->get('id_patient_integrated');
             $idServiceIntegrated = $this->input->get('id_service_integrated');
+            $page = $this->input->get('page');
+            $size = $this->input->get('length');
+            $sort = $this->input->get('sort');
+            $startDate = $this->input->get('startDate');
+            $endDate = $this->input->get('endDate');
+
             if($idUserIntegrated == null || $idServiceIntegrated == null){
                 throw new \EA\Engine\Api\V1\Exception('id_user_integrated & id_service_integrated are  required', 400);
             }
           
             
-            $appointments =  $this->appointments_model_v3->getAppointmentWithUserIdAndServiceIdAndPatientId($idUserIntegrated, $idServiceIntegrated, $idPatientIntegrated);
+            $appointments =  $this->appointments_model_v3->getAppointmentWithUserIdAndServiceIdAndPatientId($idUserIntegrated, 
+                                                                                                            $idServiceIntegrated, 
+                                                                                                            $idPatientIntegrated,
+                                                                                                            $startDate,
+                                                                                                            $endDate,
+                                                                                                            $page,
+                                                                                                            $size,
+                                                                                                            $sort);
             $appointments = $this->encodedAppointments($appointments);
             $response = new Response($appointments);
             $response->search()
@@ -63,16 +76,35 @@ class AppointmentsV3 extends AppointmentsV2 {
     }
 
     public function getAppointmentWithServiceIdAndPatientId($idServiceIntegrated, $idPatientIntegrated) {
-        
+
         try {
-		$appointments =  $this->appointments_model_v3->getAppointmentWithServiceIdAndPatientId($idServiceIntegrated, $idPatientIntegrated);
-            $appointments = $this->encodedAppointments($appointments);
-            $response = new Response($appointments);
-            $response->search()
-                     ->sort()
-                    ->paginate()
-                    ->minimize()
-                    ->output();
+            $page = $this->input->get('page');
+            $size = $this->input->get('length');
+            $sort = $this->input->get('sort');
+            $startDate = $this->input->get('startDate');
+            $endDate = $this->input->get('endDate');
+
+            
+            // $idUserIntegrated='65a4a7dc-bedd-4d42-8a8f-46b5283f482c';
+            // $idServiceIntegrated='81cbf841-1929-4c81-92c3-9ebc343a7282';
+            // $idPatientIntegrated='6eb8cde6-9237-47b8-bd27-e0b3b4d6bffb';
+            // $page='1';
+            // $size='10';
+            // $sort='DESC';
+            // $startDate = '2017-01-01';
+            // $endDate = '2019-01-01';
+
+            $resultSet =  $this->appointments_model_v3->getAppointmentWithServiceIdAndPatientId($idServiceIntegrated, 
+                                                                                                $idPatientIntegrated,
+                                                                                                $startDate,
+                                                                                                $endDate,
+                                                                                                $page,
+                                                                                                $size, 
+                                                                                                $sort);
+            
+            $resultSet['appointments'] = $this->encodedAppointments($resultSet['appointments']);
+            $response = new Response($resultSet);
+            $response->output();
            
             
         } catch (\Exception $exception) {

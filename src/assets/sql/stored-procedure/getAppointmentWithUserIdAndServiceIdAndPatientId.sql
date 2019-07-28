@@ -1,7 +1,14 @@
 -------------------------------------------------------------------------- STORED PROCEDURE SCRIPT----------------------------------------------------------------
 DELIMITER $$
 DROP PROCEDURE IF EXISTS `getAppointmentsByConditionAndPaging` $$
-CREATE PROCEDURE `getAppointmentsByConditionAndPaging`(IN `idUserIntegrated` VARCHAR(200), IN `idServiceIntegrated` VARCHAR(200), IN `idPatientIntegrated` VARCHAR(200), IN `page` INT, IN `size` INT, IN `sort` VARCHAR(200), IN `startDate` VARCHAR(200), IN `endDate` VARCHAR(200))
+CREATE PROCEDURE `getAppointmentsByConditionAndPaging`(IN `idUserIntegrated` VARCHAR(200), 
+                                                       IN `idServiceIntegrated` VARCHAR(200),
+                                                       IN `idPatientIntegrated` VARCHAR(200), 
+                                                       IN `startDate` VARCHAR(200), 
+                                                       IN `endDate` VARCHAR(200),
+                                                       IN `page` INT, 
+                                                       IN `size` INT, 
+                                                       IN `sort` VARCHAR(200))
 BEGIN
 	Declare startOffset Integer;
     #-- Prepare pre-condition before running main query
@@ -26,9 +33,10 @@ BEGIN
     END IF;
 
     SET startOffset = ((page - 1 ) * size);
+    
 
     # -- Start build final Query with parameter
-    SET @finalQuery = 'SELECT * FROM ea_appointments WHERE 1 = 1';
+    SET @finalQuery = 'SELECT *  FROM ea_appointments WHERE 1 = 1';
     IF idServiceIntegrated <> '' THEN
     	SET @finalQuery = CONCAT(@finalQuery,' AND ea_appointments.id_services = "',idServiceIntegrated,'"');
     END IF;
@@ -72,10 +80,11 @@ SET @startDate='2017-01-01';
 SET @endDate='2019-01-01';
 CALL `getAppointmentsByConditionAndPaging`(@idUserIntegrated, 
                                            @idServiceIntegrated, 
-                                           @idPatientIntegrated, 
+                                           @idPatientIntegrated,  
+                                           @startDate, 
+                                           @endDate,
                                            @page, 
                                            @size, 
-                                           @sort, 
-                                           @startDate, 
-                                           @endDate);
+                                           @sort);
+
 

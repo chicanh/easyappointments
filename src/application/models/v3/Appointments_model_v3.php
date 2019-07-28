@@ -25,7 +25,14 @@ class Appointments_Model_V3 extends Appointments_Model {
         ->where('integrated_users_patients.id_user_integrated', $id_user_integrated)->get()->result_array();
     }
 
-    public function getAppointmentWithUserIdAndServiceIdAndPatientId($id_user_integrated, $id_service_integrated, $id_patients){
+    public function getAppointmentWithUserIdAndServiceIdAndPatientId($id_user_integrated, 
+                                                                    $id_service_integrated, 
+                                                                    $id_patients,
+                                                                    $startDate,
+                                                                    $endDate,
+                                                                    $page,
+                                                                    $size,
+                                                                    $sort) {                                      
         $this->db->select('*')->from('ea_appointments')
                 ->join('integrated_users_patients', 'ea_appointments.id_users_customer = integrated_users_patients.id_patients')
                 ->where('integrated_users_patients.id_user_integrated', $id_user_integrated)
@@ -36,14 +43,46 @@ class Appointments_Model_V3 extends Appointments_Model {
         return $this->db->get()->result_array();
     }
 
-    public function getAppointmentWithServiceIdAndPatientId($id_service_integrated, $id_patient_integrated){
-	    $this->db->select('ea_appointments.*')->from('ea_appointments')
-		->join('ea_appointments_attendants', 'ea_appointments.id = ea_appointments_attendants.id_appointment')
-		->join('integrated_users_patients', 'ea_appointments_attendants.id_users = integrated_users_patients.id_patients')
-		->join('ea_users','ea_users.id = integrated_users_patients.id_patients')
-		->where("ea_users.id_integrated", $id_patient_integrated)
-		->where('integrated_users_patients.id_service_integrated', $id_service_integrated);
-        return $this->db->get()->result_array();
+    public function countAppointmentsByCondition($id_user_integrated, $id_service_integrated, $id_patient_integrated, $startDate, $endDate){
+        $arrayParams = $this->initStoredProcedureParams($id_user_integrated, $id_service_integrated, $id_patient_integrated, $startDate, $endDate);
+        $totalQuery = 'CALL countAppointmentsByCondition(?, ?, ?, ?, ?)';
+        $query = $this->db->query($totalQuery, $arrayParams);
+        $response = $query->result_array()[0]['total'];
+        $this->releaseStoredProcedureQuery($query);
+        return $response;
+    }
+
+    public function getAppointmentWithServiceIdAndPatientId($id_service_integrated, 
+                                                            $id_patient_integrated,
+                                                            $startDate,
+                                                            $endDate,
+                                                            $page,
+                                                            $size,
+                                                            $sort) {                                                                           
+        $resultSet['totals'] = $this->countAppointmentsByCondition(null, $id_service_integrated, $id_patient_integrated, $startDate, $endDate);
+
+ 
+        $arrayParams = $this->initStoredProcedureParams(null, $id_service_integrated, $id_patient_integrated, $startDate, $endDate);               
+        $appointmentsQuery = 'CALL getAppointmentsByConditionAndPaging(?, ?, ?, ?, ?, ?, ?, ?)';
+        array_push($arrayParams, $page, $size, $sort);
+        $query = $this->db->query($appointmentsQuery, $arrayParams);
+        $resultSet['appointments'] = $query->result_array();
+        $this->initStoredProcedureParams(null, $id_service_integrated, $id_patient_integrated, $startDate, $endDate);    
+        return $resultSet;
+    
+    }
+
+    private function releaseStoredProcedureQuery($query){
+        $query->next_result(); 
+        $query->free_result(); 
+    }
+
+    private function initStoredProcedureParams($id_user_integrated,
+                                               $id_service_integrated, 
+                                               $id_patient_integrated, 
+                                               $startDate = null, 
+                                               $endDate = null) {     
+        return [$id_user_integrated, $id_service_integrated, $id_patient_integrated, $startDate, $endDate];
     }
 
     public function getUserAppointments($id_integrated, $id_user_integrated) {

@@ -1,7 +1,11 @@
 -------------------------------------------------------------------------- STORED PROCEDURE SCRIPT----------------------------------------------------------------
 DELIMITER $$
 DROP PROCEDURE IF EXISTS `countAppointmentsByCondition` $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `countAppointmentsByCondition`(IN `idUserIntegrated` VARCHAR(200), IN `idServiceIntegrated` VARCHAR(200), IN `idPatientIntegrated` VARCHAR(200), IN `startDate` VARCHAR(200), IN `endDate` VARCHAR(200))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `countAppointmentsByCondition`(IN `idUserIntegrated` VARCHAR(200), 
+                                                                           IN `idServiceIntegrated` VARCHAR(200), 
+                                                                           IN `idPatientIntegrated` VARCHAR(200), 
+                                                                           IN `startDate` VARCHAR(200), 
+                                                                           IN `endDate` VARCHAR(200))
 BEGIN
 	Declare startOffset Integer;
     #-- Prepare pre-condition before running main query
@@ -19,7 +23,7 @@ BEGIN
 
 
     # -- Start build final Query with parameter
-    SET @finalQuery = 'SELECT COUNT(ea_appointments.id) FROM ea_appointments WHERE 1 = 1';
+    SET @finalQuery = 'SELECT COUNT(ea_appointments.id) as "total" FROM ea_appointments WHERE 1 = 1';
     IF idServiceIntegrated <> '' THEN
     	SET @finalQuery = CONCAT(@finalQuery,' AND ea_appointments.id_services = "',idServiceIntegrated,'"');
     END IF;
