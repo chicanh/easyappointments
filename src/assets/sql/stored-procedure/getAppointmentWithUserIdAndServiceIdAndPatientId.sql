@@ -12,24 +12,28 @@ CREATE PROCEDURE `getAppointmentsByConditionAndPaging`(IN `idUserIntegrated` VAR
 BEGIN
 	Declare startOffset Integer;
     #-- Prepare pre-condition before running main query
-    IF idServiceIntegrated <> '' THEN
+    IF idServiceIntegrated <> '' OR idServiceIntegrated IS NOT NULL THEN
         SET idServiceIntegrated = (SELECT ea_services.id from `ea_services` WHERE ea_services.id_integrated = idServiceIntegrated);
     END IF;
 
-    IF idUserIntegrated <> '' THEN
+    IF idUserIntegrated <> '' OR idUserIntegrated IS NOT NULL THEN
         SET idUserIntegrated = (SELECT ea_users.id from ea_users WHERE ea_users.id_integrated = idUserIntegrated);
     END IF;
 
-    IF idPatientIntegrated <> '' THEN
+    IF idPatientIntegrated <> '' OR idPatientIntegrated IS NOT NULL THEN
         SET idPatientIntegrated = (SELECT ea_users.id from ea_users WHERE ea_users.id_integrated = idPatientIntegrated);
     END IF;
 
-    IF page = 0 THEN
+    IF page <= 0 OR page IS NULL THEN
           SET page = 1; #default page = 1
     END IF;
 
-    IF size = 0 THEN
+    IF size <= 0 OR size IS NULL THEN
         SET size = 10; #default size = 10
+    END IF;
+
+    IF sort IS NULL OR sort <> 'ASC' OR sort <> 'DESC' THEN
+        SET sort = 'ASC'; #default size = 10
     END IF;
 
     SET startOffset = ((page - 1 ) * size);
@@ -37,13 +41,13 @@ BEGIN
 
     # -- Start build final Query with parameter
     SET @finalQuery = 'SELECT *  FROM ea_appointments WHERE 1 = 1';
-    IF idServiceIntegrated <> '' THEN
+    IF idServiceIntegrated <> '' OR idServiceIntegrated IS NOT NULL THEN
     	SET @finalQuery = CONCAT(@finalQuery,' AND ea_appointments.id_services = "',idServiceIntegrated,'"');
     END IF;
-    IF idUserIntegrated <> '' THEN
+    IF idUserIntegrated <> '' OR idUserIntegrated IS NOT NULL THEN
         SET @finalQuery = CONCAT(@finalQuery,' AND ea_appointments.id_users_provider = "',idUserIntegrated,'"');
     END IF;
-    IF idPatientIntegrated <> '' THEN
+    IF idPatientIntegrated <> '' OR idPatientIntegrated IS NOT NULL THEN
         SET @finalQuery = CONCAT(@finalQuery,' AND ea_appointments.id_users_customer = "',idPatientIntegrated,'"');
     END IF;
     IF startDate <> '' THEN

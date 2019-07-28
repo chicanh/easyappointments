@@ -59,7 +59,7 @@ class Appointments_Model_V3 extends Appointments_Model {
                                                             $page,
                                                             $size,
                                                             $sort) {                                                                           
-        $resultSet['totals'] = $this->countAppointmentsByCondition(null, $id_service_integrated, $id_patient_integrated, $startDate, $endDate);
+        $resultSet['total'] = $this->countAppointmentsByCondition(null, $id_service_integrated, $id_patient_integrated, $startDate, $endDate);
 
  
         $arrayParams = $this->initStoredProcedureParams(null, $id_service_integrated, $id_patient_integrated, $startDate, $endDate);               
