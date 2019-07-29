@@ -27,19 +27,22 @@ class Appointments_Model_V3 extends Appointments_Model {
                                                 $size,
                                                 $sort) {     
         $resultSet['total'] = $this->countAppointmentsByCondition($id_user_integrated, $id_service_integrated, $id_patient_integrated, $startDate, $endDate);
-        $arrayParams = $this->initStoredProcedureParams($id_user_integrated, $id_service_integrated, $id_patient_integrated, $startDate, $endDate);               
-        $appointmentsQuery = 'CALL getAppointmentsByConditionAndPaging(?, ?, ?, ?, ?, ?, ?, ?)';
-        array_push($arrayParams, $page, $size, $sort);
-        $query = $this->db->query($appointmentsQuery, $arrayParams);
-        $resultSet['appointments'] = $query->result_array();
-        $this->releaseStoredProcedureQuery($query);    
+        $resultSet['appointments'] = $this->getAppointmentsByCondition($id_user_integrated, $id_service_integrated, $id_patient_integrated, $startDate, $endDate, $page, $size, $sort); 
         return $resultSet; 
+    }
+
+    private function getAppointmentsByCondition($id_user_integrated, $id_service_integrated, $id_patient_integrated, $startDate, $endDate, $page, $size, $sort){
+        $arrayParams = $this->initStoredProcedureParams($id_user_integrated, $id_service_integrated, $id_patient_integrated, $startDate, $endDate);               
+        array_push($arrayParams, $page, $size, $sort);
+        $query = $this->db->query(GET_APPOINTMENTS_WITH_CONDITION_AND_PAGING_SP, $arrayParams);
+        $response = $query->result_array();
+        $this->releaseStoredProcedureQuery($query);
+        return $response;
     }
 
     private function countAppointmentsByCondition($id_user_integrated, $id_service_integrated, $id_patient_integrated, $startDate, $endDate){
         $arrayParams = $this->initStoredProcedureParams($id_user_integrated, $id_service_integrated, $id_patient_integrated, $startDate, $endDate);
-        $totalQuery = 'CALL countAppointmentsByCondition(?, ?, ?, ?, ?)';
-        $query = $this->db->query($totalQuery, $arrayParams);
+        $query = $this->db->query(COUNT_APPOINTMENTS_WITH_CONDITION_SP, $arrayParams);
         $response = $query->result_array()[0]['total'];
         $this->releaseStoredProcedureQuery($query);
         return $response;
