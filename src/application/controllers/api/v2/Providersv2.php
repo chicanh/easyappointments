@@ -67,7 +67,7 @@ class ProvidersV2 extends Providers {
                 // Get service that have id_integrated = id_services_integrated in table ea_services
                 $service = $services_model->find_by_id_integrated($_GET['id_service_integrated']);
                 if (isset($service)) {
-                    $services_providers = $services_providers_model->get_providers_by_service_id($service[0]->id);
+                    $services_providers = $services_providers_model->getProvidersByServiceId($service[0]->id);
                 }
                 $providers = array();
                 if (count($services_providers) > 0) {
@@ -187,7 +187,7 @@ class ProvidersV2 extends Providers {
                 $service = $this->services_model_v2->get_batch("id_integrated='". $id_service_integrated . "'");
                 $provider = $this->providers_model_v2->get_batch("id_integrated='". $id_integrated . "'");
                 if (!empty($service) && isset($provider)) {
-                        $services_providers = $this->services_providers_model_v2->get_providers_by_service_id($service[0]['id'], $provider[0]['id']);
+                        $services_providers = $this->services_providers_model_v2->getProviderByServiceId($service[0]['id'], $provider[0]['id']);
                         if(!empty($services_providers)) {
                             return $this->put($provider[0]['id']);
                         } else {
