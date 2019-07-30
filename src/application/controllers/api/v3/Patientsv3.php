@@ -99,7 +99,7 @@ class PatientsV3 extends Customersv2 {
             $patient = $this->patient_model->get_aggregates($patient);
             $patient = $this->parser->customEncode($patient);
             $response = new Response($patient);
-            $status = new NonEmptyText('201 Created');
+            $status = new NonEmptyText('200 Created');
             $response->output($status);
         
         }

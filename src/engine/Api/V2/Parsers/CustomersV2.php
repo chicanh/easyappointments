@@ -24,9 +24,9 @@ class CustomersV2 extends Customers {
             'national_id' => $response['national_id'],
             'birthday' => $response['birthday'],
             'photo_profile' => $response['photo_profile'],
-            'cityId' => $response['city_id'],
-            'districtId' => $response['district_id'],
-            'wardId' => $response['ward_id']
+            'city' => $response['city_id'],
+            'district' => $response['district_id'],
+            'ward' => $response['ward_id']
         ];
 
         $response = $encodedResponse;
