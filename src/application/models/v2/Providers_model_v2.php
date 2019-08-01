@@ -187,7 +187,7 @@ class Providers_Model_V2 extends CI_Model {
 
         $this->save_services($services, $provider['id']);
         $this->save_settings($settings, $provider['id']);
-        if(!empty($category)) {
+        if(!empty($categories)) {
             $this->save_categories($categories, $provider['id'], $services);
         }
 
@@ -738,7 +738,7 @@ class Providers_Model_V2 extends CI_Model {
         }
     }
 
-    protected function getCategoryByProvider($provider_id) {
+    public function getCategoryByProvider($provider_id) {
         return $this->db->select('id, name, img')->from('integrated_categories')
         ->join('integrated_provider_categories', 'integrated_provider_categories.id_categories = integrated_categories.id', 'inner')
         ->where('integrated_provider_categories.id_providers', $provider_id)->get()->result_array();;
