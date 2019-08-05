@@ -6,7 +6,7 @@
 		$dbname = 'easyappt'; // change here 
 		$conn = new mysqli($servername, $username, $password, $dbname);
 
-		$folder ='assets/sql/stored-procedure/'; // update path
+		$folder ='stored-procedure/'; // update path
 		$files = scandir($folder);
 		foreach($files as $file) {
 			// check if file name contains .sql
