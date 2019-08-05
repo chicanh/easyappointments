@@ -1,15 +1,16 @@
 <?php
 	try{
-		$username ='ea';
-		$password ='L3Tr4u4N';
-		$servername = 'localhost';
-		$dbname = 'easyappt';
+		$username ='ea'; // change here
+		$password ='L3Tr4u4N'; // change here
+		$servername = 'localhost'; // change here
+		$dbname = 'easyappt'; // change here 
 		$conn = new mysqli($servername, $username, $password, $dbname);
 
-		$folder ='assets/sql/stored-procedure/';
+		$folder ='assets/sql/stored-procedure/'; // update path
 		$files = scandir($folder);
 		foreach($files as $file) {
-			if(strpos($file, '.sql') !== false){
+			// check if file name contains .sql
+			if(strpos($file, '.sql') !== false) {
 				$fileName = $folder.$file;
 				$sql = file_get_contents($fileName);
 				if (mysqli_multi_query($conn, $sql) === TRUE) {
