@@ -1,9 +1,14 @@
 <?php
+
+	include("../../config.php");
 	try{
-		$username ='ea'; // change here
-		$password ='L3Tr4u4N'; // change here
-		$servername = 'localhost'; // change here
-		$dbname = 'easyappt'; // change here 
+		$refl = new ReflectionClass('Config');
+		$config = $refl->getConstants();
+
+		$username = $config['DB_USERNAME'];
+		$password = $config['DB_PASSWORD'];
+		$servername = $config['DB_HOST'];
+		$dbname = $config['DB_NAME'];
 		$conn = new mysqli($servername, $username, $password, $dbname);
 
 		$folder ='stored-procedure/'; // update path
@@ -14,9 +19,9 @@
 				$fileName = $folder.$file;
 				$sql = file_get_contents($fileName);
 				if (mysqli_multi_query($conn, $sql) === TRUE) {
-					echo "- The script ' <b>".$fileName."</b> ' executed <b>successfully</b> <br/>";
+					echo "- The script ' ".$fileName." ' executed successfully \n";
 				} else {
-					echo "- The script ' <b>".$fileName."</b> ' executed <b>NOT SUCCESSFULL</b>: ".$conn->error." <br/>";
+					echo "- The script ' ".$fileName." ' executed NOT SUCCESSFULL: ".$conn->error." \n";
 				}
 				mysqli_next_result($conn);
 			}
