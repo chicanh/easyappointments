@@ -1,5 +1,4 @@
-DELIMITER $$
-DROP PROCEDURE IF EXISTS `getAppointmentsByConditionAndPaging` $$
+DROP PROCEDURE IF EXISTS `getAppointmentsByConditionAndPaging`;
 CREATE PROCEDURE `getAppointmentsByConditionAndPaging`(IN `idUserIntegrated` VARCHAR(200), 
                                                        IN `idServiceIntegrated` VARCHAR(200),
                                                        IN `idPatientIntegrated` VARCHAR(200), 
@@ -52,10 +51,4 @@ BEGIN
     PREPARE stmt FROM @finalQuery;
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
-END$$
-DELIMITER ;
-
-
-
-
-
+END;

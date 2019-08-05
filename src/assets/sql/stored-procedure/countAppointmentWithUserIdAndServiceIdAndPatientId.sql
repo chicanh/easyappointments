@@ -1,5 +1,4 @@
-DELIMITER $$
-DROP PROCEDURE IF EXISTS `countAppointmentsByCondition` $$
+DROP PROCEDURE IF EXISTS `countAppointmentsByCondition`;
 CREATE PROCEDURE `countAppointmentsByCondition`(IN `idUserIntegrated` VARCHAR(200), 
                                                                            IN `idServiceIntegrated` VARCHAR(200), 
                                                                            IN `idPatientIntegrated` VARCHAR(200), 
@@ -34,5 +33,4 @@ BEGIN
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
     
-END$$
-DELIMITER ;
+END;
