@@ -383,3 +383,6 @@ ALTER TABLE `ea_users`
     ADD CONSTRAINT `fk_ward_id` FOREIGN KEY (`ward_id`) REFERENCES `integrated_wards` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE;
+
+ALTER TABLE `integrated_users_patients`
+    ADD COLUMN `first_booking_date` DATETIME;
