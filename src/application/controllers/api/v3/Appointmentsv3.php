@@ -37,48 +37,62 @@ class AppointmentsV3 extends AppointmentsV2 {
     }
     
     public function get() {
-        
         try {
             $idUserIntegrated = $this->input->get('id_user_integrated');
             $idPatientIntegrated = $this->input->get('id_patient_integrated');
             $idServiceIntegrated = $this->input->get('id_service_integrated');
+
             if($idUserIntegrated == null || $idServiceIntegrated == null){
-                throw new \EA\Engine\Api\V1\Exception('id_user_integrated & id_service_integrated are  required', 400);
+                throw new \EA\Engine\Api\V1\Exception('id_user_integrated & id_service_integrated are required', 400);
             }
           
-            
-            $appointments =  $this->appointments_model_v3->getAppointmentWithUserIdAndServiceIdAndPatientId($idUserIntegrated, $idServiceIntegrated, $idPatientIntegrated);
-            $appointments = $this->encodedAppointments($appointments);
-            $response = new Response($appointments);
-            $response->search()
-                     ->sort()
-                    ->paginate()
-                    ->minimize()
-                    ->output();
-           
+            $resultSet =  $this->getListAppointmentsByConditions($idUserIntegrated, $idServiceIntegrated, $idPatientIntegrated);
+            $response = new Response($resultSet);
+            $response->output(); 
             
         } catch (\Exception $exception) {
                     exit($this->_handleException($exception));
         }
     }
 
-    public function getAppointmentWithServiceIdAndPatientId($idServiceIntegrated, $idPatientIntegrated) {
-        
+    public function getAppointmentWithServiceAndUserAndPatient($idServiceIntegrated, $idUserIntegrated, $idPatientIntegrated) {
         try {
-		$appointments =  $this->appointments_model_v3->getAppointmentWithServiceIdAndPatientId($idServiceIntegrated, $idPatientIntegrated);
-            $appointments = $this->encodedAppointments($appointments);
-            $response = new Response($appointments);
-            $response->search()
-                     ->sort()
-                    ->paginate()
-                    ->minimize()
-                    ->output();
-           
-            
+            $resultSet =  $this->getListAppointmentsByConditions($idUserIntegrated, $idServiceIntegrated, $idPatientIntegrated);
+            $response = new Response($resultSet);
+            $response->output(); 
         } catch (\Exception $exception) {
                     exit($this->_handleException($exception));
         }
     }
+
+    public function getAppointmentWithServiceIdAndPatientId($idServiceIntegrated, $idPatientIntegrated) {
+        try {
+            $resultSet =  $this->getListAppointmentsByConditions(null, $idServiceIntegrated, $idPatientIntegrated);
+            $response = new Response($resultSet);
+            $response->output(); 
+        } catch (\Exception $exception) {
+                    exit($this->_handleException($exception));
+        }
+    }
+
+    private function getListAppointmentsByConditions($id_user_integrated, $id_service_integrated, $id_patient_integrated){
+        $page = $this->input->get('page');
+        $size = $this->input->get('size');
+        $sort = $this->input->get('sort');
+        $startDate = $this->input->get('startDate');
+        $endDate = $this->input->get('endDate');
+        $resultSet =  $this->appointments_model_v3->getAppointmentsWithCondition($id_user_integrated, 
+                                                                                $id_service_integrated, 
+                                                                                $id_patient_integrated,
+                                                                                $startDate,
+                                                                                $endDate,
+                                                                                $page,
+                                                                                $size,
+                                                                                $sort);
+        $resultSet['appointments'] = $this->encodedAppointments($resultSet['appointments']);
+        return $resultSet;
+    }
+
     public function getUserAppointments($id_integrated) {
         try {
             if($this->input->get('id_user_integrated') != null) {
