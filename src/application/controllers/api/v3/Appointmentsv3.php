@@ -137,10 +137,10 @@ class AppointmentsV3 extends AppointmentsV2 {
             if($cities !== null && $cities !== '' && !$this->containsOnlyNumber($cities)) {
                 throw new \EA\Engine\Api\V1\Exception('cities must contains only numbers', 400); 
             }
-            if( $this->getYearFromDateString($startDate) < 1905){
+            if( trim($startDate) && $this->getYearFromDateString($startDate) < 1905){
                 throw new \EA\Engine\Api\V1\Exception('startDate must greater than 1905', 400); 
             }
-            if($this->getYearFromDateString($endDate) > date("Y")){
+            if(trim($endDate) && $this->getYearFromDateString($endDate) > date("Y")){
                 throw new \EA\Engine\Api\V1\Exception('endDate must less than current year', 400); 
             }
             $result = [];
@@ -165,8 +165,9 @@ class AppointmentsV3 extends AppointmentsV2 {
 
 
     private function getYearFromDateString($dateInString){
-        return $dateInString !== null && $dateInString !== '' && intval(explode("-", $dateInString)[0]);
+        return intval(explode("-", $dateInString)[0]);
     }
+
 
     private function containsOnlyNumber($array) {
         $allNumeric = true;
