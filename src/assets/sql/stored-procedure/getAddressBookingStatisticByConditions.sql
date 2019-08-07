@@ -28,11 +28,15 @@ BEGIN
         SET @finalQuery = CONCAT(@finalQuery, 'AND eau.gender = "female" ');
     END IF;
 
-    IF bhyt IS NOT NULL AND bhyt <> '' THEN
-        SET @finalQuery = CONCAT(@finalQuery, 'AND eaa.health_insurance_used = ', bhyt, ' ');
+    IF bhyt IS NOT NULL AND bhyt <> '' AND upper(bhyt) = 'TRUE' THEN
+        SET @finalQuery = CONCAT(@finalQuery, 'AND eaa.health_insurance_used = TRUE ');
     END IF;
 
-    IF first_time IS NOT NULL AND first_time <> '' THEN
+    IF bhyt IS NOT NULL AND bhyt <> '' AND upper(bhyt) = 'FALSE' THEN
+        SET @finalQuery = CONCAT(@finalQuery, 'AND eaa.health_insurance_used = FALSE ');
+    END IF;
+
+    IF first_time IS NOT NULL AND first_time <> '' AND upper(first_time) = 'TRUE' THEN
         SET @finalQuery = CONCAT(@finalQuery, 'AND iup.first_booking_date >= "', startDate, '" AND iup.first_booking_date <= "',endDate,'" ');
     END IF; 
 

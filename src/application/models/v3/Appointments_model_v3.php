@@ -77,6 +77,15 @@ class Appointments_Model_V3 extends Appointments_Model {
         ->get()->result_array();
     }
 
+    public function getAddressBookingStatistic($idServiceIntegrated, $cityId, $startDate, $endDate, $gender, $firstTime, $bhyt) {
+        $arrayParams = [$idServiceIntegrated, $cityId, $startDate, $endDate, $gender, $firstTime, $bhyt];
+        $query = $this->db->query(GET_ADDRESS_BOOKING_STATISTIC_WITH_CONDITION, $arrayParams);
+        $response = $query->result_array();
+        $this->releaseStoredProcedureQuery($query);
+        return $response;
+
+    }
+
     protected function get_aggregates(array $appointment)
     {
         $appointment['service'] = $this->db->get_where('ea_services',

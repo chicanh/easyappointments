@@ -17,6 +17,7 @@ use \EA\Engine\Api\V1\Response;
 use \EA\Engine\Api\V1\Request;
 use \EA\Engine\Types\NonEmptyText;
 
+
 /**
  * Appointments Controller v3
  *
@@ -32,6 +33,7 @@ class AppointmentsV3 extends AppointmentsV2 {
     {
         parent::__construct();
         $this->load->model('/v3/appointments_model_v3');
+        $this->load->model('cities_model');
         $this->parser = new \EA\Engine\Api\V2\Parsers\AppointmentsV2;
         $this->attachments_parser = new \EA\Engine\Api\V2\Parsers\AttachmentsV2;
     }
@@ -122,5 +124,58 @@ class AppointmentsV3 extends AppointmentsV2 {
         return $encodedAppointments;
     }
 
+    public function getAppointmentsAddressStatistic($idServiceIntegrated){
+        try{
+            
+            $cities = $this->input->get('cities');
+            $startDate= $this->input->get('startDate');
+            $endDate = $this->input->get('endDate');
+            $gender =  $this->input->get('gender');
+            $firstTime = $this->checkIsValidBooleanType($this->input->get('firstTime')) ? $this->input->get('firstTime') : null;
+            $bhyt = $this->checkIsValidBooleanType($this->input->get('bhyt')) ? $this->input->get('bhyt') : null;
+
+            if($cities !== null && $cities !== '' && !$this->containsOnlyNumber($cities)) {
+                throw new \EA\Engine\Api\V1\Exception('cities must contains only numbers', 400); 
+            }
+            if( $this->getYearFromDateString($startDate) < 1905){
+                throw new \EA\Engine\Api\V1\Exception('startDate must greater than 1905', 400); 
+            }
+            if($this->getYearFromDateString($endDate) > date("Y")){
+                throw new \EA\Engine\Api\V1\Exception('endDate must less than current year', 400); 
+            }
+            $result = [];
+            foreach ($cities as $cityId) {
+                $element['id']= $cityId;
+                $element['city']= $this->cities_model->findCityBy($cityId)[0]['name'];
+                $element['data'] = $this->appointments_model_v3->getAddressBookingStatistic($idServiceIntegrated, $cityId, $startDate, $endDate, $gender, $firstTime, $bhyt);
+                array_push($result, $element);
+            }
+            $response = new Response($result);
+            $response->output();
+        } catch (\Exception $exception) {
+            exit($this->_handleException($exception));
+        }
+
+
+    }
+
+    private function checkIsValidBooleanType($value){
+        return $value !== null && $value !== '' && $value === 'TRUE' || $value == 'FALSE';
+    }
+
+
+    private function getYearFromDateString($dateInString){
+        return $dateInString !== null && $dateInString !== '' && intval(explode("-", $dateInString)[0]);
+    }
+
+    private function containsOnlyNumber($array) {
+        $allNumeric = true;
+        foreach($array as $value) {
+             if (!(is_numeric($value))) {
+                  return false;
+             } 
+        }
+        return true;
+   }
     
 }
