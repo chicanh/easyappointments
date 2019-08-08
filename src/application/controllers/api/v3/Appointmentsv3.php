@@ -131,23 +131,37 @@ class AppointmentsV3 extends AppointmentsV2 {
             $startDate= $this->input->get('startDate');
             $endDate = $this->input->get('endDate');
             $gender =  $this->input->get('gender');
+            $idProviderIntegrated = $this->input->get('idProviderIntegrated');
             $firstTime = $this->checkIsValidBooleanType($this->input->get('firstTime')) ? $this->input->get('firstTime') : null;
             $bhyt = $this->checkIsValidBooleanType($this->input->get('bhyt')) ? $this->input->get('bhyt') : null;
 
+            if(!trim($startDate)){
+                $startDate = date("Y-m").'-01';
+            }
+
+            if(!trim($endDate)){
+                $endDate = date("Y-m-t");
+            }
+
+            $endDate .= ' 23:59:59';
+
+            if(trim($gender) && $gender !== 'male' && $gender !== 'female'){
+                throw new \EA\Engine\Api\V1\Exception('Gender must be male or female', 400); 
+            }
             if($cities !== null && $cities !== '' && !$this->containsOnlyNumber($cities)) {
                 throw new \EA\Engine\Api\V1\Exception('cities must contains only numbers', 400); 
             }
-            if( trim($startDate) && $this->getYearFromDateString($startDate) < 1905){
+            if($this->getYearFromDateString($startDate) < 1905){
                 throw new \EA\Engine\Api\V1\Exception('startDate must greater than 1905', 400); 
             }
-            if(trim($endDate) && $this->getYearFromDateString($endDate) > date("Y")){
+            if($this->getYearFromDateString($endDate) > date("Y")){
                 throw new \EA\Engine\Api\V1\Exception('endDate must less than current year', 400); 
             }
             $result = [];
             foreach ($cities as $cityId) {
                 $element['id']= $cityId;
                 $element['city']= $this->cities_model->findCityBy($cityId)[0]['name'];
-                $element['data'] = $this->appointments_model_v3->getAddressBookingStatistic($idServiceIntegrated, $cityId, $startDate, $endDate, $gender, $firstTime, $bhyt);
+                $element['data'] = $this->appointments_model_v3->getAddressBookingStatistic($idServiceIntegrated, $cityId, $startDate, $endDate, $gender, $firstTime, $bhyt, $idProviderIntegrated);
                 array_push($result, $element);
             }
             $response = new Response($result);
