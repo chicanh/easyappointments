@@ -131,7 +131,7 @@ class AppointmentsV3 extends AppointmentsV2 {
             $startDate= $this->input->get('startDate');
             $endDate = $this->input->get('endDate');
             $gender =  $this->input->get('gender');
-            $idProviderIntegrated = $this->input->get('idProviderIntegrated');
+            $idProviderIntegrated = $this->input->get('id_provider_integrated');
             $firstTime = $this->checkIsValidBooleanType($this->input->get('firstTime')) ? $this->input->get('firstTime') : null;
             $bhyt = $this->checkIsValidBooleanType($this->input->get('bhyt')) ? $this->input->get('bhyt') : null;
 
