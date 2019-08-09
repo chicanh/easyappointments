@@ -17,7 +17,7 @@ BEGIN
                       'AND eaa.end_datetime <= "',endDate, '"');
                       
     IF cityId IS NOT NULL THEN
-        SET @finalQuery = CONCAT(@finalQuery, 'AND eau.city = ', cityId, ' ');
+        SET @finalQuery = CONCAT(@finalQuery, 'AND eau.city_id = ', cityId, ' ');
     END IF;
 
     IF gender IS NOT NULL THEN
