@@ -62,7 +62,7 @@ class Services_Providers_Model_V2 extends CI_Model {
             throw new \EA\Engine\Api\V1\Exception('$serviceId does not exist in DB: ' . $serviceId, 404, 'Not Found');
         }
 
-        $services_providers = $query->row();
+        $services_providers = $query->result_array();
 
         return $services_providers;
     }
