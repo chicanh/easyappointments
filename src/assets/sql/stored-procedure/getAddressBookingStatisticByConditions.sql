@@ -1,5 +1,5 @@
 DROP PROCEDURE IF EXISTS `getAddressBookingStatisticByConditions`;
-CREATE PROCEDURE `getAddressBookingStatisticByConditions`(IN `idServiceIntegrated` VARCHAR(200), IN `cityId` INT(11), IN `startDate` VARCHAR(200), IN `endDate` VARCHAR(200), IN `gender` VARCHAR(200), IN `first_time` VARCHAR(200), IN `bhyt` VARCHAR(200), IN `idProviderIntegrated` VARCHAR(200))
+CREATE PROCEDURE `getAddressBookingStatisticByConditions`(IN `idServiceIntegrated` VARCHAR(200), IN `cityId` INT(11), IN `startDate` VARCHAR(200), IN `endDate` VARCHAR(200), IN `gender` VARCHAR(200), IN `firstTimeBooking` VARCHAR(200), IN `healthInsuranceUsed` VARCHAR(200), IN `idProviderIntegrated` VARCHAR(200))
 BEGIN
     SET @finalQuery = CONCAT('SELECT integrated_districts.name as district, COUNT(integrated_districts.name) as value  ',
                       'FROM ea_users eau ', 
@@ -24,15 +24,15 @@ BEGIN
         SET @finalQuery = CONCAT(@finalQuery, 'AND eau.gender = "',gender,'" ');
     END IF;
 
-    IF bhyt IS NOT NULL AND upper(bhyt) = 'TRUE' THEN
+    IF healthInsuranceUsed IS NOT NULL AND upper(healthInsuranceUsed) = 'TRUE' THEN
         SET @finalQuery = CONCAT(@finalQuery, 'AND eaa.health_insurance_used = TRUE ');
     END IF;
 
-    IF bhyt IS NOT NULL AND upper(bhyt) = 'FALSE' THEN
+    IF healthInsuranceUsed IS NOT NULL AND upper(healthInsuranceUsed) = 'FALSE' THEN
         SET @finalQuery = CONCAT(@finalQuery, 'AND eaa.health_insurance_used = FALSE ');
     END IF;
 
-    IF first_time IS NOT NULL AND upper(first_time) = 'TRUE' THEN
+    IF firstTimeBooking IS NOT NULL AND upper(firstTimeBooking) = 'TRUE' THEN
         SET @finalQuery = CONCAT(@finalQuery, 'AND iup.first_booking_date >= "', startDate, '" AND iup.first_booking_date <= "',endDate,'" ');
     END IF; 
 

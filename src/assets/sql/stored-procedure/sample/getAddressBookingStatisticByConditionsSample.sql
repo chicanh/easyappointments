@@ -3,11 +3,11 @@ SET @cityId='1';
 SET @startDate='2017-01-01'; 
 SET @endDate='2020-12-31 23:59:59'; 
 SET @gender= ''; 
-SET @first_time= ''; 
-SET @bhyt= ''; 
+SET @firstTimeBooking= ''; 
+SET @healthInsuranceUsed= ''; 
 SET @idProviderIntegrated = '65a4a7dc-bedd-4d42-8a8f-46b5283f482c';
 
-CALL `getAddressBookingStatisticByConditions`(@idServiceIntegrated, @cityId, @startDate, @endDate, @gender, @first_time, @bhyt, @idProviderIntegrated);
+CALL `getAddressBookingStatisticByConditions`(@idServiceIntegrated, @cityId, @startDate, @endDate, @gender, @firstTimeBooking, @healthInsuranceUsed, @idProviderIntegrated);
 
 
 
