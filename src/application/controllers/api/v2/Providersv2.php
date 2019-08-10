@@ -280,4 +280,23 @@ class ProvidersV2 extends Providers {
         }
     }
 
+    public function getByFullName(){
+        try {
+            $firstName = $this->input->get('firstName');
+            $lastName = $this->input->get('lastName');
+            $idServiceIntegrated = $this->input->get("id_service_integrated");
+            $providers =  $this->providers_model_v2->getProviderBy($firstName, $lastName, $idServiceIntegrated);
+            $response = new Response($providers);
+            $response->encode($this->parser)
+                ->search()
+                ->sort()
+                ->paginate()
+                ->minimize()
+                ->output();
+        } catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
+    }
+
 }
