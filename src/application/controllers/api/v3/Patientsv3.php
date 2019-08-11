@@ -119,8 +119,8 @@ class PatientsV3 extends Customersv2 {
         $page = $this->input->get('page');
         $size = $this->input->get('length');
         try {
-            if($id_service_integrated == null){
-                throw new \EA\Engine\Api\V1\Exception('id_service_integrated is required', 400);
+            if($id_service_integrated == null && $id_user_integrated == null){
+                throw new \EA\Engine\Api\V1\Exception('Either id_service_integrated  or id_user_integrated are required', 400);
             }
             $result = $this->patient_model->get($id_user_integrated, $id_service_integrated, $page, $size, array_key_exists('aggregates', $_GET));
             $result['patients'] = $this->encodePatients($result['patients']);
