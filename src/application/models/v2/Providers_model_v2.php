@@ -743,4 +743,51 @@ class Providers_Model_V2 extends CI_Model {
         ->join('integrated_provider_categories', 'integrated_provider_categories.id_categories = integrated_categories.id', 'inner')
         ->where('integrated_provider_categories.id_providers', $provider_id)->get()->result_array();;
     }
+
+    public function getProvidersByIdIntegrated($providers){
+        return $this->db->select('*')->from('ea_users')->where_in('id_integrated',$providers)->get()->result_array();
+    }
+    public function addProviderToService($service_id, $providers){
+        if ( ! is_array($providers))
+        {
+            throw new Exception('Invalid argument type providers: ' . $providers);
+        }
+        if ( ! is_numeric($service_id))
+        {
+            throw new Exception('Invalid argument type idService: ' . $service_id);
+        }
+        $result = [];
+        foreach ($providers as $provider)
+        {
+            $service_provider = [
+                'id_users' => $provider['id'],
+                'id_services' => $service_id
+            ];
+            $this->db->delete('ea_services_providers', $service_provider); // this line to avoid duplicate connection when link 2 type
+            $this->db->insert('ea_services_providers', $service_provider);
+            $response['id_integrated'] = $provider['id_integrated'];
+            $response['firstName'] = $provider['first_name'];
+            $response['lastName'] = $provider['last_name'];
+            $response['fee'] = $provider['fee'];
+            $response['photoProfile'] = $provider['photo_profile'];
+            array_push($result,$response);
+        }
+        return $result;
+    }
+    public function removeProviderToService($service_id, $provider_id){
+        if ( ! is_numeric($provider_id))
+        {
+            throw new Exception('Invalid argument type idService: ' . $provider_id);
+        }
+        if ( ! is_numeric($service_id))
+        {
+            throw new Exception('Invalid argument type idService: ' . $service_id);
+        }
+        
+        $service_provider = [
+            'id_users' => $provider_id,
+            'id_services' => $service_id
+        ];
+        $this->db->delete('ea_services_providers', $service_provider); // this line to avoid duplicate connection when link 2 type
+    }
 }
