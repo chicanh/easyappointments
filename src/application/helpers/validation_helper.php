@@ -37,7 +37,7 @@ if ( ! function_exists('validateInputRequestParamsForStatictis'))
             "startDate" => $startDate,
             "endDate" => $endDate,
             "gender" => $gender,
-            "id_provider_integrated" => $id_provider_integrated,
+            "id_provider_integrated" => $idProviderIntegrated,
             "firstTime" => $firstTime,
             "useHealthInsurance" => $useHealthInsurance];
     }

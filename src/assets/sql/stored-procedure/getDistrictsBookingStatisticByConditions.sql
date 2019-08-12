@@ -1,5 +1,6 @@
 DROP PROCEDURE IF EXISTS `getAddressBookingStatisticByConditions`;
-CREATE PROCEDURE `getAddressBookingStatisticByConditions`(IN `idServiceIntegrated` VARCHAR(200), IN `cityId` INT(11), IN `startDate` VARCHAR(200), IN `endDate` VARCHAR(200), IN `gender` VARCHAR(200), IN `firstTimeBooking` VARCHAR(200), IN `healthInsuranceUsed` VARCHAR(200), IN `idProviderIntegrated` VARCHAR(200))
+DROP PROCEDURE IF EXISTS `getDistrictsBookingStatisticByConditions`;
+CREATE PROCEDURE `getDistrictsBookingStatisticByConditions`(IN `idServiceIntegrated` VARCHAR(200), IN `cityId` INT(11), IN `startDate` VARCHAR(200), IN `endDate` VARCHAR(200), IN `gender` VARCHAR(200), IN `firstTimeBooking` VARCHAR(200), IN `healthInsuranceUsed` VARCHAR(200), IN `idProviderIntegrated` VARCHAR(200))
 BEGIN
     SET @finalQuery = CONCAT('SELECT integrated_cities.name as city,integrated_districts.name as district, COUNT(integrated_districts.name) as value  ',
                       'FROM ea_users eau ', 
@@ -9,7 +10,7 @@ BEGIN
                       'INNER JOIN ea_appointments eaa ON eaa.id_users_customer = eau.id ');
     
     IF idProviderIntegrated IS NOT NULL AND idProviderIntegrated <> '' THEN
-        SET @finalQuery = CONCAT(@finalQuery, 'AND eaa.id_users_provider = (SELECT id from ea_users WHERE id_integrated = "',idProviderIntegrated,'")');
+        SET @finalQuery = CONCAT(@finalQuery, 'AND eaa.id_users_provider IN (SELECT id from ea_users WHERE find_in_set(id_integrated,"',idProviderIntegrated,'")) ');
     END IF;
 
     
@@ -18,7 +19,7 @@ BEGIN
                       'AND eaa.end_datetime <= "',endDate, '"');
                       
     IF cityId IS NOT NULL THEN
-        SET @finalQuery = CONCAT(@finalQuery, 'AND eau.city_id IN (', cityId, ') ');
+        SET @finalQuery = CONCAT(@finalQuery, 'AND find_in_set(eau.city_id,', cityId, ') ');
     END IF;
 
     IF gender IS NOT NULL THEN
@@ -43,5 +44,4 @@ BEGIN
     PREPARE stmt FROM @finalQuery;
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
-
 END;
