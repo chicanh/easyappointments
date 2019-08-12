@@ -280,12 +280,11 @@ class ProvidersV2 extends Providers {
         }
     }
 
-    public function addProvidersToService()
+    public function addProvidersToService($idServiceIntegrated)
     {
         try {
             $request = new Request();
             $requestBody = $request->getBody();
-            $idServiceIntegrated = $requestBody['id_service_integrated'];
             $idProvidersIntegrated = $requestBody['providers'];
             if (!$idServiceIntegrated && !$idProvidersIntegrated) {
                 throw new Exception('idServiceIntegrated and idProvidersIntegrated are required in request body');

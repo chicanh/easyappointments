@@ -763,7 +763,7 @@ class Providers_Model_V2 extends CI_Model {
                 'id_users' => $provider['id'],
                 'id_services' => $service_id
             ];
-            $this->db->delete('ea_services_providers', $service_provider); // this line to avoid duplicate connection when link 2 type
+
             $this->db->insert('ea_services_providers', $service_provider);
             $response['id_integrated'] = $provider['id_integrated'];
             $response['firstName'] = $provider['first_name'];
