@@ -127,91 +127,24 @@ class AppointmentsV3 extends AppointmentsV2
         return $encodedAppointments;
     }
 
-    public function getAppointmentsAddressStatistic($idServiceIntegrated)
+    public function getAppointmentsDistrictStatistic($idServiceIntegrated)
     {
+        $this->load->helper('validation_helper');
         try {
-            $requestParams = $this->validateInputRequestParams();
-            $result = [];
-            foreach ($requestParams['cities'] as $cityId) {
-                $element['id'] = $cityId;
-                $element['city'] = $this->cities_model->findCityBy($cityId)[0]['name'];
-                $element['data'] = $this->appointments_model_v3
-                    ->getAddressBookingStatistic($idServiceIntegrated,
+            $requestParams = validateInputRequestParamsForStatictis($this->input);
+            $result = $this->appointments_model_v3->getAddressBookingStatistic($idServiceIntegrated,
                                                 $requestParams['cities'],
                                                 $requestParams['startDate'],
                                                 $requestParams['endDate'],
                                                 $requestParams['gender'],
                                                 $requestParams['firstTime'],
-                                                $requestParams['bhyt'],
+                                                $requestParams['useHealthInsurance'],
                                                 $requestParams['id_provider_integrated']);
-                array_push($result, $element);
-            }
             $response = new Response($result);
             $response->output();
         } catch (\Exception $exception) {
             exit($this->_handleException($exception));
         }
-    }
-
-    private function validateInputRequestParams()
-    {
-        $cities = $this->input->get('cities');
-        $startDate = $this->input->get('startDate');
-        $endDate = $this->input->get('endDate');
-        $gender = $this->input->get('gender');
-        $idProviderIntegrated = $this->input->get('id_provider_integrated');
-        $firstTime = $this->checkIsValidBooleanType($this->input->get('firstTime')) ? $this->input->get('firstTime') : null;
-        $bhyt = $this->checkIsValidBooleanType($this->input->get('bhyt')) ? $this->input->get('bhyt') : null;
-        if (!trim($startDate)) {
-            $startDate = date("Y-m") . '-01';
-        }
-
-        if (!trim($endDate)) {
-            $endDate = date("Y-m-t");
-        }
-
-        $endDate .= ' 23:59:59';
-        if (trim($gender) && $gender !== 'male' && $gender !== 'female') {
-            throw new \EA\Engine\Api\V1\Exception('Gender must be male or female', 400);
-        }
-        if ($cities !== null && $cities !== '' && !$this->containsOnlyNumber($cities)) {
-            throw new \EA\Engine\Api\V1\Exception('cities must contains only numbers', 400);
-        }
-        if ($this->getYearFromDateString($startDate) < 1905) {
-            throw new \EA\Engine\Api\V1\Exception('startDate must greater than 1905', 400);
-        }
-        if ($this->getYearFromDateString($endDate) > date("Y")) {
-            throw new \EA\Engine\Api\V1\Exception('endDate must less than current year', 400);
-        }
-
-        return ["cities" => $cities,
-            "startDate" => $startDate,
-            "endDate" => $endDate,
-            "gender" => $gender,
-            "id_provider_integrated" => $id_provider_integrated,
-            "firstTime" => $firstTime,
-            "bhyt" => $bhyt];
-    }
-
-    private function checkIsValidBooleanType($value)
-    {
-        return $value !== null && $value !== '' && $value === 'TRUE' || $value == 'FALSE';
-    }
-
-    private function getYearFromDateString($dateInString)
-    {
-        return intval(explode("-", $dateInString)[0]);
-    }
-
-    private function containsOnlyNumber($array)
-    {
-        $allNumeric = true;
-        foreach ($array as $value) {
-            if (!(is_numeric($value))) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public function getAppointmentsGenderStatistic($idServiceIntegrated)

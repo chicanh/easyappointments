@@ -1,9 +1,10 @@
 DROP PROCEDURE IF EXISTS `getAddressBookingStatisticByConditions`;
 CREATE PROCEDURE `getAddressBookingStatisticByConditions`(IN `idServiceIntegrated` VARCHAR(200), IN `cityId` INT(11), IN `startDate` VARCHAR(200), IN `endDate` VARCHAR(200), IN `gender` VARCHAR(200), IN `firstTimeBooking` VARCHAR(200), IN `healthInsuranceUsed` VARCHAR(200), IN `idProviderIntegrated` VARCHAR(200))
 BEGIN
-    SET @finalQuery = CONCAT('SELECT integrated_districts.name as district, COUNT(integrated_districts.name) as value  ',
+    SET @finalQuery = CONCAT('SELECT integrated_cities.name as city,integrated_districts.name as district, COUNT(integrated_districts.name) as value  ',
                       'FROM ea_users eau ', 
                       'INNER JOIN integrated_users_patients iup ON eau.id = iup.id_patients ',
+                      'INNER JOIN integrated_cities  ON eau.city_id = integrated_cities.id ',
                       'INNER JOIN integrated_districts  ON integrated_districts.id_city = eau.city_id AND integrated_districts.id = eau.district_id ',
                       'INNER JOIN ea_appointments eaa ON eaa.id_users_customer = eau.id ');
     
@@ -17,7 +18,7 @@ BEGIN
                       'AND eaa.end_datetime <= "',endDate, '"');
                       
     IF cityId IS NOT NULL THEN
-        SET @finalQuery = CONCAT(@finalQuery, 'AND eau.city_id = ', cityId, ' ');
+        SET @finalQuery = CONCAT(@finalQuery, 'AND eau.city_id IN (', cityId, ') ');
     END IF;
 
     IF gender IS NOT NULL THEN
