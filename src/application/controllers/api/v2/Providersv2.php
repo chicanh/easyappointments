@@ -302,7 +302,7 @@ class ProvidersV2 extends Providers {
             }
             $providers = $this->providers_model_v2->addProviderToService($services_id, $providers);
             $response = new Response($providers);
-            $response->output();
+            $response->encode($this->parser)->output();
         } catch (\Exception $exception) {
             $this->_handleException($exception);
         }

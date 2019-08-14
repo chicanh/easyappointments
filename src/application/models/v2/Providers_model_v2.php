@@ -765,12 +765,7 @@ class Providers_Model_V2 extends CI_Model {
             ];
 
             $this->db->insert('ea_services_providers', $service_provider);
-            $response['id_integrated'] = $provider['id_integrated'];
-            $response['firstName'] = $provider['first_name'];
-            $response['lastName'] = $provider['last_name'];
-            $response['fee'] = $provider['fee'];
-            $response['photoProfile'] = $provider['photo_profile'];
-            array_push($result,$response);
+            array_push($result,$provider);
         }
         return $result;
     }
@@ -788,6 +783,6 @@ class Providers_Model_V2 extends CI_Model {
             'id_users' => $provider_id,
             'id_services' => $service_id
         ];
-        $this->db->delete('ea_services_providers', $service_provider); // this line to avoid duplicate connection when link 2 type
+        $this->db->delete('ea_services_providers', $service_provider);
     }
 }
