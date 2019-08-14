@@ -282,10 +282,9 @@ class ProvidersV2 extends Providers {
 
     public function getByFullName(){
         try {
-            $firstName = $this->input->get('firstName');
-            $lastName = $this->input->get('lastName');
+            $firstName = $this->input->get('name');
             $idServiceIntegrated = $this->input->get("id_service_integrated");
-            $providers =  $this->providers_model_v2->getProviderBy($firstName, $lastName, $idServiceIntegrated);
+            $providers =  $this->providers_model_v2->getProviderBy($name, $idServiceIntegrated);
             $response = new Response($providers);
             $response->encode($this->parser)
                 ->search()

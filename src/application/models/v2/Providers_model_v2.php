@@ -744,13 +744,12 @@ class Providers_Model_V2 extends CI_Model {
         ->where('integrated_provider_categories.id_providers', $provider_id)->get()->result_array();;
     }
 
-    public function getProviderBy($firstName, $lastName, $id_service_integrated){
+    public function getProviderBy($name, $id_service_integrated){
         $this->db->select('ea_users.*')->from('ea_users')
                 ->join('ea_services_providers', 'ea_services_providers.id_users = ea_users.id','inner')
                 ->join('ea_services', 'ea_services_providers.id_services = ea_services.id','inner')
                 ->where('ea_users.id_roles = 2')
-                ->where('ea_users.first_name', $firstName)
-                ->where('ea_users.last_name', $lastName);
+                ->where("CONCAT(ea_users.first_name, ' ', ea_users.last_name) ", $name);
         if($id_service_integrated){
             $this->db->where('ea_services.id_integrated', $id_service_integrated);
         }
