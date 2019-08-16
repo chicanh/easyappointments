@@ -97,8 +97,11 @@ class API_V1_Controller extends CI_Controller {
      *
      * @throws \EA\Engine\Api\V1\Exception
      */
-    protected function _throwRecordNotFound()
-    {
-        throw new \EA\Engine\Api\V1\Exception('The requested record was not found!', 404, 'Not Found');
-    }
+     protected function _throwRecordNotFound($message = null)
+     {
+         if($message){
+             throw new \EA\Engine\Api\V1\Exception($message, 404, 'Not Found');
+         }
+         throw new \EA\Engine\Api\V1\Exception('The requested record was not found!', 404, 'Not Found');
+     }
 }
