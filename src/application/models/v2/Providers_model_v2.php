@@ -357,16 +357,19 @@ class Providers_Model_V2 extends CI_Model {
      */
     public function get_row($provider_id)
     {
+      
         // Check if selected record exists on database.
         if ($this->db->get_where('ea_users', ['id_integrated' => $provider_id])->num_rows() == 0)
         {
+            print_r($this->db->last_query());  
+
+            exit("exception");
             throw new Exception('Selected record does not exist in the database.');
         }
-
         // Get provider data.
         $provider = $this->db->get_where('ea_users', ['id_integrated' => $provider_id])->row_array();
         $providerId = $this->db->get_where('ea_users', ['id_integrated' => $provider_id])->row()->id;
-
+        
         // Include provider services.
         $services = $this->db->get_where('ea_services_providers',
             ['id_users' => $providerId])->result_array();
@@ -375,7 +378,7 @@ class Providers_Model_V2 extends CI_Model {
         {
             $provider['services'][] = $service['id_services'];
         }
-
+        
         // Include provider settings.
         $provider['settings'] = $this->db->get_where('ea_user_settings',
             ['id_users' => $providerId])->row_array();
