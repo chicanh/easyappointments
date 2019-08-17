@@ -61,8 +61,12 @@ class ProvidersV2 extends Providers {
             $user_model = $this->user_model_v2;
             $services_model = $this->services_model_v2;
             $services_providers_model = $this->services_providers_model_v2;
-
-            if ($_GET['id_service_integrated'] !== NULL) {
+            $name = $this->input->get('name');
+            $idServiceIntegrated = $this->input->get("id_service_integrated");
+            if($name && $idServiceIntegrated){
+                $this->getByFullName($name, $idServiceIntegrated);
+            }
+            else if ($_GET['id_service_integrated'] !== NULL) {
                 $services_providers = array();
                 // Get service that have id_integrated = id_services_integrated in table ea_services
                 $service = $services_model->find_by_id_integrated($_GET['id_service_integrated']);
@@ -280,4 +284,63 @@ class ProvidersV2 extends Providers {
         }
     }
 
+    private function getByFullName($name, $idServiceIntegrated){
+        try {
+            $providers =  $this->providers_model_v2->getProviderBy($name, $idServiceIntegrated);
+
+            $response = new Response($providers);
+            $response->encode($this->parser)
+                ->search()
+                ->sort()
+                ->paginate()
+                ->output();
+        } catch (\Exception $exception)
+        {
+            $this->_handleException($exception);
+        }
+    }
+
+    public function addProvidersToService($idServiceIntegrated)
+    {
+        try {
+            $request = new Request();
+            $requestBody = $request->getBody();
+            $idProvidersIntegrated = $requestBody['providers'];
+            if (!$idServiceIntegrated && !$idProvidersIntegrated) {
+                throw new Exception('idServiceIntegrated and idProvidersIntegrated are required in request body');
+            }
+            if (!is_array($idProvidersIntegrated)) {
+                throw new Exception('idProvidersIntegrated must be an array');
+            }
+            $providers = $this->providers_model_v2->getProvidersByIdIntegrated($idProvidersIntegrated);
+            if (!$providers) {
+                $this->_throwRecordNotFound('Providers with id_integrated in list: "' . implode(" , ", $idProvidersIntegrated) . '" not found');
+            }
+            $services_id = $this->services_model_v2->find_by_id_integrated($idServiceIntegrated)[0]->id;
+            if (!$services_id) {
+                $this->_throwRecordNotFound('Service id with id_integrated: "' . $services_id . '" not found');
+            }
+            $providers = $this->providers_model_v2->addProviderToService($services_id, $providers);
+            $response = new Response($providers);
+            $response->encode($this->parser)->output();
+        } catch (\Exception $exception) {
+            $this->_handleException($exception);
+        }
+    }
+    public function removeProviderToService($idProvidersIntegrated, $idServiceIntegrated)
+    {
+        try {
+            $provider_id = $this->providers_model_v2->getProvidersByIdIntegrated(array($idProvidersIntegrated))[0]['id'];
+            if (!$provider_id) {
+                $this->_throwRecordNotFound('Providers with id_integrated : "' . $provider_id . '" not found');
+            }
+            $services_id = $this->services_model_v2->find_by_id_integrated($idServiceIntegrated)[0]->id;
+            if (!$services_id) {
+                $this->_throwRecordNotFound('Service id with id_integrated: "' . $services_id . '" not found');
+            }
+            $this->providers_model_v2->removeProviderToService($services_id, $provider_id);
+        } catch (\Exception $exception) {
+            $this->_handleException($exception);
+        }
+    }
 }
