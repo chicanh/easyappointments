@@ -61,8 +61,12 @@ class ProvidersV2 extends Providers {
             $user_model = $this->user_model_v2;
             $services_model = $this->services_model_v2;
             $services_providers_model = $this->services_providers_model_v2;
-
-            if ($_GET['id_service_integrated'] !== NULL) {
+            $name = $this->input->get('name');
+            $idServiceIntegrated = $this->input->get("id_service_integrated");
+            if($name && $idServiceIntegrated){
+                $this->getByFullName($name, $idServiceIntegrated);
+            }
+            else if ($_GET['id_service_integrated'] !== NULL) {
                 $services_providers = array();
                 // Get service that have id_integrated = id_services_integrated in table ea_services
                 $service = $services_model->find_by_id_integrated($_GET['id_service_integrated']);
@@ -280,17 +284,15 @@ class ProvidersV2 extends Providers {
         }
     }
 
-    public function getByFullName(){
+    private function getByFullName($name, $idServiceIntegrated){
         try {
-            $name = $this->input->get('name');
-            $idServiceIntegrated = $this->input->get("id_service_integrated");
             $providers =  $this->providers_model_v2->getProviderBy($name, $idServiceIntegrated);
+
             $response = new Response($providers);
             $response->encode($this->parser)
                 ->search()
                 ->sort()
                 ->paginate()
-                ->minimize()
                 ->output();
         } catch (\Exception $exception)
         {

@@ -753,7 +753,7 @@ class Providers_Model_V2 extends CI_Model {
                 ->join('ea_services', 'ea_services_providers.id_services = ea_services.id','inner')
                 ->where('ea_users.id_roles = 2');
         if ($name){
-            $this->db->where("CONCAT(ea_users.first_name, ' ', ea_users.last_name) = '".$name."'");
+            $this->db->where("CONCAT(ea_users.first_name, ' ', ea_users.last_name) LIKE '%".$name."%'");
         }
         if($id_service_integrated){
             $this->db->where('ea_services.id_integrated', $id_service_integrated);
