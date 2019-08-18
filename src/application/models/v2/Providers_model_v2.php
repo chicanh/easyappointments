@@ -784,8 +784,9 @@ class Providers_Model_V2 extends CI_Model {
                 'id_users' => $provider['id'],
                 'id_services' => $service_id
             ];
-
-            $this->db->insert('ea_services_providers', $service_provider);
+            if(!$this->db->insert('ea_services_providers', $service_provider)){
+                throw new Exception('Database exception: '.$this->db->error()['message']);
+            }
             array_push($result,$provider);
         }
         return $result;
