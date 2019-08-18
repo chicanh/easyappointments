@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
-use \EA\Engine\Api\V2\DbConflictException;
+use \EA\Engine\Api\V2\DbHandlerException;
 /* ----------------------------------------------------------------------------
  * Easy!Appointments - Open Source Web Scheduler
  *
@@ -785,7 +785,7 @@ class Providers_Model_V2 extends CI_Model {
                 'id_services' => $service_id
             ];
             if(!$this->db->insert('ea_services_providers', $service_provider)){
-                throw new DbConflictException($this->db->error()['message']);
+                DbHandlerException::handle($this->db->error());
             }
             array_push($result,$provider);
         }
