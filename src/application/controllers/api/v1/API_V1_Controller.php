@@ -1,4 +1,4 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 /* ----------------------------------------------------------------------------
  * Easy!Appointments - Open Source Web Scheduler
@@ -22,7 +22,8 @@ use \EA\Engine\Types\NonEmptyText;
  * @package Controllers
  * @subpackage API
  */
-class API_V1_Controller extends CI_Controller {
+class API_V1_Controller extends CI_Controller
+{
     /**
      * Class Constructor
      *
@@ -35,8 +36,7 @@ class API_V1_Controller extends CI_Controller {
      */
     public function __construct()
     {
-        if ( ! isset($_SERVER['PHP_AUTH_USER']))
-        {
+        if (!isset($_SERVER['PHP_AUTH_USER'])) {
             $this->_requestAuthentication();
             return;
         }
@@ -49,9 +49,7 @@ class API_V1_Controller extends CI_Controller {
             $password = new NonEmptyText($_SERVER['PHP_AUTH_PW']);
             $authorization = new \EA\Engine\Api\V1\Authorization($this);
             $authorization->basic($username, $password);
-        }
-        catch (\Exception $exception)
-        {
+        } catch (\Exception $exception) {
             exit($this->_handleException($exception));
         }
     }
@@ -75,15 +73,14 @@ class API_V1_Controller extends CI_Controller {
      */
     protected function _handleException(\Exception $exception)
     {
-        
         $error = [
             'code' => $exception->getCode() ?: 500,
             'message' => $exception->getMessage(),
         ];
 
         $header = $exception instanceof \EA\Engine\Api\V1\Exception
-            ? $exception->getCode() . ' ' . $exception->getHeader()
-            : '500 Internal Server Error';
+        ? $exception->getCode() . ' ' . $exception->getHeader()
+        : '500 Internal Server Error';
 
         header('HTTP/1.0 ' . $header);
         header('Content-Type: application/json');
@@ -91,7 +88,7 @@ class API_V1_Controller extends CI_Controller {
         $this->output
             ->set_content_type('application/json')
             ->set_output(json_encode($error, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT));
-            
+
         exit($this->output->final_output);
     }
 
@@ -100,13 +97,13 @@ class API_V1_Controller extends CI_Controller {
      *
      * @throws \EA\Engine\Api\V1\Exception
      */
-     protected function _throwRecordNotFound($message = null)
-     {
-         if($message){
-             throw new \EA\Engine\Api\V1\Exception($message, 404, 'Not Found');
-         }
-         throw new \EA\Engine\Api\V1\Exception('The requested record was not found!', 404, 'Not Found');
-     }
+    protected function _throwRecordNotFound($message = null)
+    {
+        if ($message) {
+            throw new \EA\Engine\Api\V1\Exception($message, 404, 'Not Found');
+        }
+        throw new \EA\Engine\Api\V1\Exception('The requested record was not found!', 404, 'Not Found');
+    }
 
     protected function _throwBadRequest($message)
     {
