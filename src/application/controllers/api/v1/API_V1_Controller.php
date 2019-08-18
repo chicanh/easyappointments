@@ -78,13 +78,9 @@ class API_V1_Controller extends CI_Controller
             'message' => $exception->getMessage(),
         ];
 
-        if ($error['code']) {
-            $header = $error['code'];
-        } else {
-            $header = $exception instanceof \EA\Engine\Api\V1\Exception
-            ? $exception->getCode() . ' ' . $exception->getHeader()
-            : '500 Internal Server Error';
-        }
+        $header = $exception instanceof \EA\Engine\Api\V1\Exception
+        ? $exception->getCode() . ' ' . $exception->getHeader()
+        : '500 Internal Server Error';
 
         header('HTTP/1.0 ' . $header);
         header('Content-Type: application/json');

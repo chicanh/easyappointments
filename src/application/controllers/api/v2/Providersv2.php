@@ -12,7 +12,7 @@
  * ---------------------------------------------------------------------------- */
 
 require_once __DIR__ . '/../v1/Providers.php';
-
+use \EA\Engine\Api\V2\DuplicateException;
 use \EA\Engine\Api\V1\Response;
 use \EA\Engine\Api\V1\Request;
 use \EA\Engine\Types\NonEmptyText;
@@ -323,6 +323,9 @@ class ProvidersV2 extends Providers {
             $providers = $this->providers_model_v2->addProviderToService($services_id, $providers);
             $response = new Response($providers);
             $response->encode($this->parser)->output();
+        }
+        catch(DbConflictException $exception){
+            $this->_handleException($exception);
         } catch (\Exception $exception) {
             $this->_handleException($exception);
         }
