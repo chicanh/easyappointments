@@ -16,6 +16,9 @@ use \EA\Engine\Api\V1\Exception;
 
 class DbHandlerException {
     public static function handle($dbError){
-        throw new DbConflictException($dbError['message']);
+        if(strpos($dbError['message'], 'Duplicate')){
+            throw new DbConflictException($dbError['message']);
+        }
+        throw new Exception($dbError['message'], 400);
     }
 }
