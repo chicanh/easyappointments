@@ -53,6 +53,8 @@ class AppointmentsV2 extends Appointments {
             'order_fail_reason' => $response['order_fail_reason'],
             'service_notes' => $response['service_notes'],
             'admin_notes' => $response['admin_notes'],
+            'id_category_integrated' => $response['id_category_integrated'],
+            'healthInsuranceUsed' => $response['health_insurance_used']
         ];
 
         if (isset($response['provider']))
@@ -195,6 +197,15 @@ class AppointmentsV2 extends Appointments {
             $decodedRequest['admin_notes'] = $request['admin_notes'];
         }
 
+        if ( ! empty($request['id_category_integrated']))
+        {
+            $decodedRequest['id_category_integrated'] = $request['id_category_integrated'];
+        }
+        if ( ! empty($request['healthInsuranceUsed']))
+        {
+            $decodedRequest['health_insurance_used'] = $request['healthInsuranceUsed'];
+        }
+
         $decodedRequest['is_unavailable'] = FALSE;
 
         $request = $decodedRequest;
@@ -221,7 +232,9 @@ class AppointmentsV2 extends Appointments {
             'order_status' => $response['order_status'],
             'order_fail_reason' => $response['order_fail_reason'],
             'service_notes' => $response['service_notes'],
-            'admin_notes' => $response['admin_notes']
+            'admin_notes' => $response['admin_notes'],
+            'id_category_integrated' => $response['id_category_integrated'],
+            'healthInsuranceUsed' => $response['health_insurance_used']
         ];
 
         if (isset($response['provider']))

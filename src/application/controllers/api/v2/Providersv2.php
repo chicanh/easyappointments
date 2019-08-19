@@ -12,7 +12,7 @@
  * ---------------------------------------------------------------------------- */
 
 require_once __DIR__ . '/../v1/Providers.php';
-
+use \EA\Engine\Api\V2\DuplicateException;
 use \EA\Engine\Api\V1\Response;
 use \EA\Engine\Api\V1\Request;
 use \EA\Engine\Types\NonEmptyText;
@@ -61,13 +61,17 @@ class ProvidersV2 extends Providers {
             $user_model = $this->user_model_v2;
             $services_model = $this->services_model_v2;
             $services_providers_model = $this->services_providers_model_v2;
-
-            if ($_GET['id_service_integrated'] !== NULL) {
+            $name = $this->input->get('name');
+            $idServiceIntegrated = $this->input->get("id_service_integrated");
+            if($name){
+                $this->getByFullName($name, $idServiceIntegrated);
+            }
+            else if ($_GET['id_service_integrated'] !== NULL) {
                 $services_providers = array();
                 // Get service that have id_integrated = id_services_integrated in table ea_services
                 $service = $services_model->find_by_id_integrated($_GET['id_service_integrated']);
                 if (isset($service)) {
-                    $services_providers = $services_providers_model->get_providers_by_service_id($service[0]->id);
+                    $services_providers = $services_providers_model->getProvidersByServiceId($service[0]->id);
                 }
                 $providers = array();
                 if (count($services_providers) > 0) {
@@ -121,7 +125,7 @@ class ProvidersV2 extends Providers {
             $id = $this->providers_model_v2->add($provider);
 
             // Fetch the new object from the database and return it to the client.
-            $batch = $this->providers_model->get_batch('id = ' . $id);
+            $batch = $this->providers_model_v2->get_batch('id = ' . $id);
             $response = new Response($batch);
             $status = new NonEmptyText('201 Created');
             $response->encode($this->parser)->singleEntry(TRUE)->output($status);
@@ -187,7 +191,7 @@ class ProvidersV2 extends Providers {
                 $service = $this->services_model_v2->get_batch("id_integrated='". $id_service_integrated . "'");
                 $provider = $this->providers_model_v2->get_batch("id_integrated='". $id_integrated . "'");
                 if (!empty($service) && isset($provider)) {
-                        $services_providers = $this->services_providers_model_v2->get_providers_by_service_id($service[0]['id'], $provider[0]['id']);
+                        $services_providers = $this->services_providers_model_v2->getProviderByServiceId($service[0]['id'], $provider[0]['id']);
                         if(!empty($services_providers)) {
                             return $this->put($provider[0]['id']);
                         } else {
@@ -217,7 +221,7 @@ class ProvidersV2 extends Providers {
     
     private function getProvider($id=null) {
         $condition = $id !== NULL ? 'id = ' . $id : NULL;
-            $providers = $this->providers_model->get_batch($condition);
+            $providers = $this->providers_model_v2->get_batch($condition);
 
             if ($id !== NULL && count($providers) === 0)
             {
@@ -280,17 +284,15 @@ class ProvidersV2 extends Providers {
         }
     }
 
-    public function getByFullName(){
+    private function getByFullName($name, $idServiceIntegrated){
         try {
-            $name = $this->input->get('name');
-            $idServiceIntegrated = $this->input->get("id_service_integrated");
             $providers =  $this->providers_model_v2->getProviderBy($name, $idServiceIntegrated);
+
             $response = new Response($providers);
             $response->encode($this->parser)
                 ->search()
                 ->sort()
                 ->paginate()
-                ->minimize()
                 ->output();
         } catch (\Exception $exception)
         {
@@ -321,6 +323,9 @@ class ProvidersV2 extends Providers {
             $providers = $this->providers_model_v2->addProviderToService($services_id, $providers);
             $response = new Response($providers);
             $response->encode($this->parser)->output();
+        }
+        catch(DbConflictException $exception){
+            $this->_handleException($exception);
         } catch (\Exception $exception) {
             $this->_handleException($exception);
         }
