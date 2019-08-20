@@ -63,7 +63,7 @@ class ProvidersV2 extends Providers {
             $services_providers_model = $this->services_providers_model_v2;
             $name = $this->input->get('name');
             $idServiceIntegrated = $this->input->get("id_service_integrated");
-            if($name){
+            if($name) {
                 $this->getByFullName($name, $idServiceIntegrated);
             }
             else if ($_GET['id_service_integrated'] !== NULL) {
@@ -284,7 +284,7 @@ class ProvidersV2 extends Providers {
         }
     }
 
-    private function getByFullName($name, $idServiceIntegrated){
+    public function getByFullName($name, $idServiceIntegrated){
         try {
             $providers =  $this->providers_model_v2->getProviderBy($name, $idServiceIntegrated);
 
