@@ -73,15 +73,16 @@ class ProvidersV2 extends Providers {
                 if (isset($service)) {
                     $services_providers = $services_providers_model->getProvidersByServiceId($service[0]->id);
                 }
-                $providers = array();
+
                 if (count($services_providers) > 0) {
                     foreach ($services_providers as $sp) {
                         $user = $user_model->find_by_id($sp['id_users']);
-                        array_push($providers, $user);
+                        $providers = $this->providers_model_v2->get_batch("id = " . $sp['id_users']);
+                        // array_push($providers, $user);
                     }
                 }
                 $response = new Response($providers);
-                $response->search()
+                $response->encode($this->parser)->search()
                 ->sort()
                 ->paginate()
                 ->minimize()
