@@ -727,8 +727,18 @@ class Providers_Model_V2 extends CI_Model {
             throw new Exception('Invalid argument type $service_id: ' . $services[0]);
         }
 
-        // Save provider services in the database (delete old records and add new).
-        $this->db->delete('integrated_provider_categories', ['id_providers' => $provider_id]);
+        //TODO: CHECK TRONG BẢNG service_categories, có id này ko, nếu có add vô bảng provider_categories, nếu ko throw exception
+        $categories_id = $this->getCategoryByServiceId($services[0]);
+
+        if($categories_id == null) {
+            throw new Exception('Can not find any defined categories before for service with id' . $services[0]);
+        }
+
+        foreach($categories_id as $id) {
+            if(!in_array($id['id_categories'], $categories)) {
+                throw new Exception('Category does not match with supported categories');
+            }
+        }
 
         foreach ($categories as $category_id)
         {
@@ -763,11 +773,10 @@ class Providers_Model_V2 extends CI_Model {
         return $result;
     }
 
-
-
     public function getProvidersByIdIntegrated($providers){
         return $this->db->select('*')->from('ea_users')->where_in('id_integrated',$providers)->get()->result_array();
     }
+
     public function addProviderToService($service_id, $providers){
         if ( ! is_array($providers))
         {
@@ -784,13 +793,14 @@ class Providers_Model_V2 extends CI_Model {
                 'id_users' => $provider['id'],
                 'id_services' => $service_id
             ];
-            if(!$this->db->insert('ea_services_providers', $service_provider)){
+            if(!$this->db->insert('ea_services_providers', $service_provider)) {
                 DbHandlerException::handle($this->db->error());
             }
             array_push($result,$provider);
         }
         return $result;
     }
+
     public function removeProviderToService($service_id, $provider_id){
         if ( ! is_numeric($provider_id))
         {
@@ -806,5 +816,15 @@ class Providers_Model_V2 extends CI_Model {
             'id_services' => $service_id
         ];
         $this->db->delete('ea_services_providers', $service_provider);
+    }
+
+    public function getCategoryByServiceId($service_id) {
+        return $this->db->select('id_categories')->from('integrated_services_categories')
+        ->where('id_services', $service_id)
+        ->get()->result_array();
+    }
+
+    public function validateProviderCategories($service_categories_id, $provider_categories_id) {
+
     }
 }
