@@ -748,7 +748,7 @@ class Providers_Model_V2 extends CI_Model {
     }
 
     public function getProviderBy($name, $id_service_integrated){
-        $this->db->select('ea_users.*')->from('ea_users')
+        $this->db->distinct()->select('ea_users.*')->from('ea_users')
                 ->join('ea_services_providers', 'ea_services_providers.id_users = ea_users.id','inner')
                 ->join('ea_services', 'ea_services_providers.id_services = ea_services.id','inner')
                 ->where('ea_users.id_roles = 2');
