@@ -58,9 +58,6 @@ use \EA\Engine\Api\V2\DbHandlerException;
     }
 
     public function getPatient($id_user_integrated,$id_service_integrated, $id_integrated, $isAggregates) {
-        if(empty($id_service_integrated)) {
-            throw new Exception('Field $id_service_integrated is required');
-        }
  
         if(empty($id_integrated)) {
             throw new Exception('Field $id_integrated is required');
