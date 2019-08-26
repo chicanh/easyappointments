@@ -712,22 +712,8 @@ class Providers_Model_V2 extends CI_Model {
     protected function save_categories($categories, $provider_id, $services)
     {
         // Validate method arguments.
-        if ( ! is_array($categories))
-        {
-            throw new Exception('Invalid argument type $categories: ' . $categories);
-        }
+        $this->validateSavingCategory($categories, $provider_id, $service_id);
 
-        if ( ! is_numeric($provider_id))
-        {
-            throw new Exception('Invalid argument type $provider_id: ' . $provider_id);
-        }
-
-        if ( ! is_numeric($services[0]))
-        {
-            throw new Exception('Invalid argument type $service_id: ' . $services[0]);
-        }
-
-        //TODO: CHECK TRONG BẢNG service_categories, có id này ko, nếu có add vô bảng provider_categories, nếu ko throw exception
         $categories_id = $this->getCategoryByServiceId($services[0]);
 
         if($categories_id == null) {
@@ -824,7 +810,90 @@ class Providers_Model_V2 extends CI_Model {
         ->get()->result_array();
     }
 
-    public function validateProviderCategories($service_categories_id, $provider_categories_id) {
+    public function updateProviderByServiceId($provider, $id_service_integrated)
+    {
+        $this->validate($provider);
 
+        if ($this->exists($provider) && ! isset($provider['id']))
+        {
+            $provider['id'] = $this->find_record_id($provider);
+        }
+
+        $this->load->helper('general');
+
+        // Store service and settings (must not be present on the $provider array).
+        $services = $provider['services'];
+        unset($provider['services']);
+        $settings = $provider['settings'];
+        unset($provider['settings']);
+        $categories = $provider['categories'];
+        unset($provider['categories']);
+
+        if (isset($settings['password']))
+        {
+            $salt = $this->db->get_where('ea_user_settings', ['id_users' => $provider['id']])->row()->salt;
+            $settings['password'] = hash_password($salt, $settings['password']);
+        }
+
+        // Update provider record.
+        $this->db->where('id', $provider['id']);
+        if ( ! $this->db->update('ea_users', $provider))
+        {
+            throw new Exception('Could not update provider record.');
+        }
+
+        $this->save_services($services, $provider['id']);
+        $this->save_settings($settings, $provider['id']);
+        if(!empty($categories)) {
+            $this->saveCategory($categories, $provider['id'], $id_service_integrated);
+        }
+
+        // Return record id.
+        return (int)$provider['id'];
+    }
+
+    protected function saveCategory($categories, $provider_id, $service_id)
+    {
+        // Validate method arguments.
+        $this->validateSavingCategory($categories, $provider_id, $service_id);
+
+        $categories_id = $this->getCategoryByServiceId($service_id);
+
+        if($categories_id == null) {
+            throw new Exception('Can not find any defined categories before for service with id' . $service_id);
+        }
+
+        foreach($categories_id as $id) {
+            if(!in_array($id['id_categories'], $categories)) {
+                throw new Exception('Category does not match with supported categories');
+            }
+        }
+
+        foreach ($categories as $category_id)
+        {
+            $category_provider = [
+                'id_providers' => $provider_id,
+                'id_services' => $service_id,
+                'id_categories' => $category_id
+            ];
+            $this->db->insert('integrated_provider_categories', $category_provider);
+        }
+    }
+
+    protected function validateSavingCategory($categories, $provider_id, $service_id) {
+        if ( ! is_array($categories))
+        {
+            throw new Exception('Invalid argument type $categories: ' . $categories);
+        }
+
+        if ( ! is_numeric($provider_id))
+        {
+            throw new Exception('Invalid argument type $provider_id: ' . $provider_id);
+        }
+
+        if ( ! is_numeric($service_id))
+        {
+            throw new Exception('Invalid argument type $service_id: ' . $service_id);
+        }
     }
 }

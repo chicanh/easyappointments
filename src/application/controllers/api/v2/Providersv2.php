@@ -193,7 +193,25 @@ class ProvidersV2 extends Providers {
                 if (!empty($service) && isset($provider)) {
                         $services_providers = $this->services_providers_model_v2->getProviderByServiceId($service[0]['id'], $provider[0]['id']);
                         if(!empty($services_providers)) {
-                            return $this->put($provider[0]['id']);
+                            $id = $provider[0]['id'];
+                            $batch = $this->providers_model_v2->get_batch('id = ' . $id);
+
+                            if ($id !== NULL && count($batch) === 0)
+                            {
+                                $this->_throwRecordNotFound();
+                            }
+                
+                            $request = new Request();
+                            $updatedProvider = $request->getBody();
+                            $baseProvider = $batch[0];
+                            $this->parser->decode($updatedProvider, $baseProvider);
+                            $updatedProvider['id'] = $id;
+                            $id = $this->providers_model_v2->updateProviderByServiceId($updatedProvider, $service[0]['id']);
+                
+                            // Fetch the updated object from the database and return it to the client.
+                            $batch = $this->providers_model_v2->get_batch('id = ' . $id);
+                            $response = new Response($batch);
+                            $response->encode($this->parser)->singleEntry($id)->output();
                         } else {
                             $this->_throwRecordNotFound();
                         }
