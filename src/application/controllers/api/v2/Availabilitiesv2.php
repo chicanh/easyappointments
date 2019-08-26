@@ -49,7 +49,7 @@ class Availabilitiesv2 extends Availabilities {
             $service_model = $this->services_model_v2;
             $id_provider_integrated = $this->input->get('id_provider_integrated');
             $id_service_integrated =  $this->input->get('id_service_integrated');
-
+                
             if ($this->input->get('date'))
             {
                 $date = new DateTime($this->input->get('date'));
@@ -58,8 +58,9 @@ class Availabilitiesv2 extends Availabilities {
             {
                 $date = new DateTime();
             }
-
+            
             $provider = $provider_model->get_row($id_provider_integrated);
+            
             if($provider ==null) {
                 throw new \EA\Engine\Api\V1\Exception('$provider does not exist in DB: ' . $provider, 404, 'Not Found');
             } 
@@ -67,6 +68,7 @@ class Availabilitiesv2 extends Availabilities {
             if($service ==null) {
                 throw new \EA\Engine\Api\V1\Exception('$service does not exist in DB: ' . $service, 404, 'Not Found');
             }
+            
             $providerId =  $provider['id'];
             $serviceId = $service['id'];
             $emptyPeriods = $this->_getProviderAvailableTimePeriods($providerId,

@@ -456,6 +456,8 @@ class Appointments_Model_V2 extends Appointments_Model {
             throw new \EA\Engine\Api\V1\Exception('Provided order id does not exist in the database.', 404, 'Not Found');
           }
 
+        $this->db->where('order_id',$orderId);
+        
         if ( ! $this->db->update('ea_appointments', $request))
         {
             throw new Exception('Could not update appointment record.');
@@ -476,5 +478,35 @@ class Appointments_Model_V2 extends Appointments_Model {
         $resultSet['appointments'] = $appointments;
         return $resultSet;
 
+    }
+    public function getAppointmentWithServiceIntegrated($id_service_integrated) {
+        $serviceId = $this->db->get_where('ea_services', ['id_integrated' => $id_service_integrated])->row()->id;
+        if(empty($serviceId)) {
+            throw new Exception('Can not find any record with id_service_integrated');
+        }
+
+        return $this->db->select('*')->from('ea_appointments')
+        ->join('ea_services', 'ea_services.id = ea_appointments.id_services')
+        ->where('ea_appointments.id_services', $serviceId)->get()->result_array();
+    }
+
+    public function getAppointmentWithIdUserIntegrated($id_user_integrated) {
+
+        return $this->db->select('*')->from('ea_appointments')
+        ->join('integrated_users_patients', 'ea_appointments.id_users_customer = integrated_users_patients.id_patients')
+        ->where('integrated_users_patients.id_user_integrated', $id_user_integrated)->get()->result_array();
+    }
+
+    public function getUserAppointments($id_integrated, $id_user_integrated) {
+        $patientId = $this->db->get_where('ea_users',['id_integrated' => $id_integrated])->row()->id;
+        if(empty($patientId)) {
+            throw new Exception('Can not find any record with id_integrated');
+        }
+
+        return $this->db->select('*')->from('ea_appointments')
+        ->join('integrated_users_patients', 'ea_appointments.id_users_customer = integrated_users_patients.id_patients')
+        ->where('integrated_users_patients.id_user_integrated', $id_user_integrated)
+        ->where('integrated_users_patients.id_patients', $patientId)
+        ->get()->result_array();
     }
 }

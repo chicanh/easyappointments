@@ -23,7 +23,10 @@ class CustomersV2 extends Customers {
             'gender' => $response['gender'],
             'national_id' => $response['national_id'],
             'birthday' => $response['birthday'],
-            'photo_profile' => $response['photo_profile']
+            'photo_profile' => $response['photo_profile'],
+            'city' => $response['city_id'],
+            'district' => $response['district_id'],
+            'ward' => $response['ward_id']
         ];
 
         $response = $encodedResponse;
@@ -50,6 +53,7 @@ class CustomersV2 extends Customers {
         {
             $birthday = $request['birthday'];
         }
+       
         parent::decode($request);
             
         if(isset($id_integrated)) {
@@ -67,6 +71,31 @@ class CustomersV2 extends Customers {
         if(isset($birthday)) {
             $request['birthday'] = $birthday;
         }
-	}
+    }
+    
+
+    public function customEncode($response)
+    {
+        $encodedResponse = [
+            'id' => $response['id'] !== NULL ? (int)$response['id'] : NULL,
+            'firstName' => $response['first_name'],
+            'lastName' => $response['last_name'],
+            'email' => $response['email'],
+            'phone' => $response['phone_number'],
+            'address' => $response['address'],
+            'id_integrated' => $response['id_integrated'],
+            'gender' => $response['gender'],
+            'national_id' => $response['national_id'],
+            'birthday' => $response['birthday'],
+            'photo_profile' => $response['photo_profile'],
+            'zip' => $response['zip_code'],
+            'notes' => $response['notes'],
+            'city' => $response['city_id'],
+            'district' => $response['district_id'],
+            'ward' => $response['ward_id']
+        ];
+
+        return $encodedResponse;
+    }
 }
 ?>

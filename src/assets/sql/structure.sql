@@ -257,4 +257,136 @@ ON  `ea_appointments` (`order_id`);
 ALTER TABLE `ea_users`
     ADD COLUMN `fee` DECIMAL(10, 2) AFTER `photo_profile`,
     ADD COLUMN `currency` VARCHAR(32),
-    ADD COLUMN `default` BOOLEAN DEFAULT NULL
+    ADD COLUMN `default` BOOLEAN DEFAULT NULL;
+
+CREATE TABLE IF NOT EXISTS `integrated_categories` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(256),
+    `id_integrated` VARCHAR(50),
+    `img` TEXT,
+    PRIMARY KEY (`id`),
+     UNIQUE KEY (`name`),
+     UNIQUE KEY (`id_integrated`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8;
+
+CREATE TABLE IF NOT EXISTS `integrated_provider_categories` (
+    `id_services` INT(11),
+    `id_providers` INT(11),
+    `id_categories` INT(11),
+    PRIMARY KEY (`id_providers`, `id_categories`,`id_services`),
+    KEY `id_services` (`id_services`),
+    KEY `id_providers` (`id_providers`),
+    KEY `id_categories` (`id_categories`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8;
+
+ALTER TABLE `integrated_provider_categories`
+    ADD CONSTRAINT `fk_provider_category` FOREIGN KEY (`id_providers`) REFERENCES `ea_users` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    ADD CONSTRAINT `fk_category` FOREIGN KEY (`id_categories`) REFERENCES `integrated_categories` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    ADD CONSTRAINT `fk_service_category` FOREIGN KEY (`id_services`) REFERENCES `ea_services` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+CREATE TABLE IF NOT EXISTS `integrated_services_categories` (
+    `id_services` INT(11),
+    `id_categories` INT(11),
+    PRIMARY KEY ( `id_categories`,`id_services`),
+    KEY `id_services` (`id_services`),
+    KEY `id_categories` (`id_categories`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8;
+
+ALTER TABLE `integrated_services_categories`
+    ADD CONSTRAINT `fk_services_category` FOREIGN KEY (`id_services`) REFERENCES `ea_services` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    ADD CONSTRAINT `fk_integrated_category` FOREIGN KEY (`id_categories`) REFERENCES `integrated_categories` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+CREATE TABLE IF NOT EXISTS `integrated_users_patients` (
+    `id_user_integrated` VARCHAR(50),
+    `id_patients` INT(11),
+	`id_service_integrated` VARCHAR(50) NOT NULL,
+    PRIMARY KEY ( `id_service_integrated`,`id_patients`),
+    KEY `id_user_integrated` (`id_user_integrated`),
+    KEY `id_patients` (`id_patients`),
+    KEY `id_service_integrated` (`id_service_integrated`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8;
+
+ALTER TABLE `integrated_users_patients`
+    ADD CONSTRAINT `fk_user_patient` FOREIGN KEY (`id_patients`) REFERENCES `ea_users` (`id`)
+    ON DELETE CASCADE
+	ON UPDATE CASCADE;
+	
+ALTER TABLE `integrated_users_patients`
+	ADD CONSTRAINT `fk_service_patient` FOREIGN KEY (`id_service_integrated`) REFERENCES `ea_services` (`id_integrated`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+ALTER TABLE `ea_appointments`
+    ADD COLUMN `id_category_integrated` VARCHAR(50),
+    ADD COLUMN `health_insurance_used` BOOLEAN;
+
+
+CREATE TABLE IF NOT EXISTS `integrated_cities` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `city` VARCHAR(60) NOT NULL,
+    `type` VARCHAR(50) NOT NULL,
+    UNIQUE KEY (`city`),
+    PRIMARY KEY (`id`)
+);
+
+CREATE TABLE IF NOT EXISTS `integrated_districts` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(60) NOT NULL,
+    `type` VARCHAR(50) NOT NULL,
+    `id_city` INT(11) NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+ALTER TABLE `integrated_districts`
+    ADD CONSTRAINT `fk_id_city` FOREIGN KEY (`id_city`) REFERENCES `integrated_cities` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+CREATE TABLE IF NOT EXISTS `integrated_wards` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(60) NOT NULL,
+    `type` VARCHAR(50) NOT NULL,
+    `id_district` INT(11) NOT NULL,
+    PRIMARY KEY (`id`)
+);
+
+ALTER TABLE `integrated_wards`
+    ADD CONSTRAINT `fk_id_district` FOREIGN KEY (`id_district`) REFERENCES `integrated_districts` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+
+ALTER TABLE `ea_users`
+    ADD COLUMN `city_id` INT(11),
+    ADD COLUMN `district_id` INT(11),
+    ADD COLUMN `ward_id` INT(11),
+    ADD CONSTRAINT `fk_city_id` FOREIGN KEY (`city_id`) REFERENCES `integrated_cities` (`id`),
+    ADD CONSTRAINT `fk_district_id` FOREIGN KEY (`district_id`) REFERENCES `integrated_districts` (`id`),
+    ADD CONSTRAINT `fk_ward_id` FOREIGN KEY (`ward_id`) REFERENCES `integrated_wards` (`id`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE;
+
+ALTER TABLE `integrated_users_patients`
+    ADD COLUMN `first_booking_date` DATETIME;
+
+
+ALTER TABLE `integrated_users_patients` DROP PRIMARY KEY, ADD PRIMARY KEY(`id_user_integrated`, `id_patients`);
+ALTER TABLE `integrated_users_patients` modify `id_service_integrated` VARCHAR(50);

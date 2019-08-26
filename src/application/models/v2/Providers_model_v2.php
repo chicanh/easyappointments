@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
-
+use \EA\Engine\Api\V2\DbHandlerException;
 /* ----------------------------------------------------------------------------
  * Easy!Appointments - Open Source Web Scheduler
  *
@@ -126,6 +126,8 @@ class Providers_Model_V2 extends CI_Model {
         unset($provider['services']);
         $settings = $provider['settings'];
         unset($provider['settings']);
+        $categories = $provider['categories'];
+        unset($provider['categories']);
 
         // Insert provider record and save settings.
         if ( ! $this->db->insert('ea_users', $provider))
@@ -138,7 +140,12 @@ class Providers_Model_V2 extends CI_Model {
 
         $provider['id'] = $this->db->insert_id();
         $this->save_settings($settings, $provider['id']);
-        $this->save_services($services, $provider['id']);
+	$this->save_services($services, $provider['id']);
+
+	if(isset($categories))
+	{
+	   $this->save_categories($categories, $provider['id'], $services);
+	}
 
         // Return the new record id.
         return (int)$provider['id'];
@@ -162,6 +169,8 @@ class Providers_Model_V2 extends CI_Model {
         unset($provider['services']);
         $settings = $provider['settings'];
         unset($provider['settings']);
+        $categories = $provider['categories'];
+        unset($provider['categories']);
 
         if (isset($settings['password']))
         {
@@ -178,6 +187,9 @@ class Providers_Model_V2 extends CI_Model {
 
         $this->save_services($services, $provider['id']);
         $this->save_settings($settings, $provider['id']);
+        if(!empty($categories)) {
+            $this->save_categories($categories, $provider['id'], $services);
+        }
 
         // Return record id.
         return (int)$provider['id'];
@@ -255,7 +267,7 @@ class Providers_Model_V2 extends CI_Model {
         // Validate provider services.
         if ( ! isset($provider['services']) || ! is_array($provider['services']))
         {
-            throw new Exception('Invalid provider services given: ' . print_r($provider, TRUE));
+            throw new Exception('services field is missing or Invalid provider services given: ' . print_r($provider, TRUE));
         }
         else
         { // Check if services are valid int values.
@@ -345,16 +357,19 @@ class Providers_Model_V2 extends CI_Model {
      */
     public function get_row($provider_id)
     {
+      
         // Check if selected record exists on database.
         if ($this->db->get_where('ea_users', ['id_integrated' => $provider_id])->num_rows() == 0)
         {
+            print_r($this->db->last_query());  
+
+            exit("exception");
             throw new Exception('Selected record does not exist in the database.');
         }
-
         // Get provider data.
         $provider = $this->db->get_where('ea_users', ['id_integrated' => $provider_id])->row_array();
         $providerId = $this->db->get_where('ea_users', ['id_integrated' => $provider_id])->row()->id;
-
+        
         // Include provider services.
         $services = $this->db->get_where('ea_services_providers',
             ['id_users' => $providerId])->result_array();
@@ -363,7 +378,7 @@ class Providers_Model_V2 extends CI_Model {
         {
             $provider['services'][] = $service['id_services'];
         }
-
+        
         // Include provider settings.
         $provider['settings'] = $this->db->get_where('ea_user_settings',
             ['id_users' => $providerId])->row_array();
@@ -457,6 +472,13 @@ class Providers_Model_V2 extends CI_Model {
             $provider['settings'] = $this->db->get_where('ea_user_settings',
                 ['id_users' => $provider['id']])->row_array();
             unset($provider['settings']['id_users']);
+
+            $categories = $this->getCategoryByProvider($provider['id']);
+            $provider['categories'] = [];
+            foreach ($categories as $category)
+            {
+                $provider['categories'][] = $category;
+            }
         }
 
         // Return provider records in an array.
@@ -643,5 +665,146 @@ class Providers_Model_V2 extends CI_Model {
         {
             throw new Exception('Could not update provider record.');
         }
+    }
+
+    public function getProvidersByCategoryAndService($id_category_integrated, $id_service_integrated) {
+        $serviceId = $this->db->get_where('ea_services',['id_integrated'=> $id_service_integrated])->row()->id;
+        $categoryId = $this->db->get_where('integrated_categories',['id_integrated'=> $id_category_integrated])->row()->id;
+        if(empty($serviceId)) {
+            throw new Exception('Can not find any record with id_service_integrated');
+        }
+        if(empty($categoryId)) {
+            throw new Exception('Can not find any record with id_category_integrated');
+        }
+
+        $providers = $this->db->select('*')->from('ea_users')
+        ->join('integrated_provider_categories','ea_users.id = integrated_provider_categories.id_providers','inner')
+        ->where('integrated_provider_categories.id_services', $serviceId)
+        ->where('integrated_provider_categories.id_categories', $categoryId)
+        ->where('ea_users.id_roles', 2)
+        ->get()->result_array();
+        foreach ($providers as &$provider)
+        {
+            // Services
+            $services = $this->db->get_where('ea_services_providers',
+                ['id_users' => $provider['id']])->result_array();
+            $provider['services'] = [];
+            foreach ($services as $service)
+            {
+                $provider['services'][] = $service['id_services'];
+            }
+
+            // Settings
+            $provider['settings'] = $this->db->get_where('ea_user_settings',
+                ['id_users' => $provider['id']])->row_array();
+            unset($provider['settings']['id_users']);
+            $categories = $this->getCategoryByProvider($provider['id']);
+            $provider['categories'] = [];
+            foreach ($categories as $category)
+            {
+                $provider['categories'][] = $category;
+            }
+        }
+
+        return $providers;
+    }
+
+    protected function save_categories($categories, $provider_id, $services)
+    {
+        // Validate method arguments.
+        if ( ! is_array($categories))
+        {
+            throw new Exception('Invalid argument type $categories: ' . $categories);
+        }
+
+        if ( ! is_numeric($provider_id))
+        {
+            throw new Exception('Invalid argument type $provider_id: ' . $provider_id);
+        }
+
+        if ( ! is_numeric($services[0]))
+        {
+            throw new Exception('Invalid argument type $service_id: ' . $services[0]);
+        }
+
+        // Save provider services in the database (delete old records and add new).
+        $this->db->delete('integrated_provider_categories', ['id_providers' => $provider_id]);
+
+        foreach ($categories as $category_id)
+        {
+            $category_provider = [
+                'id_providers' => $provider_id,
+                'id_services' => $services[0],
+                'id_categories' => $category_id
+            ];
+            $this->db->insert('integrated_provider_categories', $category_provider);
+        }
+    }
+
+    public function getCategoryByProvider($provider_id) {
+        return $this->db->select('id, id_integrated, name, img')->from('integrated_categories')
+        ->join('integrated_provider_categories', 'integrated_provider_categories.id_categories = integrated_categories.id', 'inner')
+        ->where('integrated_provider_categories.id_providers', $provider_id)->get()->result_array();
+    }
+
+    public function getProviderBy($name, $id_service_integrated){
+        $this->db->distinct()->select('ea_users.*')->from('ea_users')
+                ->join('ea_services_providers', 'ea_services_providers.id_users = ea_users.id','inner')
+                ->join('ea_services', 'ea_services_providers.id_services = ea_services.id','inner')
+                ->where('ea_users.id_roles = 2');
+        if ($name){
+            $this->db->where("CONCAT(ea_users.first_name, ' ', ea_users.last_name) LIKE '%".$name."%'");
+        }
+        if($id_service_integrated){
+            $this->db->where('ea_services.id_integrated', $id_service_integrated);
+        }
+
+        $result = $this->db->get()->result_array();
+        return $result;
+    }
+
+
+
+    public function getProvidersByIdIntegrated($providers){
+        return $this->db->select('*')->from('ea_users')->where_in('id_integrated',$providers)->get()->result_array();
+    }
+    public function addProviderToService($service_id, $providers){
+        if ( ! is_array($providers))
+        {
+            throw new Exception('Invalid argument type providers: ' . $providers);
+        }
+        if ( ! is_numeric($service_id))
+        {
+            throw new Exception('Invalid argument type idService: ' . $service_id);
+        }
+        $result = [];
+        foreach ($providers as $provider)
+        {
+            $service_provider = [
+                'id_users' => $provider['id'],
+                'id_services' => $service_id
+            ];
+            if(!$this->db->insert('ea_services_providers', $service_provider)){
+                DbHandlerException::handle($this->db->error());
+            }
+            array_push($result,$provider);
+        }
+        return $result;
+    }
+    public function removeProviderToService($service_id, $provider_id){
+        if ( ! is_numeric($provider_id))
+        {
+            throw new Exception('Invalid argument type idService: ' . $provider_id);
+        }
+        if ( ! is_numeric($service_id))
+        {
+            throw new Exception('Invalid argument type idService: ' . $service_id);
+        }
+        
+        $service_provider = [
+            'id_users' => $provider_id,
+            'id_services' => $service_id
+        ];
+        $this->db->delete('ea_services_providers', $service_provider);
     }
 }

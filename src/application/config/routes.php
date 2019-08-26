@@ -63,7 +63,11 @@ $resources = [
     'providers',
     'secretaries',
     'attachment',
-    'attendants'
+    'attendants',
+    'patients',
+    'cities',
+    'districts',
+    'wards'
 ];
 
 foreach ($resources as $resource)
@@ -79,12 +83,23 @@ foreach ($resources as $resource)
     $route['api/v2/' . $resource . '/(:num)']['delete'] = 'api/v2/' . $resource.'v2' . '/delete/$1';
     $route['api/v2/' . $resource]['get'] = 'api/v2/' . $resource.'v2' . '/get';
     $route['api/v2/' . $resource . '/(:num)']['get'] = 'api/v2/' . $resource .'v2'. '/get/$1';
+    $route['api/v3/' . $resource]['post'] = 'api/v3/' . $resource .'v3'. '/post';
+    $route['api/v3/' . $resource]['get'] = 'api/v3/' . $resource .'v3'. '/get';
+    $route['api/v3/' . $resource . '/(:num)/users/(:any)/services/(:any)']['put'] = 'api/v3/' . $resource .'v3'. '/put/$1/$2/$3';
+    $route['api/v2/' . $resource . '/(:any)']['get'] = 'api/v2/' . $resource .'v2'. '/get/$1';
+    $route['api/v2/' . $resource . '/(:any)']['put'] = 'api/v2/' . $resource .'v2'. '/put/$1';
 }
 
 $route['api/v1/settings']['get'] = 'api/v1/settings/get';
 $route['api/v1/settings/(:any)']['get'] = 'api/v1/settings/get/$1';
 $route['api/v1/settings/(:any)']['put'] = 'api/v1/settings/put/$1';
 $route['api/v1/settings/(:any)']['delete'] = 'api/v1/settings/delete/$1';
+
+//WARD API
+// $route['api/v1/wards/create']['post'] = 'api/v1/wards/post';
+// $route['api/v1/wards/get/all']['get'] = 'api/v1/wards/get';
+// $route['api/v1/wards/get']['get'] = 'api/v1/wards/getAllByCityAndDistrict';
+// $route['api/v1/wards/delete/']['delete'] = 'api/v1/wards/delete/$1';
 
 $route['api/v2/appointments/statistic']['get'] = 'api/v2/appointmentsv2/getTotalAppointmentGroupByGender';
 $route['api/v1/availabilities']['get'] = 'api/v1/availabilities/get';
@@ -93,11 +108,26 @@ $route['api/v2/appointments/(:any)']['get'] = 'api/v2/appointmentsv2/get/$1';
 $route['api/v2/appointments/(:any)']['put'] = 'api/v2/appointmentsv2/updateAppointmentByIdIntegrated/$1';
 $route['api/v2/appointments/(:any)']['put'] = 'api/v2/appointmentsv2/updateAppointmentStatus/$1';
 $route['api/v2/customers/(:any)']['put'] = 'api/v2/customersv2/updateCustomer/$1';
+$route['api/v2/providers/(:any)/services/(:any)']['delete'] = 'api/v2/providersv2/removeProviderToService/$1/$2';
+$route['api/v2/providers/list/services/(:any)']['post'] = 'api/v2/providersv2/addProvidersToService/$1';
 $route['api/v2/providers/(:any)']['put'] = 'api/v2/providersv2/updateProvider/$1';
 $route['api/v2/providers/(:any)/(:any)']['put'] = 'api/v2/providersv2/updateProviderByServiceId/$1/$2';
 $route['api/v2/services/(:any)']['put'] = 'api/v2/servicesv2/updateService/$1';
 $route['api/v2/providers/update/(:any)/(:any)']['put'] = 'api/v2/providersv2/updateProviderIdIntegrated/$1/$2';
 $route['api/v2/appointments/orders/(:any)']['put'] = 'api/v2/appointmentsv2/updateAppointmentByOrderId/$1';
 $route['api/v2/appointments/orders/(:any)']['get'] = 'api/v2/appointmentsv2/getAppointmentByOrderId/$1';
+$route['api/v2/providers/category/(:any)/(:any)']['get'] = 'api/v2/providersv2/getProvidersWithCategoryAndService/$1/$2';
+$route['api/v2/categories/services/(:any)']['get'] = 'api/v2/categoriesv2/getCategoryByServiceIdIntegrated/$1';
+$route['api/v2/appointments/services/(:any)']['get'] = 'api/v2/appointmentsv2/getAppointmentWithServiceIntegrated/$1';
+$route['api/v2/categories/providers/(:any)']['get'] = 'api/v2/categoriesv2/getCategoryByProviderId/$1';
+$route['api/v3/patients/(:any)']['get'] = 'api/v3/patientsv3/getPatient/$1';
+$route['api/v3/appointments/(:any)']['get'] = 'api/v3/appointmentsv3/getUserAppointments/$1';
+$route['api/v3/appointments/services/(:any)/statistics/district']['get'] = 'api/v3/appointmentsv3/getAppointmentsDistrictStatistic/$1';
+$route['api/v3/appointments/services/(:any)/patients/(:any)']['get'] = 'api/v3/appointmentsv3/getAppointmentWithServiceIdAndPatientId/$1/$2';
+$route['api/v3/appointments/services/(:any)/users/(:any)/patients/(:any)']['get'] = 'api/v3/appointmentsv3/getAppointmentWithServiceAndUserAndPatient/$1/$2/$3';
+$route['api/v2/categories/id']['post'] = 'api/v2/categoriesv2/getCategoryIds';
+$route['api/v2/services/(:any)/categories']['delete'] = 'api/v2/servicesv2/removeServiceCategory/$1';
+$route['api/v2/services/(:any)/categories']['put'] = 'api/v2/servicesv2/addCategoryToService/$1';
+// $route['api/v2/categories']['get']/(:) = 'api/v2/categoryv2/get';
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

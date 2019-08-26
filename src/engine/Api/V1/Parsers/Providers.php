@@ -46,6 +46,11 @@ class Providers implements ParsersInterface {
             $encodedResponse['services'] = $response['services'];
         }
 
+        if (array_key_exists('categories', $response))
+        {
+            $encodedResponse['categories'] = $response['categories'];
+        }
+
         if (array_key_exists('settings', $response))
         {
             $encodedResponse['settings'] = [
@@ -192,6 +197,11 @@ class Providers implements ParsersInterface {
             {
                 $decodedRequest['settings']['working_plan'] = json_encode($request['settings']['workingPlan']);
             }
+        }
+
+        if ( ! empty($request['categories']))
+        {
+            $decodedRequest['categories'] = $request['categories'];
         }
 
         $request = $decodedRequest;

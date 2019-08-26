@@ -87,5 +87,10 @@ define('CALENDAR_VIEW_TABLE', 'table');
 define('AVAILABILITIES_TYPE_FLEXIBLE', 'flexible');
 define('AVAILABILITIES_TYPE_FIXED', 'fixed');
 
+// Stored Procedure
+define('GET_APPOINTMENTS_WITH_CONDITION_AND_PAGING_SP','CALL getAppointmentsByConditionAndPaging(?, ?, ?, ?, ?, ?, ?, ?)');
+define('COUNT_APPOINTMENTS_WITH_CONDITION_SP','CALL countAppointmentsByCondition(?, ?, ?, ?, ?)');
+define('GET_DISTRICTS_BOOKING_STATISTIC_WITH_CONDITION','CALL getDistrictsBookingStatisticByConditions(?, ?, ?, ?, ?, ?, ?, ?)');
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

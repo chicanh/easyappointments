@@ -96,6 +96,16 @@ class Customers implements ParsersInterface {
         {
             $decodedRequest['notes'] = $request['notes'];
         }
+        
+        if(!empty($request['cityId'])){
+            $decodedRequest['city_id'] = $request['cityId'];
+        }
+        if(!empty($request['districtId'])){
+            $decodedRequest['district_id'] = $request['districtId'];
+        }
+        if(!empty($request['wardId'])){
+            $decodedRequest['ward_id'] = $request['wardId'];
+        }
 
         $request = $decodedRequest;
     }
