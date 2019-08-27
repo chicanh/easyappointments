@@ -23,9 +23,17 @@ class Customers_Model_V2 extends Customers_Model {
         // Validate the customer data before doing anything.
         $this->validate($customer);
 
-	$customer['id'] = $this->_insert($customer);
+	    $customer['id'] = $this->_insert($customer);
         return $customer['id'];
     }
+
+    public function update($id, $customer)
+    {
+        // Validate the customer data before doing anything
+        $updated_status = $this->db->update('ea_users', $customer, array('id' => $id));
+        return $updated_status;
+    }
+
 
     /**
      * Check if a particular customer record already exists.
@@ -87,12 +95,8 @@ class Customers_Model_V2 extends Customers_Model {
                     . 'exist in the database.');
             }
         }
-        // Validate required fields
-        if (! isset($customer['phone_number']))
-        {
-            throw new Exception('Not all required fields are provided: '
-                . print_r($customer, TRUE));
-        }
+
+        // Removed validate of phone_number as required
 
         // Validate email address
         if(isset($customer['email']))
