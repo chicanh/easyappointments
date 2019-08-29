@@ -720,11 +720,8 @@ class Providers_Model_V2 extends CI_Model {
             throw new Exception('Can not find any defined categories before for service with id' . $services[0]);
         }
 
-<<<<<<< HEAD
         $this->db->delete('integrated_provider_categories', ['id_providers' => $provider_id, 'id_services' => $service_id]);
 
-=======
->>>>>>> e98ef715c7a8fe5490dbfcb8ca07e41b84bdae91
         foreach($categories_id as $id) {
             if(!in_array($id['id_categories'], $categories)) {
                 throw new Exception('Category does not match with supported categories');
