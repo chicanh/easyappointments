@@ -91,6 +91,7 @@ define('AVAILABILITIES_TYPE_FIXED', 'fixed');
 define('GET_APPOINTMENTS_WITH_CONDITION_AND_PAGING_SP','CALL getAppointmentsByConditionAndPaging(?, ?, ?, ?, ?, ?, ?, ?)');
 define('COUNT_APPOINTMENTS_WITH_CONDITION_SP','CALL countAppointmentsByCondition(?, ?, ?, ?, ?)');
 define('GET_DISTRICTS_BOOKING_STATISTIC_WITH_CONDITION','CALL getDistrictsBookingStatisticByConditions(?, ?, ?, ?, ?, ?, ?, ?)');
+define('GET_GENDER_BOOKING_STATISTIC_WITH_CONDITION','CALL getGenderBookingStatisticByCondition(?, ?, ?, ?, ?, ?, ?)');
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

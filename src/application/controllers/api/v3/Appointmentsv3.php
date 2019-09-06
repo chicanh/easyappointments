@@ -149,7 +149,21 @@ class AppointmentsV3 extends AppointmentsV2
 
     public function getAppointmentsGenderStatistic($idServiceIntegrated)
     {
-
+        $this->load->helper('validation_helper');
+        try {
+            $requestParams = validateInputRequestParamsForStatictis($this->input);
+            $result = $this->appointments_model_v3->getGenderBookingStatistic($idServiceIntegrated,
+                                                $requestParams['cities'],
+                                                $requestParams['startDate'],
+                                                $requestParams['endDate'],
+                                                $requestParams['firstTime'],
+                                                $requestParams['useHealthInsurance'],
+                                                $requestParams['id_provider_integrated']);
+            $response = new Response($result);
+            $response->output();
+        } catch (\Exception $exception) {
+            exit($this->_handleException($exception));
+        }
     }
 
 }

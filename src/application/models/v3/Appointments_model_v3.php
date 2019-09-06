@@ -102,4 +102,13 @@ class Appointments_Model_V3 extends Appointments_Model {
         "ea_users.id = ea_appointments_attendants.id_users AND ea_appointments_attendants.id_appointment = $id")->get()->row_array();
         return $appointment;
     }
+
+    public function getGenderBookingStatistic($idServiceIntegrated, $cityId, $startDate, $endDate, $firstTime, $useHealthInsurance, $idProviderIntegrated) {
+        $arrayParams = [$idServiceIntegrated, $cityId, $startDate, $endDate, $firstTime, $useHealthInsurance, implode(',',$idProviderIntegrated)];
+        $query = $this->db->query(GET_GENDER_BOOKING_STATISTIC_WITH_CONDITION, $arrayParams);
+        $response = $query->result_array();
+        $this->releaseStoredProcedureQuery($query);
+        return $response;
+
+    }
 }
