@@ -1,4 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
+use \EA\Engine\Api\V2\DbHandlerException;
 
 /* ----------------------------------------------------------------------------
  * Easy!Appointments - Open Source Web Scheduler
@@ -110,7 +111,7 @@ class Customers_Model extends CI_Model {
 
         if ( ! $this->db->insert('ea_users', $customer))
         {
-            throw new Exception('Could not insert customer to the database.');
+            DbHandlerException::handle($this->db->error());
         }
 
         return (int)$this->db->insert_id();

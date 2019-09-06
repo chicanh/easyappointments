@@ -1,4 +1,5 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
+use \EA\Engine\Api\V2\DbHandlerException;
 
     class Patient_model extends CI_Model {
 
@@ -19,11 +20,6 @@
     public function validate($patient_integrated) {
         $this->load->helper('data_validation');
 
-        if (empty($patient_integrated['id_service_integrated']))
-        {
-            throw new Exception('id_service_integrated is required field');
-        }
-
         if (empty($patient_integrated['id_patients']))
         {
             throw new Exception('id_user_integrated is required field');
@@ -43,7 +39,7 @@
     {
         if ( ! $this->db->insert('integrated_users_patients', $patient_integrated))
         {
-            throw new Exception('Could not insert integrated_users_patients record.');
+            DbHandlerException::handle($this->db->error());
         }
     }
 
@@ -62,9 +58,6 @@
     }
 
     public function getPatient($id_user_integrated,$id_service_integrated, $id_integrated, $isAggregates) {
-        if(empty($id_service_integrated)) {
-            throw new Exception('Field $id_service_integrated is required');
-        }
  
         if(empty($id_integrated)) {
             throw new Exception('Field $id_integrated is required');

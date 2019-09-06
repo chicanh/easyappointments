@@ -95,12 +95,8 @@ class Customers_Model_V2 extends Customers_Model {
                     . 'exist in the database.');
             }
         }
-        // Validate required fields
-        if (! isset($customer['phone_number']))
-        {
-            throw new Exception('Not all required fields are provided: '
-                . print_r($customer, TRUE));
-        }
+
+        // Removed validate of phone_number as required
 
         // Validate email address
         if(isset($customer['email']))

@@ -119,8 +119,8 @@ class PatientsV3 extends Customersv2 {
         $page = $this->input->get('page');
         $size = $this->input->get('length');
         try {
-            if($id_service_integrated == null){
-                throw new \EA\Engine\Api\V1\Exception('id_service_integrated is required', 400);
+            if($id_service_integrated == null && $id_user_integrated == null){
+                throw new \EA\Engine\Api\V1\Exception('Either id_service_integrated  or id_user_integrated are required', 400);
             }
             $result = $this->patient_model->get($id_user_integrated, $id_service_integrated, $page, $size, array_key_exists('aggregates', $_GET));
             $result['patients'] = $this->encodePatients($result['patients']);
@@ -138,21 +138,15 @@ class PatientsV3 extends Customersv2 {
         try {
             $id_user_integrated = $this->input->get('id_user_integrated');
             $id_service_integrated = $this->input->get('id_service_integrated');
-            if($id_service_integrated == null){
-                throw new \EA\Engine\Api\V1\Exception('id_service_integrated are required', 400);
+            $patients = $this->patient_model->getPatient($id_user_integrated, $id_service_integrated, $id_integrated, array_key_exists('aggregates', $_GET));
+            if (!empty($patients)) {
+                $response = new Response($patients);
+                $response->encode($this->parser)->singleEntry(true)->output();
+            } else {
+                $this->_throwRecordNotFound();
             }
-            else {
-		$patients = $this->patient_model->getPatient($id_user_integrated, $id_service_integrated, $id_integrated, array_key_exists('aggregates', $_GET));
-		if(!empty($patients)) {
-	                $response = new Response($patients);
-			$response->encode($this->parser)->singleEntry(TRUE)->output();
-		} else {
-			$this->_throwRecordNotFound();				
-		}
-            }
-        }
-        catch (\Exception $exception)
-        {
+            
+        } catch (\Exception $exception) {
             $this->_handleException($exception);
         }
     }
