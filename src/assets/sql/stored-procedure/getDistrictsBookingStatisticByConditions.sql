@@ -1,4 +1,3 @@
-DROP PROCEDURE IF EXISTS `getAddressBookingStatisticByConditions`;
 DROP PROCEDURE IF EXISTS `getDistrictsBookingStatisticByConditions`;
 CREATE PROCEDURE `getDistrictsBookingStatisticByConditions`(IN `idServiceIntegrated` VARCHAR(200), IN `cityId` INT(11), IN `startDate` VARCHAR(200), IN `endDate` VARCHAR(200), IN `gender` VARCHAR(200), IN `firstTimeBooking` VARCHAR(200), IN `healthInsuranceUsed` VARCHAR(200), IN `idProviderIntegrated` VARCHAR(200))
 BEGIN
