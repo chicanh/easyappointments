@@ -509,4 +509,24 @@ class Appointments_Model_V2 extends Appointments_Model {
         ->where('integrated_users_patients.id_patients', $patientId)
         ->get()->result_array();
     }
+
+    public function checkAppointmentsWorkingDate($id_service_integrated, $id_provider_integrated, $dates) {
+        $sqlQuery = "Select ea_appointments.start_datetime from ea_appointments 
+                    INNER JOIN ea_users ON ea_appointments.id_users_provider = ea_users.id 
+                    INNER JOIN ea_services ON ea_appointments.id_services = ea_services.id 
+                    WHERE ea_services.id_integrated = ? AND ea_users.id_integrated = ? AND (";
+
+        $arrlength = count($dates);
+        for($i = 0; $i < $arrlength; $x++) {
+            $statement = "DATE(ea_appointments.start_datetime) = '".$dates[$i]."'";
+            if($x <= $arrlength - 1){
+                $statement .= " OR ";
+            }
+            $sqlQuery .= $statement;
+        }
+        $sqlQuery .= ");";
+
+        $result = $this->db->query($sqlQuery, array($id_service_integrated, $id_provider_integrated));
+        return $result;
+    }
 }

@@ -464,4 +464,21 @@ class AppointmentsV2 extends Appointments {
             exit($this->_handleException($exception));
         }
     }
+
+    public function checkAppointmentsWorkingDate(){
+        try {
+            $id_service_integrated = $this->input->get('id_service_integrated');
+            $id_provider_integrated = $this->input->get('id_provider_integrated');
+            $dates = $this->input->get('dates');
+            if($dates && count($dates) > 0){
+                $this->appointments_model_v2->checkAppointmentsWorkingDate($id_service_integrated, $id_provider_integrated, $dates);
+                $response = new Response($appointments);
+                $response->output();
+            } else {
+                throw new Exception('Missing dates parameter');
+            }
+        } catch(\Exception $exception) {
+            exit($this->_handleException($exception));
+        }
+    }
 }
