@@ -470,9 +470,9 @@ class AppointmentsV2 extends Appointments {
             $id_service_integrated = $this->input->get('id_service_integrated');
             $id_provider_integrated = $this->input->get('id_provider_integrated');
             $dates = $this->input->get('dates');
-            if($dates && count($dates) > 0){
-                $this->appointments_model_v2->checkAppointmentsWorkingDate($id_service_integrated, $id_provider_integrated, $dates);
-                $response = new Response($appointments);
+            if($dates && sizeof($dates) > 0){
+                $result = $this->appointments_model_v2->checkAppointmentsWorkingDate($id_service_integrated, $id_provider_integrated, $dates);
+                $response = new Response($result);
                 $response->output();
             } else {
                 throw new Exception('Missing dates parameter');
