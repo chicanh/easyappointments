@@ -390,3 +390,6 @@ ALTER TABLE `integrated_users_patients`
 
 ALTER TABLE `integrated_users_patients` DROP PRIMARY KEY, ADD PRIMARY KEY(`id_user_integrated`, `id_patients`);
 ALTER TABLE `integrated_users_patients` modify `id_service_integrated` VARCHAR(50);
+
+
+ALTER TABLE `ea_appointments` ADD COLUMN `platform` VARCHAR(255);
