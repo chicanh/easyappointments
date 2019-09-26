@@ -36,8 +36,7 @@ class Appointments implements ParsersInterface {
             'customerId' => $response['id_users_customer'] !== NULL ? (int)$response['id_users_customer'] : NULL,
             'providerId' => $response['id_users_provider'] !== NULL ? (int)$response['id_users_provider'] : NULL,
             'serviceId' => $response['id_services'] !== NULL ? (int)$response['id_services'] : NULL,
-            'googleCalendarId' => $response['id_google_calendar'] !== NULL ? (int)$response['id_google_calendar'] : NULL,
-            'platform' => $response['platform']
+            'googleCalendarId' => $response['id_google_calendar'] !== NULL ? (int)$response['id_google_calendar'] : NULL
         ];
 
         if (isset($response['provider']))

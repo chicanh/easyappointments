@@ -392,4 +392,4 @@ ALTER TABLE `integrated_users_patients` DROP PRIMARY KEY, ADD PRIMARY KEY(`id_us
 ALTER TABLE `integrated_users_patients` modify `id_service_integrated` VARCHAR(50);
 
 
-ALTER TABLE `ea_appointments` ADD COLUMN `platform` VARCHAR(255);
+ALTER TABLE `ea_appointments` ADD COLUMN `platform` VARCHAR(15);

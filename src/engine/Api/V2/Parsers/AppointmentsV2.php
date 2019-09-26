@@ -206,6 +206,10 @@ class AppointmentsV2 extends Appointments {
         {
             $decodedRequest['health_insurance_used'] = $request['healthInsuranceUsed'];
         }
+        if ( ! empty($request['platform']))
+        {
+            $decodedRequest['platform'] = $request['platform'];
+        }
 
         $decodedRequest['is_unavailable'] = FALSE;
 
