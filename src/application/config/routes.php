@@ -52,7 +52,7 @@ $route['404_override'] = 'errors/error404';
 | used for each operation.
 |
 */
-$route['api/v3/appointments/workingdate']['get'] = 'api/v2/appointmentsv3/getAppointmentsWorkingDate';
+$route['api/v3/appointments/workingdate']['get'] = 'api/v3/appointmentsv3/getAppointmentsWorkingDate';
 
 $resources = [
     'appointments',
