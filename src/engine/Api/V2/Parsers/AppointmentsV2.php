@@ -211,13 +211,9 @@ class AppointmentsV2 extends Appointments {
         {
             $decodedRequest['platform'] = $request['platform'];
         }
-        if ( ! empty($request['arrived']))
-        {
-            $decodedRequest['arrived'] = $request['arrived'];
-        }
 
+        $decodedRequest['arrived'] = $request['arrived'];
         $decodedRequest['is_unavailable'] = FALSE;
-
         $request = $decodedRequest;
     }
 
