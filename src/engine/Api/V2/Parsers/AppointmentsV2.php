@@ -55,7 +55,8 @@ class AppointmentsV2 extends Appointments {
             'admin_notes' => $response['admin_notes'],
             'id_category_integrated' => $response['id_category_integrated'],
             'healthInsuranceUsed' => $response['health_insurance_used'],
-            'platform' => $response['platform']
+            'platform' => $response['platform'],
+            'arrived' => $response['arrived']
         ];
 
         if (isset($response['provider']))
@@ -210,6 +211,10 @@ class AppointmentsV2 extends Appointments {
         {
             $decodedRequest['platform'] = $request['platform'];
         }
+        if ( ! empty($request['arrived']))
+        {
+            $decodedRequest['arrived'] = $request['arrived'];
+        }
 
         $decodedRequest['is_unavailable'] = FALSE;
 
@@ -240,7 +245,8 @@ class AppointmentsV2 extends Appointments {
             'admin_notes' => $response['admin_notes'],
             'id_category_integrated' => $response['id_category_integrated'],
             'healthInsuranceUsed' => $response['health_insurance_used'],
-            'platform' => $response['platform']
+            'platform' => $response['platform'],
+            'arrived' => $response['arrived']
         ];
 
         if (isset($response['provider']))
