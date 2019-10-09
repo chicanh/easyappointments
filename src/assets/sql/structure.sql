@@ -394,4 +394,4 @@ ALTER TABLE `integrated_users_patients` modify `id_service_integrated` VARCHAR(5
 
 ALTER TABLE `ea_appointments` ADD COLUMN `platform` VARCHAR(15);
 
-ALTER TABLE `ea_appointments` ADD COLUMN `arrived` TINYINT(4) DEFAULT '0';
+ALTER TABLE `ea_appointments` ADD COLUMN `arrived` TINYINT(4) DEFAULT 0;
