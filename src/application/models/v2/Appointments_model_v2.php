@@ -33,6 +33,13 @@ class Appointments_Model_V2 extends Appointments_Model {
      *
      * @throws Exception If appointment record could not be inserted.
      */
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->model('/v3/patient_model');
+    }
+
     protected function _insert($appointment)
     {
         $appointment['book_datetime'] = date('Y-m-d H:i:s');
@@ -295,9 +302,14 @@ class Appointments_Model_V2 extends Appointments_Model {
             
         $id = $appointment['id'];
 
-        $appointment['patient'] = $this->db->select('*')->from('ea_users')
+        $patient = $this->db->select('ea_users.*')->from('ea_users')
         ->join('ea_appointments_attendants', 
         "ea_users.id = ea_appointments_attendants.id_users AND ea_appointments_attendants.id_appointment = $id")->get()->row_array();
+        
+        if(isset($patient)) {
+            $appointment['patient'] = $this->patient_model->get_aggregates($patient);
+        }
+
         return $appointment;
     }
 
