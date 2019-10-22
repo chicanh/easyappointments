@@ -254,7 +254,7 @@ class AppointmentsV2 extends Appointments {
 
         if (isset($response['customer']))
         {
-            $customerParser = new Customers();
+            $customerParser = new CustomersV2();
             $customerParser->encode($response['customer']);
             $encodedResponse['customer'] = $response['customer'];
         }
@@ -267,7 +267,7 @@ class AppointmentsV2 extends Appointments {
         }
         if (isset($response['patient']))
         {
-            $customerParser = new Customers();
+            $customerParser = new CustomersV2();
             $customerParser->encode($response['patient']);
             $encodedResponse['patient'] = $response['patient'];
         }
