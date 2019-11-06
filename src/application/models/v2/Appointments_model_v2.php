@@ -409,7 +409,7 @@ class Appointments_Model_V2 extends Appointments_Model {
         }
 
         $appointments = $this->db->order_by("DATE(start_datetime)",$sort)
-                                ->$this->db->order_by("TIME(start_datetime)",'asc')
+                                ->order_by("TIME(start_datetime)",'asc')
                                 ->get_where('ea_appointments', $where_clause)->result_array();
         $totalRecords = sizeof($appointments);
 
@@ -417,7 +417,7 @@ class Appointments_Model_V2 extends Appointments_Model {
             $offset = ($page - 1 ) * $size;
             $this->db->limit($size,$offset);
             $appointments = $this->db->order_by("DATE(start_datetime)",$sort)
-                                        ->$this->db->order_by("TIME(start_datetime)", "asc")
+                                        ->order_by("TIME(start_datetime)", "asc")
                                         ->get_where('ea_appointments', $where_clause, $size, $offset)->result_array();
         }
 
