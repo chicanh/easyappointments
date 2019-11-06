@@ -352,7 +352,8 @@ class Appointments_Model_V2 extends Appointments_Model {
                 break;
         }
 
-        $this->db->order_by("start_datetime", $sort);
+        $this->db->order_by("DATE(start_datetime)", $sort);
+        $this->db->order_by("TIME(start_datetime)", "asc");
 
 		if($page != ''&& $size != ''){
             $offset = ($page - 1 ) * $size;
@@ -378,7 +379,6 @@ class Appointments_Model_V2 extends Appointments_Model {
         $page = $requestParams['page'];
         $size = $requestParams['size'];
         $otherQuery = $requestParams['q'];
-
         $sort = $sort == null || $sort == '' ? 'DESC' : $sort; // set default value for sort
         switch ($type) {
             case self::CUSTOMER:
