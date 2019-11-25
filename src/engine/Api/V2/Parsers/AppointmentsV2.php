@@ -55,7 +55,8 @@ class AppointmentsV2 extends Appointments {
             'admin_notes' => $response['admin_notes'],
             'id_category_integrated' => $response['id_category_integrated'],
             'healthInsuranceUsed' => $response['health_insurance_used'],
-            'platform' => $response['platform']
+            'platform' => $response['platform'],
+            'arrived' => $response['arrived']
         ];
 
         if (isset($response['provider']))
@@ -211,8 +212,8 @@ class AppointmentsV2 extends Appointments {
             $decodedRequest['platform'] = $request['platform'];
         }
 
+        $decodedRequest['arrived'] = $request['arrived'];
         $decodedRequest['is_unavailable'] = FALSE;
-
         $request = $decodedRequest;
     }
 
@@ -240,7 +241,8 @@ class AppointmentsV2 extends Appointments {
             'admin_notes' => $response['admin_notes'],
             'id_category_integrated' => $response['id_category_integrated'],
             'healthInsuranceUsed' => $response['health_insurance_used'],
-            'platform' => $response['platform']
+            'platform' => $response['platform'],
+            'arrived' => $response['arrived']
         ];
 
         if (isset($response['provider']))
@@ -252,7 +254,7 @@ class AppointmentsV2 extends Appointments {
 
         if (isset($response['customer']))
         {
-            $customerParser = new Customers();
+            $customerParser = new CustomersV2();
             $customerParser->encode($response['customer']);
             $encodedResponse['customer'] = $response['customer'];
         }
@@ -265,7 +267,7 @@ class AppointmentsV2 extends Appointments {
         }
         if (isset($response['patient']))
         {
-            $customerParser = new Customers();
+            $customerParser = new CustomersV2();
             $customerParser->encode($response['patient']);
             $encodedResponse['patient'] = $response['patient'];
         }

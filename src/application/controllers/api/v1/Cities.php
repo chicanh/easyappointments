@@ -28,7 +28,8 @@ class Cities extends API_V1_Controller {
 
     public function getAll(){
         try{
-            $cities = $this->cities_model->getAllCities();
+            $sort = $this->input->get('sort');
+            $cities = $this->cities_model->getAllCities($sort);
          
             $response = new Response($cities);
         
