@@ -146,12 +146,6 @@ class AppointmentsV3 extends AppointmentsV2
             exit($this->_handleException($exception));
         }
     }
-
-    public function getAppointmentsGenderStatistic($idServiceIntegrated)
-    {
-
-    }
-
     
     public function getAppointmentsWorkingDate(){
         try {
