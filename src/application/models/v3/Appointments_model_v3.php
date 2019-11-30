@@ -104,8 +104,12 @@ class Appointments_Model_V3 extends Appointments_Model {
     }
 
     public function getAppointmentsWorkingDate($id_service_integrated, $id_provider_integrated, $dates) {
-        $sqlQuery = "SELECT DISTINCT(ea_customer.email), DATE(ea_appointments.start_datetime) as date from ea_appointments 
-                     INNER JOIN ea_users ea_provider ON ea_appointments.id_users_provider = ea_provider.id 
+        $sqlQuery = "SELECT ea_customer.email, 
+                            ea_appointments.id_integrated as bookingId, 
+                            CONCAT(ea_provider.first_name,' ',ea_provider.last_name) as doctorName,
+                            DATE(ea_appointments.start_datetime) as date 
+                    FROM ea_appointments 
+                    INNER JOIN ea_users ea_provider ON ea_appointments.id_users_provider = ea_provider.id 
                     INNER JOIN ea_users ea_customer ON ea_appointments.id_users_customer = ea_customer.id 
                     INNER JOIN ea_services ON ea_appointments.id_services = ea_services.id 
                     WHERE ea_services.id_integrated = ? AND ea_provider.id_integrated = ? AND (";
