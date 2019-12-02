@@ -22,7 +22,6 @@ class Appointments_Model_V2 extends Appointments_Model {
     const PROVIDER = 'provider';
     const SERVICE = 'service';
     const PROVIDER_SERVICE = 'provider_service';
-    const CUSTOMER_SERVICE = 'customer_service';
 
     /**
      * Insert a new appointment record to the database.
@@ -39,8 +38,6 @@ class Appointments_Model_V2 extends Appointments_Model {
     {
         parent::__construct();
         $this->load->model('/v3/patient_model');
-        $this->load->model('/v2/services_model_v2');
-        $this->load->model('/v2/user_model_v2');
     }
 
     protected function _insert($appointment)
@@ -325,8 +322,6 @@ class Appointments_Model_V2 extends Appointments_Model {
         $page = $otherRequestParams['page'];
         $size = $otherRequestParams['size'];
         $sort = $otherRequestParams['sort'];
-        $id_service_integrated = $otherRequestParams['id_service_integrated'];
-        $id_user_integrated = $otherRequestParams['id_user_integrated'];
         $otherQuery = $otherRequestParams['q'];
 
         if(strlen($startDate) != 0){
@@ -345,18 +340,13 @@ class Appointments_Model_V2 extends Appointments_Model {
                 $this->db->where('id_integrated', $otherQuery);
             }
         }
-       
+
         switch ($type) {
             case self::CUSTOMER:
                 $condition['id_users_customer'] = $service['id'];
                 break;
             case self::SERVICE:
                 $condition['id_services'] = $service[0]->id;
-                break;
-            case self::CUSTOMER_SERVICE:
-                // both customer and service
-                $condition['id_users_provider'] =$this->user_model_v2->find_by_id_integrated($id_user_integrated)['id'];
-                $condition['id_services'] = $this->services_model_v2->find_by_id_integrated($id_service_integrated)[0]->id;
                 break;
             default:
                 break;
@@ -377,6 +367,7 @@ class Appointments_Model_V2 extends Appointments_Model {
                 $appointment = $this->get_aggregates($appointment);
             }
         }
+
         $resultSet['total'] = $totalRecords;
         $resultSet['appointments'] = $appointments;
         return $resultSet;

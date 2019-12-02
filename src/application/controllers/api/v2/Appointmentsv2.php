@@ -105,9 +105,7 @@ class AppointmentsV2 extends Appointments {
         $otherRequestParams = $this->input->get();
         if($id_provider_integrated != null && $id_service_integrated != null) {
             return $this->getAppointmentByProviderIdAndServiceId($conditions, $id_provider_integrated, $id_service_integrated, $otherRequestParams);
-        } else if($id_user_integrated != null && $id_service_integrated != null) {
-            return $this->appointments_model_v2->getAllAppointmentBy(null, array_key_exists('aggregates', $_GET), $otherRequestParams, $this->appointments_model_v2::CUSTOMER_SERVICE);
-        }
+        } 
         else if($id_user_integrated != null ) {
             return $this->getAppointmentByUserId($conditions, $id_user_integrated, $otherRequestParams);
         }else if($id_provider_integrated != null) {
@@ -123,9 +121,7 @@ class AppointmentsV2 extends Appointments {
         $id_service_integrated = $this->input->get('id_service_integrated');
         $id_user_integrated = $this->input->get('id_user_integrated');
         $otherRequestParams = $this->input->get();
-        if($id_service_integrated != null && $id_user_integrated != null ){
-            return $this->appointments_model_v2->getAllAppointmentBy(null, array_key_exists('aggregates', $_GET), $otherRequestParams, $this->appointments_model_v2::CUSTOMER_SERVICE);
-        } else if($id_service_integrated != null ){
+        if($id_service_integrated != null ){
            return $this->getAllAppointmentByPeriodTime($startDate, $endDate, $id_service_integrated, $otherRequestParams, $this->appointments_model_v2::SERVICE);
         }else if($id_user_integrated != null){
            return $this->getAllAppointmentByPeriodTime($startDate, $endDate, $id_user_integrated, $otherRequestParams, $this->appointments_model_v2::CUSTOMER);
