@@ -26,6 +26,12 @@
             return $result;
         }
 
+        public function getCityNameLike($q){
+            $this->db->like('name', $q);
+            $this->db->from(CITY_TABLE);
+            return $this->db->get()->result_array();
+        }
+
         public function delete($id){
             $this->db->where('id', $id);
             if ( ! $this->db->delete(CITY_TABLE))
