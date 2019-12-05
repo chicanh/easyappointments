@@ -104,12 +104,7 @@ class Appointments_Model_V3 extends Appointments_Model {
     }
 
     public function getAppointmentsWorkingDate($id_service_integrated, $id_provider_integrated, $dates) {
-        $sqlQuery = "SELECT ea_customer.email, 
-                            ea_appointments.id_integrated as bookingId, 
-                            CONCAT(ea_provider.first_name,' ',ea_provider.last_name) as doctorName,
-                            CONCAT(ea_customer.first_name,' ',ea_customer.last_name) as customerName,
-                            DATE(ea_appointments.start_datetime) as date,
-                            TIME(ea_appointments.start_datetime) as time
+        $sqlQuery = "SELECT ea_appointments.*
                     FROM ea_appointments 
                     INNER JOIN ea_users ea_provider ON ea_appointments.id_users_provider = ea_provider.id 
                     INNER JOIN ea_users ea_customer ON ea_appointments.id_users_customer = ea_customer.id 
@@ -125,6 +120,11 @@ class Appointments_Model_V3 extends Appointments_Model {
         }
         $sqlQuery .= ");";
         $result = $this->db->query($sqlQuery, array($id_service_integrated, $id_provider_integrated));
-        return $result->result_array();
+        $appointments = $result->result_array();
+        foreach ($appointments as &$appointment) {
+            $appointment = $this->get_aggregates($appointment);
+        }
+
+        return $appointments;
     }
 }
