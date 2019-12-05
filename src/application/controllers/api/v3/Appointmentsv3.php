@@ -154,6 +154,7 @@ class AppointmentsV3 extends AppointmentsV2
             $dates = $this->input->get('dates');
             if($dates && sizeof($dates) > 0){
                 $result = $this->appointments_model_v3->getAppointmentsWorkingDate($id_service_integrated, $id_provider_integrated, $dates);
+                $result = $this->encodedAppointments($result); 
                 $response = new Response($result);
                 $response->output();
             } else {
