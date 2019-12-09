@@ -16,26 +16,42 @@ class Cities extends API_V1_Controller {
         $this->parser = new \EA\Engine\Api\V1\Parsers\Cities;
     }
 
-    public function get(){
+    public function get()
+    {
         $id = $this->input->get('id');
         $city = $this->input->get('city');
-        if(!isset($id) && !isset($city)){
+        $q = $this->input->get('q');
+        if (!isset($id) && !isset($city) && !isset($q)) {
             $this->getAll();
-        }else{
+        } else if (isset($q)) {
+            $this->getCitiesNameLike($q);
+        } else {
             $this->getByEitherIdOrName($id, $city);
         }
     }
 
     public function getAll(){
         try{
-            $cities = $this->cities_model->getAllCities();
+            $sort = $this->input->get('sort');
+            $cities = $this->cities_model->getAllCities($sort);
          
             $response = new Response($cities);
         
             $response->encode($this->parser)->output();
+        } catch (\Exception $exception) {
+            exit($this->_handleException($exception));
         }
-        catch (\Exception $exception)
-        {
+    }
+
+    public function getCitiesNameLike($q)
+    {
+        try {
+            $cities = $this->cities_model->getCityNameLike($q);
+
+            $response = new Response($cities);
+
+            $response->encode($this->parser)->output();
+        } catch (\Exception $exception) {
             exit($this->_handleException($exception));
         }
     }

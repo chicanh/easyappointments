@@ -102,4 +102,22 @@ class Appointments_Model_V3 extends Appointments_Model {
         "ea_users.id = ea_appointments_attendants.id_users AND ea_appointments_attendants.id_appointment = $id")->get()->row_array();
         return $appointment;
     }
+
+    public function getAppointmentsWorkingDate($id_service_integrated, $id_provider_integrated, $dates) {
+        $sqlQuery = "SELECT DATE(ea_appointments.start_datetime) as date from ea_appointments 
+                    INNER JOIN ea_users ON ea_appointments.id_users_provider = ea_users.id 
+                    INNER JOIN ea_services ON ea_appointments.id_services = ea_services.id 
+                    WHERE ea_services.id_integrated = ? AND ea_users.id_integrated = ? AND (";
+        $arrlength = sizeof($dates);       
+        for($i = 0; $i < $arrlength; $i++) {
+            $statement = "DATE(ea_appointments.start_datetime) = '".$dates[$i]."'";
+            if($i < $arrlength - 1){
+                $statement .= " OR ";
+            }
+            $sqlQuery .= $statement;
+        }
+        $sqlQuery .= ");";
+        $result = $this->db->query($sqlQuery, array($id_service_integrated, $id_provider_integrated));
+        return $result->result_array();
+    }
 }

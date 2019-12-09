@@ -2,7 +2,7 @@
     define("DISTRICT_TABLE", "integrated_districts");
     class Districts_model extends CI_Model {
         public function getAllDistricts(){
-           return $this->db->select('*')->from(DISTRICT_TABLE)->get()->result_array();
+           return $this->db->select('*')->order_by("name", "asc")->from(DISTRICT_TABLE)->get()->result_array();
         }
 
         public function createDistrict($district){
@@ -26,6 +26,7 @@
             if(isset($id)){
                 $this->db->where(DISTRICT_TABLE.'.id', $id);
             }
+            $this->db->order_by("integrated_districts.name", "asc");
             $result = $this->db->get()->result_array();
             
             return $result;

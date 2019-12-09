@@ -22,6 +22,7 @@ class Appointments_Model_V2 extends Appointments_Model {
     const PROVIDER = 'provider';
     const SERVICE = 'service';
     const PROVIDER_SERVICE = 'provider_service';
+    const CUSTOMER_SERVICE = 'customer_service';
 
     /**
      * Insert a new appointment record to the database.
@@ -33,6 +34,15 @@ class Appointments_Model_V2 extends Appointments_Model {
      *
      * @throws Exception If appointment record could not be inserted.
      */
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->model('/v3/patient_model');
+        $this->load->model('/v2/services_model_v2');
+        $this->load->model('/v2/user_model_v2');
+    }
+
     protected function _insert($appointment)
     {
         $appointment['book_datetime'] = date('Y-m-d H:i:s');
@@ -295,9 +305,14 @@ class Appointments_Model_V2 extends Appointments_Model {
             
         $id = $appointment['id'];
 
-        $appointment['patient'] = $this->db->select('*')->from('ea_users')
+        $patient = $this->db->select('ea_users.*')->from('ea_users')
         ->join('ea_appointments_attendants', 
         "ea_users.id = ea_appointments_attendants.id_users AND ea_appointments_attendants.id_appointment = $id")->get()->row_array();
+        
+        if(isset($patient)) {
+            $appointment['patient'] = $this->patient_model->get_aggregates($patient);
+        }
+
         return $appointment;
     }
 
@@ -310,6 +325,8 @@ class Appointments_Model_V2 extends Appointments_Model {
         $page = $otherRequestParams['page'];
         $size = $otherRequestParams['size'];
         $sort = $otherRequestParams['sort'];
+        $id_service_integrated = $otherRequestParams['id_service_integrated'];
+        $id_user_integrated = $otherRequestParams['id_user_integrated'];
         $otherQuery = $otherRequestParams['q'];
 
         if(strlen($startDate) != 0){
@@ -328,7 +345,7 @@ class Appointments_Model_V2 extends Appointments_Model {
                 $this->db->where('id_integrated', $otherQuery);
             }
         }
-
+       
         switch ($type) {
             case self::CUSTOMER:
                 $condition['id_users_customer'] = $service['id'];
@@ -336,11 +353,17 @@ class Appointments_Model_V2 extends Appointments_Model {
             case self::SERVICE:
                 $condition['id_services'] = $service[0]->id;
                 break;
+            case self::CUSTOMER_SERVICE:
+                // both customer and service
+                $condition['id_users_provider'] =$this->user_model_v2->find_by_id_integrated($id_user_integrated)['id'];
+                $condition['id_services'] = $this->services_model_v2->find_by_id_integrated($id_service_integrated)[0]->id;
+                break;
             default:
                 break;
         }
 
-        $this->db->order_by("start_datetime", $sort);
+        $this->db->order_by("DATE(start_datetime)", $sort);
+        $this->db->order_by("TIME(start_datetime)", "asc");
 
 		if($page != ''&& $size != ''){
             $offset = ($page - 1 ) * $size;
@@ -354,7 +377,6 @@ class Appointments_Model_V2 extends Appointments_Model {
                 $appointment = $this->get_aggregates($appointment);
             }
         }
-
         $resultSet['total'] = $totalRecords;
         $resultSet['appointments'] = $appointments;
         return $resultSet;
@@ -366,7 +388,6 @@ class Appointments_Model_V2 extends Appointments_Model {
         $page = $requestParams['page'];
         $size = $requestParams['size'];
         $otherQuery = $requestParams['q'];
-
         $sort = $sort == null || $sort == '' ? 'DESC' : $sort; // set default value for sort
         switch ($type) {
             case self::CUSTOMER:
@@ -396,13 +417,17 @@ class Appointments_Model_V2 extends Appointments_Model {
             }
         }
 
-        $appointments = $this->db->order_by("start_datetime",$sort)->get_where('ea_appointments', $where_clause)->result_array();
+        $appointments = $this->db->order_by("DATE(start_datetime)",$sort)
+                                ->order_by("TIME(start_datetime)",'asc')
+                                ->get_where('ea_appointments', $where_clause)->result_array();
         $totalRecords = sizeof($appointments);
 
         if($page != '' && $size != ''){
             $offset = ($page - 1 ) * $size;
             $this->db->limit($size,$offset);
-            $appointments = $this->db->order_by("start_datetime",$sort)->get_where('ea_appointments', $where_clause, $size, $offset)->result_array();
+            $appointments = $this->db->order_by("DATE(start_datetime)",$sort)
+                                        ->order_by("TIME(start_datetime)", "asc")
+                                        ->get_where('ea_appointments', $where_clause, $size, $offset)->result_array();
         }
 
         if ($aggregates) {
