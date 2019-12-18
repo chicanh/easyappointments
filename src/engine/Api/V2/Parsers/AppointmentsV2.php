@@ -56,7 +56,9 @@ class AppointmentsV2 extends Appointments {
             'id_category_integrated' => $response['id_category_integrated'],
             'healthInsuranceUsed' => $response['health_insurance_used'],
             'platform' => $response['platform'],
-            'arrived' => $response['arrived']
+            'arrived' => $response['arrived'],
+            'fee' => $response['fee'],
+            'service_fee' => $response['service_fee'],
         ];
 
         if (isset($response['provider']))
@@ -211,6 +213,14 @@ class AppointmentsV2 extends Appointments {
         {
             $decodedRequest['platform'] = $request['platform'];
         }
+        if ( ! empty($request['fee']))
+        {
+            $decodedRequest['fee'] = $request['fee'];
+        }
+        if ( ! empty($request['service_fee']))
+        {
+            $decodedRequest['service_fee'] = $request['service_fee'];
+        }
 
         $decodedRequest['arrived'] = $request['arrived'];
         $decodedRequest['is_unavailable'] = FALSE;
@@ -242,7 +252,9 @@ class AppointmentsV2 extends Appointments {
             'id_category_integrated' => $response['id_category_integrated'],
             'healthInsuranceUsed' => $response['health_insurance_used'],
             'platform' => $response['platform'],
-            'arrived' => $response['arrived']
+            'arrived' => $response['arrived'],
+            'fee' => $response['fee'],
+            'service_fee' => $response['service_fee']
         ];
 
         if (isset($response['provider']))
