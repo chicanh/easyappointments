@@ -89,6 +89,7 @@ class AppointmentsV2 extends Appointments {
             $encodedAppointments = $this->encodedAppointments($result);  
             
             $responseSet['total'] = $totalAppointmentsByPeriodTime == null ? 0 : $totalAppointmentsByPeriodTime;
+            $responseSet['amount'] = $resultSet['amount'];
             $responseSet['appointments'] = $encodedAppointments;
             $response = new Response($responseSet);
             $response->singleAppointmentEntry($id_integrated)->output();
