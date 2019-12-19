@@ -372,13 +372,18 @@ class Appointments_Model_V2 extends Appointments_Model {
             $appointments = $this->db->get_where('ea_appointments', $condition)->result_array();
         }
         $totalRecords = sizeof($appointments);
+        $amount = 0;
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);
+                $fee = isset($appointment['fee']) ? $appointment['fee'] : 0; 
+                $serviceFee = isset($appointment['service_fee']) ? $appointment['service_fee'] : 0; 
+                $amount += $fee + $serviceFee;
             }
         }
         $resultSet['total'] = $totalRecords;
         $resultSet['appointments'] = $appointments;
+        $resultSet['amount'] = $amount;
         return $resultSet;
     }
 
@@ -429,15 +434,19 @@ class Appointments_Model_V2 extends Appointments_Model {
                                         ->order_by("TIME(start_datetime)", "asc")
                                         ->get_where('ea_appointments', $where_clause, $size, $offset)->result_array();
         }
-
+        $amount = 0;
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);
+                $fee = isset($appointment['fee']) ? $appointment['fee'] : 0; 
+                $serviceFee = isset($appointment['service_fee']) ? $appointment['service_fee'] : 0; 
+                $amount += $fee + $serviceFee;
             }
         }
 
         $resultSet['total'] = $totalRecords;
         $resultSet['appointments'] = $appointments;
+        $resultSet['amount'] = $amount;
         return $resultSet;
     }
     
