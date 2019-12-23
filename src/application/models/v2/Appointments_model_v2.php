@@ -376,9 +376,11 @@ class Appointments_Model_V2 extends Appointments_Model {
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);
-                $fee = isset($appointment['fee']) ? $appointment['fee'] : 0; 
-                $serviceFee = isset($appointment['service_fee']) ? $appointment['service_fee'] : 0; 
-                $amount += $fee + $serviceFee;
+                if($appointment['order_status'] == 'confirmed'){
+                    $fee = isset($appointment['fee']) ? $appointment['fee'] : 0; 
+                    $serviceFee = isset($appointment['service_fee']) ? $appointment['service_fee'] : 0; 
+                    $amount += $fee + $serviceFee;
+                }
             }
         }
         $resultSet['total'] = $totalRecords;
@@ -438,9 +440,11 @@ class Appointments_Model_V2 extends Appointments_Model {
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);
-                $fee = isset($appointment['fee']) ? $appointment['fee'] : 0; 
-                $serviceFee = isset($appointment['service_fee']) ? $appointment['service_fee'] : 0; 
-                $amount += $fee + $serviceFee;
+                if($appointment['order_status'] == 'confirmed'){
+                    $fee = isset($appointment['fee']) ? $appointment['fee'] : 0; 
+                    $serviceFee = isset($appointment['service_fee']) ? $appointment['service_fee'] : 0; 
+                    $amount += $fee + $serviceFee;
+                }
             }
         }
 

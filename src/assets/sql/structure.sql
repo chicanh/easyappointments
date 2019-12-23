@@ -402,3 +402,7 @@ ALTER TABLE `integrated_cities` ADD COLUMN `index` INT(4) DEFAULT 0;
 ALTER TABLE `ea_appointments` 
     ADD COLUMN `fee` DECIMAL(10, 2),
     ADD COLUMN `service_fee` DECIMAL(10, 2);
+
+ALTER TABLE `ea_appointments` 
+    ADD COLUMN `paymentGateway` VARCHAR(50),
+    ADD COLUMN `cardType` VARCHAR(50);
