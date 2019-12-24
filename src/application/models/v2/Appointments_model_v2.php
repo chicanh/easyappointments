@@ -355,7 +355,7 @@ class Appointments_Model_V2 extends Appointments_Model {
                 break;
             case self::CUSTOMER_SERVICE:
                 // both customer and service
-                $condition['id_users_provider'] =$this->user_model_v2->find_by_id_integrated($id_user_integrated)['id'];
+                $condition['id_users_customer'] =$this->user_model_v2->find_by_id_integrated($id_user_integrated)['id'];
                 $condition['id_services'] = $this->services_model_v2->find_by_id_integrated($id_service_integrated)[0]->id;
                 break;
             default:
