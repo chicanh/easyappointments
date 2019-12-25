@@ -355,7 +355,7 @@ class Appointments_Model_V2 extends Appointments_Model {
                 break;
             case self::CUSTOMER_SERVICE:
                 // both customer and service
-                $condition['id_users_provider'] =$this->user_model_v2->find_by_id_integrated($id_user_integrated)['id'];
+                $condition['id_users_customer'] =$this->user_model_v2->find_by_id_integrated($id_user_integrated)['id'];
                 $condition['id_services'] = $this->services_model_v2->find_by_id_integrated($id_service_integrated)[0]->id;
                 break;
             default:
@@ -372,13 +372,20 @@ class Appointments_Model_V2 extends Appointments_Model {
             $appointments = $this->db->get_where('ea_appointments', $condition)->result_array();
         }
         $totalRecords = sizeof($appointments);
+        $amount = 0;
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);
+                if($appointment['order_status'] == 'confirmed'){
+                    $fee = isset($appointment['fee']) ? $appointment['fee'] : 0; 
+                    $serviceFee = isset($appointment['service_fee']) ? $appointment['service_fee'] : 0; 
+                    $amount += $fee + $serviceFee;
+                }
             }
         }
         $resultSet['total'] = $totalRecords;
         $resultSet['appointments'] = $appointments;
+        $resultSet['amount'] = $amount;
         return $resultSet;
     }
 
@@ -429,15 +436,21 @@ class Appointments_Model_V2 extends Appointments_Model {
                                         ->order_by("TIME(start_datetime)", "asc")
                                         ->get_where('ea_appointments', $where_clause, $size, $offset)->result_array();
         }
-
+        $amount = 0;
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);
+                if($appointment['order_status'] == 'confirmed'){
+                    $fee = isset($appointment['fee']) ? $appointment['fee'] : 0; 
+                    $serviceFee = isset($appointment['service_fee']) ? $appointment['service_fee'] : 0; 
+                    $amount += $fee + $serviceFee;
+                }
             }
         }
 
         $resultSet['total'] = $totalRecords;
         $resultSet['appointments'] = $appointments;
+        $resultSet['amount'] = $amount;
         return $resultSet;
     }
     
