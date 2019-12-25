@@ -57,10 +57,10 @@ class AppointmentsV2 extends Appointments {
             'healthInsuranceUsed' => $response['health_insurance_used'],
             'platform' => $response['platform'],
             'arrived' => $response['arrived'],
-            'fee' => $response['fee'],
-            'service_fee' => $response['service_fee'],
-            'paymentGateway' => $response['paymentGateway'],
-            'cardType' => $response['cardType']
+            'fee' => (double)$response['fee'],
+            'service_fee' => (double)$response['service_fee'],
+            'payment_gateway ' => $response['payment_gateway '],
+            'card_type' => $response['card_type']
         ];
 
         if (isset($response['provider']))
@@ -223,13 +223,13 @@ class AppointmentsV2 extends Appointments {
         {
             $decodedRequest['service_fee'] = $request['service_fee'];
         }
-        if ( ! empty($request['paymentGateway']))
+        if ( ! empty($request['payment_gateway ']))
         {
-            $decodedRequest['paymentGateway'] = $request['paymentGateway'];
+            $decodedRequest['payment_gateway '] = $request['payment_gateway '];
         }
-        if ( ! empty($request['cardType']))
+        if ( ! empty($request['card_type']))
         {
-            $decodedRequest['cardType'] = $request['cardType'];
+            $decodedRequest['card_type'] = $request['card_type'];
         }
 
         $decodedRequest['arrived'] = $request['arrived'];
@@ -263,10 +263,10 @@ class AppointmentsV2 extends Appointments {
             'healthInsuranceUsed' => $response['health_insurance_used'],
             'platform' => $response['platform'],
             'arrived' => $response['arrived'],
-            'fee' => $response['fee'],
-            'service_fee' => $response['service_fee'],
-            'paymentGateway' => $response['paymentGateway'],
-            'cardType' => $response['cardType']
+            'fee' => (double)$response['fee'],
+            'service_fee' => (double)$response['service_fee'],
+            'payment_gateway ' => $response['payment_gateway '],
+            'card_type' => $response['card_type']
         ];
 
         if (isset($response['provider']))
