@@ -365,6 +365,12 @@ class Appointments_Model_V2 extends Appointments_Model {
         $this->db->order_by("DATE(start_datetime)", $sort);
         $this->db->order_by("TIME(start_datetime)", "asc");
 
+        $appointmentData = $this->db->select("COUNT(*) as total, SUM(fee) + SUM(service_fee) as amount")
+        ->get_where('ea_appointments', $condition)->result_array();
+        
+        $totalRecords = $appointmentData[0]['total'];
+        $amount = isset($appointmentData[0]['amount']) ? $appointmentData[0]['amount'] : 0;
+        
 		if($page != ''&& $size != ''){
             $offset = ($page - 1 ) * $size;
             $appointments = $this->db->get_where('ea_appointments', $condition, $size, $offset)->result_array();
@@ -372,15 +378,9 @@ class Appointments_Model_V2 extends Appointments_Model {
             $appointments = $this->db->get_where('ea_appointments', $condition)->result_array();
         }
         $totalRecords = sizeof($appointments);
-        $amount = 0;
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);
-                if($appointment['order_status'] == 'confirmed'){
-                    $fee = isset($appointment['fee']) ? $appointment['fee'] : 0; 
-                    $serviceFee = isset($appointment['service_fee']) ? $appointment['service_fee'] : 0; 
-                    $amount += $fee + $serviceFee;
-                }
             }
         }
         $resultSet['total'] = $totalRecords;
@@ -424,10 +424,11 @@ class Appointments_Model_V2 extends Appointments_Model {
             }
         }
 
-        $appointments = $this->db->order_by("DATE(start_datetime)",$sort)
+        $appointmentData = $this->db->select("COUNT(*) as total, SUM(fee) + SUM(service_fee) as amount")->order_by("DATE(start_datetime)",$sort)
                                 ->order_by("TIME(start_datetime)",'asc')
                                 ->get_where('ea_appointments', $where_clause)->result_array();
-        $totalRecords = sizeof($appointments);
+        $totalRecords = $appointmentData[0]['total'];
+        $amount = isset($appointmentData[0]['amount']) ? $appointmentData[0]['amount'] : 0;
 
         if($page != '' && $size != ''){
             $offset = ($page - 1 ) * $size;
@@ -436,15 +437,10 @@ class Appointments_Model_V2 extends Appointments_Model {
                                         ->order_by("TIME(start_datetime)", "asc")
                                         ->get_where('ea_appointments', $where_clause, $size, $offset)->result_array();
         }
-        $amount = 0;
+        
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);
-                if($appointment['order_status'] == 'confirmed'){
-                    $fee = isset($appointment['fee']) ? $appointment['fee'] : 0; 
-                    $serviceFee = isset($appointment['service_fee']) ? $appointment['service_fee'] : 0; 
-                    $amount += $fee + $serviceFee;
-                }
             }
         }
 

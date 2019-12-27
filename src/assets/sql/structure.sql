@@ -404,5 +404,5 @@ ALTER TABLE `ea_appointments`
     ADD COLUMN `service_fee` DECIMAL(10, 2);
 
 ALTER TABLE `ea_appointments` 
-    ADD COLUMN `paymentGateway` VARCHAR(50),
-    ADD COLUMN `cardType` VARCHAR(50);
+    ADD COLUMN `payment_gateway` VARCHAR(50),
+    ADD COLUMN `card_type` VARCHAR(50);
