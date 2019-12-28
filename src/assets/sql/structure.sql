@@ -398,3 +398,11 @@ ALTER TABLE `ea_appointments` ADD COLUMN `arrived` TINYINT(4) DEFAULT 0;
 
 
 ALTER TABLE `integrated_cities` ADD COLUMN `index` INT(4) DEFAULT 0;
+
+ALTER TABLE `ea_appointments` 
+    ADD COLUMN `fee` DECIMAL(10, 2),
+    ADD COLUMN `service_fee` DECIMAL(10, 2);
+
+ALTER TABLE `ea_appointments` 
+    ADD COLUMN `payment_gateway` VARCHAR(50),
+    ADD COLUMN `card_type` VARCHAR(50);

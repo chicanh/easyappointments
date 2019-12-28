@@ -56,7 +56,11 @@ class AppointmentsV2 extends Appointments {
             'id_category_integrated' => $response['id_category_integrated'],
             'healthInsuranceUsed' => $response['health_insurance_used'],
             'platform' => $response['platform'],
-            'arrived' => $response['arrived']
+            'arrived' => $response['arrived'],
+            'fee' => (double)$response['fee'],
+            'service_fee' => (double)$response['service_fee'],
+            'payment_gateway ' => $response['payment_gateway '],
+            'card_type' => $response['card_type']
         ];
 
         if (isset($response['provider']))
@@ -211,6 +215,22 @@ class AppointmentsV2 extends Appointments {
         {
             $decodedRequest['platform'] = $request['platform'];
         }
+        if ( ! empty($request['fee']))
+        {
+            $decodedRequest['fee'] = $request['fee'];
+        }
+        if ( ! empty($request['service_fee']))
+        {
+            $decodedRequest['service_fee'] = $request['service_fee'];
+        }
+        if ( ! empty($request['payment_gateway ']))
+        {
+            $decodedRequest['payment_gateway '] = $request['payment_gateway '];
+        }
+        if ( ! empty($request['card_type']))
+        {
+            $decodedRequest['card_type'] = $request['card_type'];
+        }
 
         $decodedRequest['arrived'] = $request['arrived'];
         $decodedRequest['is_unavailable'] = FALSE;
@@ -242,7 +262,11 @@ class AppointmentsV2 extends Appointments {
             'id_category_integrated' => $response['id_category_integrated'],
             'healthInsuranceUsed' => $response['health_insurance_used'],
             'platform' => $response['platform'],
-            'arrived' => $response['arrived']
+            'arrived' => $response['arrived'],
+            'fee' => (double)$response['fee'],
+            'service_fee' => (double)$response['service_fee'],
+            'payment_gateway ' => $response['payment_gateway '],
+            'card_type' => $response['card_type']
         ];
 
         if (isset($response['provider']))
