@@ -503,7 +503,7 @@ class Appointments_Model_V2 extends Appointments_Model {
         return $num_rows;
     }
 
-    public function getAppointmentsWhichCondition($appointments, $aggregates = FALSE) {
+    public function getAppointmentsWithCondition($appointments, $aggregates = FALSE) {
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);

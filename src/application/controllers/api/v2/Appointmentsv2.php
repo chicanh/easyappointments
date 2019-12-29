@@ -442,14 +442,19 @@ class AppointmentsV2 extends Appointments {
         }
     }
 
-    public function getAppointmentByOrderId($orderId) {
+    public function getAppointmentByUserIdAndOrderId($userId, $orderId) {
        try {
-           $appointment = $this->appointments_model_v2->get_batch("order_id = '" . $orderId ."'");
+           $user = $this->user_model_v2->find_by_id_integrated($userId);
+          
+           $where['order_id'] = $orderId;
+           $where['id_users_customer'] = $user['id'];
+           $appointment = $this->appointments_model_v2->get_batch($where);
            if($appointment == null ) {
-            throw new \EA\Engine\Api\V1\Exception('Provided order id does not exist in the database.', 404, 'Not Found');
+            throw new \EA\Engine\Api\V1\Exception('Provided order id and user id does not exist in the database.', 404, 'Not Found');
            }
-           $appointment = $this->appointments_model_v2->getAppointmentsWhichCondition($appointment, array_key_exists('aggregates', $_GET));
-           $response = new Response($appointment);
+           $result = $this->appointments_model_v2->getAppointmentsWithCondition($appointment, array_key_exists('aggregates', $_GET));
+           $responseSet['appointments'] = $this->encodedAppointments($result['appointments']);
+           $response = new Response($responseSet);
            $response->output();
        } catch (\Exception $exception) {
             exit($this->_handleException($exception));
