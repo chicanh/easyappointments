@@ -442,12 +442,13 @@ class AppointmentsV2 extends Appointments {
         }
     }
 
-    public function getAppointmentByUserIdAndOrderId($userId, $orderId) {
+    public function getAppointmentByOrderId($orderId) {
        try {
-           $user = $this->user_model_v2->find_by_id_integrated($userId);
-          
+           if($this->input->get('id_user_integrated') != null){
+            $user = $this->user_model_v2->find_by_id_integrated($this->input->get('id_user_integrated'));
+            $where['id_users_customer'] = $user['id'];
+           }         
            $where['order_id'] = $orderId;
-           $where['id_users_customer'] = $user['id'];
            $appointment = $this->appointments_model_v2->get_batch($where);
            if($appointment == null ) {
             throw new \EA\Engine\Api\V1\Exception('Provided order id and user id does not exist in the database.', 404, 'Not Found');
