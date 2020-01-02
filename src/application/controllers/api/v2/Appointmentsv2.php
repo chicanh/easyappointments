@@ -451,7 +451,7 @@ class AppointmentsV2 extends Appointments {
            $where['order_id'] = $orderId;
            $appointment = $this->appointments_model_v2->get_batch($where);
            if($appointment == null ) {
-            throw new \EA\Engine\Api\V1\Exception('Provided order id and user id does not exist in the database.', 404, 'Not Found');
+            throw new \EA\Engine\Api\V1\Exception('User id does not exist in the database.', 404, 'Not Found');
            }
            $result = $this->appointments_model_v2->getAppointmentsWithCondition($appointment, array_key_exists('aggregates', $_GET));   
            $responseSet['appointments'] = $this->encodedAppointments($result['appointments']);
