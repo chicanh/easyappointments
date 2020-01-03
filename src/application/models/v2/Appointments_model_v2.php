@@ -312,6 +312,12 @@ class Appointments_Model_V2 extends Appointments_Model {
         if(isset($patient)) {
             $appointment['patient'] = $this->patient_model->get_aggregates($patient);
         }
+        if(isset($appointment['provider'])){
+            $appointment['provider'] = $this->user_model_v2->get_aggregates($appointment['provider']);
+        }
+        if(isset($appointment['customer'])){
+            $appointment['customer'] = $this->user_model_v2->get_aggregates($appointment['customer']);
+        }
 
         return $appointment;
     }
@@ -436,8 +442,9 @@ class Appointments_Model_V2 extends Appointments_Model {
             $appointments = $this->db->order_by("DATE(start_datetime)",$sort)
                                         ->order_by("TIME(start_datetime)", "asc")
                                         ->get_where('ea_appointments', $where_clause, $size, $offset)->result_array();
+        } else {
+            $appointments = $this->db->get_where('ea_appointments', $condition)->result_array();
         }
-        
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);
