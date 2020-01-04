@@ -443,7 +443,7 @@ class Appointments_Model_V2 extends Appointments_Model {
                                         ->order_by("TIME(start_datetime)", "asc")
                                         ->get_where('ea_appointments', $where_clause, $size, $offset)->result_array();
         } else {
-            $appointments = $this->db->get_where('ea_appointments', $condition)->result_array();
+            $appointments = $this->db->get_where('ea_appointments', $where_clause)->result_array();
         }
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
