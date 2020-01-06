@@ -2,7 +2,7 @@
     define("WARD_TABLE", "integrated_wards");
     class Wards_model extends CI_Model {
         public function getAllWards(){
-           return $this->db->select('*')->from(WARD_TABLE)->get()->result_array();
+           return $this->db->select('*')->order_by("name", "asc")->from(WARD_TABLE)->get()->result_array();
         }
 
         public function createWard($Ward){
@@ -30,7 +30,7 @@
             if(isset($id)){
                 $this->db->where('integrated_wards.id', $id);
             }
-           
+            $this->db->order_by("integrated_wards.name", "asc");
             $result = $this->db->get()->result_array();
             return $result;
         }

@@ -89,6 +89,7 @@ class AppointmentsV2 extends Appointments {
             $encodedAppointments = $this->encodedAppointments($result);  
             
             $responseSet['total'] = $totalAppointmentsByPeriodTime == null ? 0 : $totalAppointmentsByPeriodTime;
+            $responseSet['amount'] = $resultSet['amount'];
             $responseSet['appointments'] = $encodedAppointments;
             $response = new Response($responseSet);
             $response->singleAppointmentEntry($id_integrated)->output();
@@ -105,7 +106,9 @@ class AppointmentsV2 extends Appointments {
         $otherRequestParams = $this->input->get();
         if($id_provider_integrated != null && $id_service_integrated != null) {
             return $this->getAppointmentByProviderIdAndServiceId($conditions, $id_provider_integrated, $id_service_integrated, $otherRequestParams);
-        } 
+        } else if($id_user_integrated != null && $id_service_integrated != null) {
+            return $this->appointments_model_v2->getAllAppointmentBy(null, array_key_exists('aggregates', $_GET), $otherRequestParams, $this->appointments_model_v2::CUSTOMER_SERVICE);
+        }
         else if($id_user_integrated != null ) {
             return $this->getAppointmentByUserId($conditions, $id_user_integrated, $otherRequestParams);
         }else if($id_provider_integrated != null) {
@@ -121,7 +124,9 @@ class AppointmentsV2 extends Appointments {
         $id_service_integrated = $this->input->get('id_service_integrated');
         $id_user_integrated = $this->input->get('id_user_integrated');
         $otherRequestParams = $this->input->get();
-        if($id_service_integrated != null ){
+        if($id_service_integrated != null && $id_user_integrated != null ){
+            return $this->appointments_model_v2->getAllAppointmentBy(null, array_key_exists('aggregates', $_GET), $otherRequestParams, $this->appointments_model_v2::CUSTOMER_SERVICE);
+        } else if($id_service_integrated != null ){
            return $this->getAllAppointmentByPeriodTime($startDate, $endDate, $id_service_integrated, $otherRequestParams, $this->appointments_model_v2::SERVICE);
         }else if($id_user_integrated != null){
            return $this->getAllAppointmentByPeriodTime($startDate, $endDate, $id_user_integrated, $otherRequestParams, $this->appointments_model_v2::CUSTOMER);
@@ -443,9 +448,10 @@ class AppointmentsV2 extends Appointments {
            if($appointment == null ) {
             throw new \EA\Engine\Api\V1\Exception('Provided order id does not exist in the database.', 404, 'Not Found');
            }
-           $appointment = $this->appointments_model_v2->getAppointmentsWhichCondition($appointment, array_key_exists('aggregates', $_GET));
-           $response = new Response($appointment);
-           $response->output();
+           $result = $this->appointments_model_v2->getAppointmentsWhichCondition($appointment, array_key_exists('aggregates', $_GET));   
+           $responseSet['appointments'] = $this->encodedAppointments($result['appointments']);
+           $response = new Response($responseSet);
+           $response->singleAppointmentEntry($id_integrated)->output();
        } catch (\Exception $exception) {
             exit($this->_handleException($exception));
        }   

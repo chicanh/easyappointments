@@ -29,6 +29,7 @@ class Cities implements ParsersInterface {
         $encodedResponse = [
             'id' => $response['id'] !== NULL ? (int)$response['id'] : NULL,
             'name' => $response['name'],
+            'index' => $response['index'],
         ];
 
         $response = $encodedResponse;
@@ -52,6 +53,11 @@ class Cities implements ParsersInterface {
         if ( ! empty($request['name']))
         {
             $decodedRequest['name'] = $request['name'];
+        }
+
+        if ( ! empty($request['index']))
+        {
+            $decodedRequest['index'] = $request['index'];
         }
 
         $request = $decodedRequest;
