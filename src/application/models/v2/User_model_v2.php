@@ -122,4 +122,12 @@ class User_Model_V2 extends User_Model {
         }
         return $idList;
     }
+
+    public function get_aggregates(array $patients)
+    {
+        $patients['city_id'] = $this->db->select('id, name')->from('integrated_cities')->where('id', $patients['city_id'])->get()->result_array()[0];
+        $patients['district_id'] = $this->db->select('id, name')->from('integrated_districts')->where('id', $patients['district_id'])->get()->result_array()[0];
+        $patients['ward_id'] = $this->db->select('id, name')->from('integrated_wards')->where('id', $patients['ward_id'])->get()->result_array()[0];
+        return $patients;
+    }
 }
