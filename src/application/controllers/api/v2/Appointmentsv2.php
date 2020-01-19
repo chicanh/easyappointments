@@ -454,6 +454,7 @@ class AppointmentsV2 extends Appointments {
             throw new \EA\Engine\Api\V1\Exception('User id does not exist in the database.', 404, 'Not Found');
            }
            $result = $this->appointments_model_v2->getAppointmentsWithCondition($appointment, array_key_exists('aggregates', $_GET));   
+           $responseSet['total'] = sizeof($result['appointments']);
            $responseSet['appointments'] = $this->encodedAppointments($result['appointments']);
            $response = new Response($responseSet);
            $response->singleAppointmentEntry($id_integrated)->output();
