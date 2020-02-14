@@ -52,6 +52,7 @@ $route['404_override'] = 'errors/error404';
 | used for each operation.
 |
 */
+$route['api/v3/appointments/workingdate']['get'] = 'api/v3/appointmentsv3/getAppointmentsWorkingDate';
 
 $resources = [
     'appointments',
@@ -69,7 +70,6 @@ $resources = [
     'districts',
     'wards'
 ];
-
 foreach ($resources as $resource)
 {
     $route['api/v1/' . $resource]['post'] = 'api/v1/' . $resource . '/post';
@@ -100,7 +100,6 @@ $route['api/v1/settings/(:any)']['delete'] = 'api/v1/settings/delete/$1';
 // $route['api/v1/wards/get/all']['get'] = 'api/v1/wards/get';
 // $route['api/v1/wards/get']['get'] = 'api/v1/wards/getAllByCityAndDistrict';
 // $route['api/v1/wards/delete/']['delete'] = 'api/v1/wards/delete/$1';
-
 $route['api/v2/appointments/statistic']['get'] = 'api/v2/appointmentsv2/getTotalAppointmentGroupByGender';
 $route['api/v1/availabilities']['get'] = 'api/v1/availabilities/get';
 $route['api/v2/availabilities']['get'] = 'api/v2/availabilitiesv2/get';
@@ -115,7 +114,7 @@ $route['api/v2/providers/(:any)/(:any)']['put'] = 'api/v2/providersv2/updateProv
 $route['api/v2/services/(:any)']['put'] = 'api/v2/servicesv2/updateService/$1';
 $route['api/v2/providers/update/(:any)/(:any)']['put'] = 'api/v2/providersv2/updateProviderIdIntegrated/$1/$2';
 $route['api/v2/appointments/orders/(:any)']['put'] = 'api/v2/appointmentsv2/updateAppointmentByOrderId/$1';
-$route['api/v2/appointments/orders/(:any)']['get'] = 'api/v2/appointmentsv2/getAppointmentByOrderId/$1';
+$route['api/v2/appointments/order/(:any)']['get'] = 'api/v2/appointmentsv2/getAppointmentByOrderId/$1';
 $route['api/v2/providers/category/(:any)/(:any)']['get'] = 'api/v2/providersv2/getProvidersWithCategoryAndService/$1/$2';
 $route['api/v2/categories/services/(:any)']['get'] = 'api/v2/categoriesv2/getCategoryByServiceIdIntegrated/$1';
 $route['api/v2/appointments/services/(:any)']['get'] = 'api/v2/appointmentsv2/getAppointmentWithServiceIntegrated/$1';

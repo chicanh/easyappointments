@@ -54,7 +54,13 @@ class AppointmentsV2 extends Appointments {
             'service_notes' => $response['service_notes'],
             'admin_notes' => $response['admin_notes'],
             'id_category_integrated' => $response['id_category_integrated'],
-            'healthInsuranceUsed' => $response['health_insurance_used']
+            'healthInsuranceUsed' => $response['health_insurance_used'],
+            'platform' => $response['platform'],
+            'arrived' => $response['arrived'],
+            'fee' => (double)$response['fee'],
+            'service_fee' => (double)$response['service_fee'],
+            'payment_gateway ' => $response['payment_gateway '],
+            'card_type' => $response['card_type']
         ];
 
         if (isset($response['provider']))
@@ -205,9 +211,29 @@ class AppointmentsV2 extends Appointments {
         {
             $decodedRequest['health_insurance_used'] = $request['healthInsuranceUsed'];
         }
+        if ( ! empty($request['platform']))
+        {
+            $decodedRequest['platform'] = $request['platform'];
+        }
+        if ( ! empty($request['fee']))
+        {
+            $decodedRequest['fee'] = $request['fee'];
+        }
+        if ( ! empty($request['service_fee']))
+        {
+            $decodedRequest['service_fee'] = $request['service_fee'];
+        }
+        if ( ! empty($request['payment_gateway ']))
+        {
+            $decodedRequest['payment_gateway '] = $request['payment_gateway '];
+        }
+        if ( ! empty($request['card_type']))
+        {
+            $decodedRequest['card_type'] = $request['card_type'];
+        }
 
+        $decodedRequest['arrived'] = $request['arrived'];
         $decodedRequest['is_unavailable'] = FALSE;
-
         $request = $decodedRequest;
     }
 
@@ -234,7 +260,13 @@ class AppointmentsV2 extends Appointments {
             'service_notes' => $response['service_notes'],
             'admin_notes' => $response['admin_notes'],
             'id_category_integrated' => $response['id_category_integrated'],
-            'healthInsuranceUsed' => $response['health_insurance_used']
+            'healthInsuranceUsed' => $response['health_insurance_used'],
+            'platform' => $response['platform'],
+            'arrived' => $response['arrived'],
+            'fee' => (double)$response['fee'],
+            'service_fee' => (double)$response['service_fee'],
+            'payment_gateway ' => $response['payment_gateway '],
+            'card_type' => $response['card_type']
         ];
 
         if (isset($response['provider']))
@@ -246,7 +278,7 @@ class AppointmentsV2 extends Appointments {
 
         if (isset($response['customer']))
         {
-            $customerParser = new Customers();
+            $customerParser = new CustomersV2();
             $customerParser->encode($response['customer']);
             $encodedResponse['customer'] = $response['customer'];
         }
@@ -259,7 +291,7 @@ class AppointmentsV2 extends Appointments {
         }
         if (isset($response['patient']))
         {
-            $customerParser = new Customers();
+            $customerParser = new CustomersV2();
             $customerParser->encode($response['patient']);
             $encodedResponse['patient'] = $response['patient'];
         }
