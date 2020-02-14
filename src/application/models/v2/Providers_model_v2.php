@@ -712,7 +712,7 @@ class Providers_Model_V2 extends CI_Model {
     protected function save_categories($categories, $provider_id, $services)
     {
         // Validate method arguments.
-        $this->validateSavingCategory($categories, $provider_id, $service_id);
+        $this->validateSavingCategory($categories, $provider_id, $services[0]);
 
         $categories_id = $this->getCategoryByServiceId($services[0]);
 

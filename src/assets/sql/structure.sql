@@ -406,3 +406,6 @@ ALTER TABLE `ea_appointments`
 ALTER TABLE `ea_appointments` 
     ADD COLUMN `payment_gateway` VARCHAR(50),
     ADD COLUMN `card_type` VARCHAR(50);
+
+ALTER TABLE `ea_appointments` 
+    ADD COLUMN `cancel_by` VARCHAR(50);
