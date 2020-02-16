@@ -409,3 +409,6 @@ ALTER TABLE `ea_appointments`
 
 ALTER TABLE `ea_appointments` 
     ADD COLUMN `cancel_by` VARCHAR(50);
+
+ALTER TABLE `ea_appointments` 
+    ADD COLUMN `pay_platform` VARCHAR(50);
