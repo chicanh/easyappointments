@@ -60,7 +60,9 @@ class AppointmentsV2 extends Appointments {
             'fee' => (double)$response['fee'],
             'service_fee' => (double)$response['service_fee'],
             'payment_gateway ' => $response['payment_gateway '],
-            'card_type' => $response['card_type']
+            'card_type' => $response['card_type'],
+            'cancel_by' => $response['cancel_by'],
+            'payment_platform' => $response['payment_platform']
         ];
 
         if (isset($response['provider']))
@@ -231,6 +233,14 @@ class AppointmentsV2 extends Appointments {
         {
             $decodedRequest['card_type'] = $request['card_type'];
         }
+        if ( ! empty($request['cancel_by']))
+        {
+            $decodedRequest['cancel_by'] = $request['cancel_by'];
+        }
+        if ( ! empty($request['payment_platform']))
+        {
+            $decodedRequest['payment_platform'] = $request['payment_platform'];
+        }
 
         $decodedRequest['arrived'] = $request['arrived'];
         $decodedRequest['is_unavailable'] = FALSE;
@@ -266,7 +276,9 @@ class AppointmentsV2 extends Appointments {
             'fee' => (double)$response['fee'],
             'service_fee' => (double)$response['service_fee'],
             'payment_gateway ' => $response['payment_gateway '],
-            'card_type' => $response['card_type']
+            'card_type' => $response['card_type'],
+            'cancel_by' => $response['cancel_by'],
+            'payment_platform' => $response['payment_platform']
         ];
 
         if (isset($response['provider']))
