@@ -53,11 +53,10 @@ use \EA\Engine\Api\V2\DbHandlerException;
             foreach ($result as &$patient) {
                 $patient =  $this->get_aggregates($patient);
             }
-           
         }
-        $patient['total'] = $total;
-        $patient['patients'] = $result;
-        return $patient;
+        $data['total'] = $total;
+        $data['patients'] = $result;
+        return $data;
     }
 
     public function getPatient($id_user_integrated,$id_service_integrated, $id_integrated, $isAggregates) {
