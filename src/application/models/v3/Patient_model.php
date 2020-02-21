@@ -43,18 +43,21 @@ use \EA\Engine\Api\V2\DbHandlerException;
         }
     }
 
-    public function get($id_user_integrated, $id_service_integrated, $page, $size, $isAggregates) {
+    public function get($id_user_integrated, $id_service_integrated, $page, $size, $isAggregates, $name, $phone, $national_id) {        
         $offset = ($page - 1 ) * $size;
-        $patients = $this->getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated)->limit($size, $offset)->get()->result_array();
+        $total = 0;
+        $result = [];
+        $this->getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated, $name, $phone, $national_id, $size, $offset, $total, $result);
+        
         if($isAggregates){
-            foreach ($patients as &$patient) {
+            foreach ($result as &$patient) {
                 $patient =  $this->get_aggregates($patient);
             }
            
         }
-        $result['total'] = $this->getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated)->get()->result_id->num_rows;
-        $result['patients'] = $patients;
-        return $result;
+        $patient['total'] = $total;
+        $patient['patients'] = $result;
+        return $patient;
     }
 
     public function getPatient($id_user_integrated,$id_service_integrated, $id_integrated, $isAggregates) {
@@ -82,15 +85,40 @@ use \EA\Engine\Api\V2\DbHandlerException;
         return $patients;
     }
 
-    private function getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated){
-        $this->db->select('*')->from('ea_users')->join('integrated_users_patients', 'integrated_users_patients.id_patients  = ea_users.id');
+     function getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated, $name, $phone, $national_id, $size, $offset, &$total, &$result) {
+        $conditions = array();
+        if($name != null) {
+            $conditions[] = 'last_name  LIKE "%' . $name . '%"';
+        }
+
+        if($phone != null) {
+            $conditions[] = 'phone_number =' . $phone;
+        }
+
+        if($national_id != null) {
+            $conditions[] = 'national_id =' . $national_id;
+        }
+
+        $sqlStatement = "SELECT * FROM `ea_users` JOIN `integrated_users_patients` ON `integrated_users_patients`.`id_patients` = `ea_users`.`id`";
+
         if(!empty($id_user_integrated)){
-            $this->db->where('integrated_users_patients.id_user_integrated ', $id_user_integrated);
+            $sqlStatement .= " WHERE `integrated_users_patients`.id_user_integrated  =  ". "'$id_user_integrated'";
         }
-        if(!empty($id_service_integrated)){
-            $this->db->where('integrated_users_patients.id_service_integrated ', $id_service_integrated);
+        if(!empty($id_user_integrated) && !empty($id_service_integrated)) {
+            $sqlStatement .= "AND `integrated_users_patients`.id_service_integrated  = " ."'$id_service_integrated'";
         }
-        return $this->db;
+
+        if(empty($id_user_integrated) && !empty($id_service_integrated)) {
+            $sqlStatement .= "WHERE `integrated_users_patients`.id_service_integrated  = "  ."'$id_service_integrated'";
+        }
+        if(count($conditions) > 0) {
+            $sqlStatement .= "AND " .implode(' AND ', $conditions);
+        }
+
+        $total = $this->db->query($sqlStatement)->num_rows();;
+
+        $sqlStatement .=" LIMIT $offset, $size";
+        $result =  $this->db->query($sqlStatement)->result_array();
     }
 
     public function get_aggregates(array $patients)

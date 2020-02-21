@@ -116,16 +116,20 @@ class PatientsV3 extends Customersv2 {
     public function get() {
         $id_user_integrated = $this->input->get('id_user_integrated');
         $id_service_integrated = $this->input->get('id_service_integrated');
-        $page = $this->input->get('page');
-        $size = $this->input->get('length');
+        $page = $this->input->get('page')? $this->input->get('page') : 1;
+        $size = $this->input->get('length')? $this->input->get('length') : 10;
+        $name = $this->input->get('name');
+        $national_id = $this->input->get('national_id');
+        $phone = $this->input->get('phone');
         try {
             if($id_service_integrated == null && $id_user_integrated == null){
                 throw new \EA\Engine\Api\V1\Exception('Either id_service_integrated  or id_user_integrated are required', 400);
             }
-            $result = $this->patient_model->get($id_user_integrated, $id_service_integrated, $page, $size, array_key_exists('aggregates', $_GET));
+            $result = $this->patient_model->get($id_user_integrated, $id_service_integrated, $page, $size, array_key_exists('aggregates', $_GET), $name, $phone, $national_id);
             $result['patients'] = $this->encodePatients($result['patients']);
             $response = new Response($result);
-            $response->output();
+            $response
+            ->output();
         }
         catch (\Exception $exception)
         {
