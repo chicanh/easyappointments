@@ -412,3 +412,6 @@ ALTER TABLE `ea_appointments`
 
 ALTER TABLE `ea_appointments` 
     ADD COLUMN `payment_platform` VARCHAR(50);
+
+ALTER TABLE `ea_appointments`
+     CHANGE COLUMN `card_type` `bank_code` VARCHAR(50);
