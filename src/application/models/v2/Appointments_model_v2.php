@@ -383,7 +383,7 @@ class Appointments_Model_V2 extends Appointments_Model {
         }else{
             $appointments = $this->db->get_where('ea_appointments', $condition)->result_array();
         }
-        $totalRecords = sizeof($appointments);
+        // $totalRecords = sizeof($appointments);
         if ($aggregates) {
             foreach ($appointments as &$appointment) {
                 $appointment = $this->get_aggregates($appointment);
