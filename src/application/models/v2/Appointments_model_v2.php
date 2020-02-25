@@ -330,7 +330,7 @@ class Appointments_Model_V2 extends Appointments_Model {
         $endDate = $otherRequestParams['endDate'];
         $page = $otherRequestParams['page'];
         $size = $otherRequestParams['size'];
-        $sort = $otherRequestParams['sort'];
+        $sort = $otherRequestParams['sort'] == '' ? 'DESC' : $otherRequestParams['sort'];
         $id_service_integrated = $otherRequestParams['id_service_integrated'];
         $id_user_integrated = $otherRequestParams['id_user_integrated'];
         $otherQuery = $otherRequestParams['q'];
@@ -379,9 +379,15 @@ class Appointments_Model_V2 extends Appointments_Model {
         
 		if($page != ''&& $size != ''){
             $offset = ($page - 1 ) * $size;
-            $appointments = $this->db->get_where('ea_appointments', $condition, $size, $offset)->result_array();
+            $appointments = $this->db
+            ->order_by("DATE(start_datetime)",$sort)
+            ->order_by("TIME(start_datetime)", "asc")
+            ->get_where('ea_appointments', $condition, $size, $offset)->result_array();
         }else{
-            $appointments = $this->db->get_where('ea_appointments', $condition)->result_array();
+            $appointments = $this->db
+            ->order_by("DATE(start_datetime)",$sort)
+            ->order_by("TIME(start_datetime)", "asc")
+            ->get_where('ea_appointments', $condition)->result_array();
         }
         $totalRecords = sizeof($appointments);
         if ($aggregates) {
