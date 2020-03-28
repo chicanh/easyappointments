@@ -367,7 +367,7 @@ class Appointments_Model_V2 extends Appointments_Model {
             default:
                 break;
         }
-        $condition["status <> 'unconfirmed' AND status <> 'UNCONFRIMED'"] = null;
+        $condition["status <>"] = 'unconfirmed';
 
         $this->db->order_by("DATE(start_datetime)", $sort);
         $this->db->order_by("TIME(start_datetime)", "asc");
@@ -437,7 +437,7 @@ class Appointments_Model_V2 extends Appointments_Model {
             }
         }
 
-        $where_clause["status <> 'unconfirmed' AND status <> 'UNCONFRIMED'"] = null;
+        $where_clause["status <>"] = 'unconfirmed';
 
         $appointmentData = $this->db->select("COUNT(*) as total, SUM(fee) + SUM(service_fee) as amount")->order_by("DATE(start_datetime)",$sort)
                                 ->order_by("TIME(start_datetime)",'asc')
