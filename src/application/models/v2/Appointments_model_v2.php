@@ -334,7 +334,10 @@ class Appointments_Model_V2 extends Appointments_Model {
         $id_service_integrated = $otherRequestParams['id_service_integrated'];
         $id_user_integrated = $otherRequestParams['id_user_integrated'];
         $otherQuery = $otherRequestParams['q'];
-
+        $sortBy = 'start_datetime';
+        if ($otherRequestParams['sortBy'] === 'book_datetime' || $otherRequestParams['sortBy'] === 'start_datetime' ){
+            $sortBy = $otherRequestParams['sortBy'];
+        }
         if(strlen($startDate) != 0){
             $condition['start_datetime >='] = $startDate;
         }
@@ -369,8 +372,8 @@ class Appointments_Model_V2 extends Appointments_Model {
         }
         $condition["status <>"] = 'unconfirmed';
 
-        $this->db->order_by("DATE(start_datetime)", $sort);
-        $this->db->order_by("TIME(start_datetime)", "asc");
+        $this->db->order_by("DATE(".$sortBy.")", $sort);
+        $this->db->order_by("TIME(".$sortBy.")", "asc");
 
         $appointmentData = $this->db->select("COUNT(*) as total, SUM(fee) + SUM(service_fee) as amount")
         ->get_where('ea_appointments', $condition)->result_array();
@@ -408,6 +411,10 @@ class Appointments_Model_V2 extends Appointments_Model {
         $page = $requestParams['page'];
         $size = $requestParams['size'];
         $otherQuery = $requestParams['q'];
+        $sortBy = 'start_datetime';
+        if ($requestParams['sortBy'] === 'book_datetime' || $requestParams['sortBy'] === 'start_datetime' ){
+            $sortBy = $requestParams['sortBy'];
+        }
         $sort = $sort == null || $sort == '' ? 'DESC' : $sort; // set default value for sort
         switch ($type) {
             case self::CUSTOMER:
@@ -453,8 +460,8 @@ class Appointments_Model_V2 extends Appointments_Model {
                                         ->get_where('ea_appointments', $where_clause, $size, $offset)->result_array();
         } else {
             $appointments = $this->db
-            ->order_by("DATE(start_datetime)",$sort)
-            ->order_by("TIME(start_datetime)", "asc")
+            ->order_by("DATE(".$sortBy.")",$sort)
+            ->order_by("TIME(".$sortBy.")", "asc")
             ->get_where('ea_appointments', $where_clause)->result_array();
         }
         if ($aggregates) {
