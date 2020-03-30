@@ -336,8 +336,8 @@ class Appointments_Model_V2 extends Appointments_Model {
         $id_user_integrated = $otherRequestParams['id_user_integrated'];
         $otherQuery = $otherRequestParams['q'];
         $sortBy = 'start_datetime';
-        if ($otherRequestParams['sortBy'] === 'book_datetime' || $otherRequestParams['sortBy'] === 'start_datetime' ){
-            $sortBy = $otherRequestParams['sortBy'];
+        if ($otherRequestParams['sortBy'] === 'book' || $otherRequestParams['sortBy'] === 'start' ){
+            $sortBy = $otherRequestParams['sortBy'].'_datetime';
         }
         if(strlen($startDate) != 0){
             $condition['start_datetime >='] = $startDate;
@@ -412,8 +412,8 @@ class Appointments_Model_V2 extends Appointments_Model {
         $size = $requestParams['size'];
         $otherQuery = $requestParams['q'];
         $sortBy = 'start_datetime';
-        if ($requestParams['sortBy'] === 'book_datetime' || $requestParams['sortBy'] === 'start_datetime' ){
-            $sortBy = $requestParams['sortBy'];
+        if ($requestParams['sortBy'] === 'book' || $requestParams['sortBy'] === 'start'){
+            $sortBy = $requestParams['sortBy'].'_datetime';
         }
         $dateOrder = $otherRequestParams['dateOrder'] == '' ? 'DESC' : $otherRequestParams['dateOrder'];
         $timeOrder = $otherRequestParams['timeOrder'] == '' ? 'ASC' : $otherRequestParams['timeOrder'];
