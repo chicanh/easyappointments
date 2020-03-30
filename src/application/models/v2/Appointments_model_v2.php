@@ -330,7 +330,8 @@ class Appointments_Model_V2 extends Appointments_Model {
         $endDate = $otherRequestParams['endDate'];
         $page = $otherRequestParams['page'];
         $size = $otherRequestParams['size'];
-        $sort = $otherRequestParams['sort'] == '' ? 'DESC' : $otherRequestParams['sort'];
+        $dateOrder = $otherRequestParams['dateOrder'] == '' ? 'DESC' : $otherRequestParams['dateOrder'];
+        $timeOrder = $otherRequestParams['timeOrder'] == '' ? 'ASC' : $otherRequestParams['timeOrder'];
         $id_service_integrated = $otherRequestParams['id_service_integrated'];
         $id_user_integrated = $otherRequestParams['id_user_integrated'];
         $otherQuery = $otherRequestParams['q'];
@@ -372,8 +373,8 @@ class Appointments_Model_V2 extends Appointments_Model {
         }
         $condition["status <>"] = 'unconfirmed';
 
-        $this->db->order_by("DATE(".$sortBy.")", $sort);
-        $this->db->order_by("TIME(".$sortBy.")", "asc");
+        $this->db->order_by("DATE(".$sortBy.")", $dateOrder);
+        $this->db->order_by("TIME(".$sortBy.")", $timeOrder);
 
         $appointmentData = $this->db->select("COUNT(*) as total, SUM(fee) + SUM(service_fee) as amount")
         ->get_where('ea_appointments', $condition)->result_array();
@@ -384,13 +385,13 @@ class Appointments_Model_V2 extends Appointments_Model {
 		if($page != ''&& $size != ''){
             $offset = ($page - 1 ) * $size;
             $appointments = $this->db
-            ->order_by("DATE(start_datetime)",$sort)
-            ->order_by("TIME(start_datetime)", "asc")
+            ->order_by("DATE(".$sortBy.")",$dateOrder)
+            ->order_by("TIME(".$sortBy.")", $timeOrder)
             ->get_where('ea_appointments', $condition, $size, $offset)->result_array();
         }else{
             $appointments = $this->db
-            ->order_by("DATE(start_datetime)",$sort)
-            ->order_by("TIME(start_datetime)", "asc")
+            ->order_by("DATE(".$sortBy.")",$dateOrder)
+            ->order_by("TIME(".$sortBy.")", $timeOrder)
             ->get_where('ea_appointments', $condition)->result_array();
         }
         $totalRecords = sizeof($appointments);
@@ -407,7 +408,6 @@ class Appointments_Model_V2 extends Appointments_Model {
 
     public function get_batch_paging($where_clause = '', $aggregates = FALSE, $userId = NULL, $serviceId = NULL, $type = '', $requestParams)
     {
-        $sort = $requestParams['sort'];
         $page = $requestParams['page'];
         $size = $requestParams['size'];
         $otherQuery = $requestParams['q'];
@@ -415,7 +415,8 @@ class Appointments_Model_V2 extends Appointments_Model {
         if ($requestParams['sortBy'] === 'book_datetime' || $requestParams['sortBy'] === 'start_datetime' ){
             $sortBy = $requestParams['sortBy'];
         }
-        $sort = $sort == null || $sort == '' ? 'DESC' : $sort; // set default value for sort
+        $dateOrder = $otherRequestParams['dateOrder'] == '' ? 'DESC' : $otherRequestParams['dateOrder'];
+        $timeOrder = $otherRequestParams['timeOrder'] == '' ? 'ASC' : $otherRequestParams['timeOrder'];
         switch ($type) {
             case self::CUSTOMER:
                 $where_clause['id_users_customer'] = $userId;
@@ -446,8 +447,9 @@ class Appointments_Model_V2 extends Appointments_Model {
 
         $where_clause["status <>"] = 'unconfirmed';
 
-        $appointmentData = $this->db->select("COUNT(*) as total, SUM(fee) + SUM(service_fee) as amount")->order_by("DATE(start_datetime)",$sort)
-                                ->order_by("TIME(start_datetime)",'asc')
+        $appointmentData = $this->db->select("COUNT(*) as total, SUM(fee) + SUM(service_fee) as amount")
+                                ->order_by("DATE(".$sortBy.")",$dateOrder)
+                                ->order_by("TIME(".$sortBy.")", $timeOrder)
                                 ->get_where('ea_appointments', $where_clause)->result_array();
         $totalRecords = $appointmentData[0]['total'];
         $amount = isset($appointmentData[0]['amount']) ? $appointmentData[0]['amount'] : 0;
@@ -455,13 +457,13 @@ class Appointments_Model_V2 extends Appointments_Model {
         if($page != '' && $size != ''){
             $offset = ($page - 1 ) * $size;
             $this->db->limit($size,$offset);
-            $appointments = $this->db->order_by("DATE(start_datetime)",$sort)
-                                        ->order_by("TIME(start_datetime)", "asc")
+            $appointments = $this->db->order_by("DATE(".$sortBy.")",$dateOrder)
+                                        ->order_by("TIME(".$sortBy.")", $timeOrder)
                                         ->get_where('ea_appointments', $where_clause, $size, $offset)->result_array();
         } else {
             $appointments = $this->db
-            ->order_by("DATE(".$sortBy.")",$sort)
-            ->order_by("TIME(".$sortBy.")", "asc")
+            ->order_by("DATE(".$sortBy.")",$dateOrder)
+            ->order_by("TIME(".$sortBy.")", $timeOrder)
             ->get_where('ea_appointments', $where_clause)->result_array();
         }
         if ($aggregates) {
