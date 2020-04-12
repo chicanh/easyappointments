@@ -43,16 +43,20 @@ use \EA\Engine\Api\V2\DbHandlerException;
         }
     }
 
-    public function get($id_user_integrated, $id_service_integrated, $page, $size, $isAggregates) {
+    public function get($id_user_integrated, $id_service_integrated, $page, $size, $isAggregates, $q) {
         $offset = ($page - 1 ) * $size;
         $patients = $this->getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated)->limit($size, $offset)->get()->result_array();
+        if($q != null) {
+            $this->searchByKeyword($patients, $q);
+        }
+
         if($isAggregates){
             foreach ($patients as &$patient) {
                 $patient =  $this->get_aggregates($patient);
             }
            
         }
-        $result['total'] = $this->getPatientWithIdUserAndIdServiceQuery($id_user_integrated, $id_service_integrated)->get()->result_id->num_rows;
+        $result['total'] = count($patients);
         $result['patients'] = $patients;
         return $result;
     }
@@ -104,6 +108,34 @@ use \EA\Engine\Api\V2\DbHandlerException;
     public function update($patient_integrated){
         $this->db->update('integrated_users_patients', $patient_integrated, array('id_patients' => $patient_integrated['id_patients']));
         return $patient_integrated;
+    }
+
+    private function searchByKeyword(&$patients, $keyword) {
+        $searchedResponse = [];
+        foreach ($patients as $entry)
+        {
+            if (self::_recursiveArraySearch($entry, $keyword) !== FALSE)
+            {
+                $searchedResponse[] = $entry;
+            }
+        }
+        $patients =  $searchedResponse;
+    }
+
+    protected static function _recursiveArraySearch(array $haystack, $needle)
+    {
+        foreach ($haystack as $key => $value)
+        {
+            $currentKey = $key;
+
+            if (stripos($value, $needle) !== FALSE || (is_array($value) && self::_recursiveArraySearch($value,
+                        $needle) !== FALSE))
+            {
+                return $currentKey;
+            }
+        }
+
+        return FALSE;
     }
 }
 ?>
