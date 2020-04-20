@@ -70,9 +70,10 @@ class AppointmentsV2 extends Appointments {
             ];
 
             if ($id_integrated !== NULL) {
-                $conditions['id_integrated'] = $id_integrated;
+                $result = $this->getDetailAppointment($id_integrated);
+                $response = new Response($result);
+                return $response->singleEntry($result[0]->id)->output();
             }
-
 
             $resultSet = ($startDate == null && $endDate == null) ? $this->getDataWithoutDateRange($conditions) : 
                                                                     $this->getDataWitDateRange($conditions);
@@ -475,5 +476,9 @@ class AppointmentsV2 extends Appointments {
         }catch(\Exception $exception) {
             exit($this->_handleException($exception));
         }
+    }
+
+    private function getDetailAppointment($id_integrated) {
+        return $this->appointments_model_v2->find_by_id_integrated($id_integrated);
     }
 }
