@@ -114,7 +114,11 @@ class User_Model_V2 extends User_Model {
                     ->join('ea_appointments eaAppointments', 'eaAppointments.id_users_customer = eaUsers.id')
                     ->where('eaUsers.id_roles', $ID_ROLES_OF_CUSTOMER)
                     ->where('eaAppointments.id_services', $id_service_integrated)
-                    ->where("CONCAT(eaUsers.first_name, ' ', eaUsers.last_name) LIKE '%".$fullName."%'", NULL, FALSE);
+                    ->group_start()
+                    ->like('eaUsers.first_name', $fullName)
+                    ->or_like('eaUsers.last_name',$fullName)
+                    ->group_end();
+                    // ->where("CONCAT(eaUsers.first_name, ' ', eaUsers.last_name) LIKE '%".$fullName."%'", NULL, FALSE);
             $result = $this->db->get()->result_array();
         }
         foreach($result as &$record){
