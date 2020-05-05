@@ -118,7 +118,6 @@ class User_Model_V2 extends User_Model {
                     ->like('eaUsers.first_name', $fullName)
                     ->or_like('eaUsers.last_name',$fullName)
                     ->group_end();
-                    // ->where("CONCAT(eaUsers.first_name, ' ', eaUsers.last_name) LIKE '%".$fullName."%'", NULL, FALSE);
             $result = $this->db->get()->result_array();
         }
         foreach($result as &$record){
