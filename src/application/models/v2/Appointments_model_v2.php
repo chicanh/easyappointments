@@ -346,9 +346,10 @@ class Appointments_Model_V2 extends Appointments_Model {
         if($otherQuery != null && $otherQuery != ''){
             $idList = $this->find_list_userId_by($otherQuery, $service[0]->id);
             if(sizeof($idList) > 0){
-                $this->db->where_in('id_users_customer', $idList);
+                $listId = $this->handlerArrayString($idList);
+                $condition["id_users_customer IN (".$listId.")"] = null;
             }else{
-                $this->db->where('id_integrated', $otherQuery);
+                $condition['id_integrated'] = $otherQuery;
             }
         }
        
