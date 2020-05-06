@@ -72,8 +72,9 @@ class AppointmentsV2 extends Appointments {
             if ($id_integrated !== NULL) {
                 $conditions['id_integrated'] = $id_integrated;
                 $result = $this->appointments_model_v2->get_batch($conditions, array_key_exists('aggregates', $_GET));
-                $response = new Response($result);
-                return $response->singleEntry($result[0]->id)->output();
+                $responseSet['appointments'] = $this->encodedAppointments($result);
+                $response = new Response($responseSet);
+                return $response->singleAppointmentEntry($id_integrated)->output();
             }
 
             $resultSet = ($startDate == null && $endDate == null) ? $this->getDataWithoutDateRange($conditions) : 
